@@ -1,0 +1,85 @@
+"10-22-2019 13:18:31=>	Error Number = #-2147024809 (Hex = 80070057)
+		Error Description = El valor especificado se encuentra fuera de los límites.
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 13:18:31=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:04:37=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:04:44=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:05:04=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:05:58=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:07:12=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo2
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:08:45=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:08:48=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:08:50=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo3
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:08:52=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo4
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:10:32=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:11:09=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:13:00=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:13:31=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"
+"10-22-2019 19:14:29=>	Error Number = #1004 (Hex = 3EC)
+		Error Description = Error en el método Select de la clase Range.
+		Error Source = HojaSorteosUI.SetModo
+		Error Original Source = Microsoft Excel
+"
+"10-22-2019 19:14:48=>	Error Number = #-2147418113 (Hex = 8000FFFF)
+		Error Description = Error de Automatización
+		Error Source = HojaSorteosUI.btnSorteo1
+		Error Original Source = LotInterfazGUI
+"

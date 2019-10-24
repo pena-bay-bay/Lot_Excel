@@ -1,867 +1,881 @@
-File	: Code_Snippets_LotExcel.txt
-Fecha	: 16/10/2016 16:24:00
+File    : Code_Snippets_LotExcel.txt
+Fecha   : 16/10/2016 16:24:00
 Objetivo: Reunir códigos de código Visual Basic del proyecto Lot_Excel
 
 Indice:
-	1.- Documentacion
-		Comentarios del código para que sea más legible e interpretable
-	2.- Control de Errores
-		Rutinas de control y log de errores 
-	3.- Formularios
-		Rutinas de control y manejo de Objetos de formularios 
-	4.- Mensajes y cajas de dialogo
-		Ejemplos de cajas de control y dialogo
-	5.- Validaciones
-		Validaciones de tipos de campos y variables
-	6.- HowTo
-		Ejemplos de rutinas para realizar tareas y procesos tipo
-	7.- Instrucciones mas comunes
-		Patrones para bucles, evaluadores, colecciones
-	8.- Manejo de Matrices
-		Definición y uso de variables matriz
-	9.- Manejo de cadenas de caracteres
-	10.- Definición de Variables
+    01.- Documentacion
+        Comentarios del código para que sea más legible e interpretable
+    02.- Control de Errores
+        Rutinas de control y log de errores 
+    03.- Formularios
+        Rutinas de control y manejo de Objetos de formularios 
+    04.- Mensajes y cajas de dialogo
+        Ejemplos de cajas de control y dialogo
+    05.- Validaciones
+        Validaciones de tipos de campos y variables
+    06.- HowTo
+        Ejemplos de rutinas para realizar tareas y procesos tipo
+    07.- Instrucciones mas comunes
+        Patrones para bucles, evaluadores, colecciones
+    08.- Manejo de Matrices
+        Definición y uso de variables matriz
+    09.- Manejo de cadenas de caracteres
+    10.- Definición de Variables
 
-	Obtener la hora actual: ? format(Now(),"ddd, dd/MMM/yyyy hh:mm:ss",vbMonday)
-	
-1.- Documentación
-	
-	a) Cabecera de Modulo
-		' *============================================================================*
-		' *
-		' *     Fichero    : <<nombre fichero>>.bas
-		' *
-		' *     Autor      : Carlos Almela Baeza
-		' *     Creación   : ddd, dd/MMM/yyyy hh:mm:ss
-		' *     Versión    : 1.0
-		' *     Propósito  : 
-		' *
-		' *============================================================================*
-		Option Explicit
-		Option Base 0
-	
-	
-	b) Cabecera de Clase
-		' *============================================================================*
-		' *
-		' *     Fichero    : <<nombre fichero>>.cls
-		' *
-		' *     Autor      : Carlos Almela Baeza
-		' *     Creación   : ddd, dd/MMM/yyyy hh:mm:ss
-		' *     Versión    : 1.0
-		' *     Propósito  : 
-		' *
-		' *============================================================================*
-		Option Explicit
-		Option Base 0
-	
-	d) Informacion Propiedad, Funcion, Procedimiento
-		'------------------------------------------------------------------------------*
-		' Procedimiento  : <<nombre propiedad>>
-		' Fecha          : dd/MMM/yyyy
-		' Propósito      :
-		' Parámetros     :
-		' Retorno        : 
-		'------------------------------------------------------------------------------*
-		'
-	e) pie del fichero	
-		' *===========(EOF): <<nombre fichero>>
-	f) secciones
-		'
-		'--- Variables Privadas -------------------------------------------------------*			
-		'--- Constantes ---------------------------------------------------------------*
-		'--- Mensajes -----------------------------------------------------------------*
-		'--- Errores ------------------------------------------------------------------*
-		'--- Propiedades --------------------------------------------------------------*
-		'--- Métodos Privados ---------------------------------------------------------*
-		'--- Métodos Públicos ---------------------------------------------------------*
-
-	g) Clase completa
-		' *============================================================================*
-		' *
-		' *     Fichero    : <<nombre fichero>>.cls
-		' *
-		' *     Autor      : Carlos Almela Baeza
-		' *     Creación   : ddd, dd/MMM/yyyy hh:mm:ss
-		' *     Versión    : 1.0
-		' *     Propósito  :
-		' *
-		' *============================================================================*
-		Option Explicit
-		Option Base 0
-		'
-		'--- Variables Privadas -------------------------------------------------------*
-		'--- Constantes ---------------------------------------------------------------*
-		'--- Mensajes -----------------------------------------------------------------*
-		'--- Errores ------------------------------------------------------------------*
-		'--- Propiedades --------------------------------------------------------------*
-		'--- Métodos Privados ---------------------------------------------------------*
-		Private Sub Class_Initialize()
-
-		End Sub
-
-		Private Sub Class_Terminate()
-
-		End Sub
-		'--- Métodos Públicos ---------------------------------------------------------*
-		'------------------------------------------------------------------------------*
-		' Procedimiento  : <<nombre propiedad>>
-		' Fecha          : dd/MMM/yyyy
-		' Propósito      :
-		' Parámetros     :
-		' Retorno        :
-		'------------------------------------------------------------------------------*
-		'' *===========(EOF): <<nombre fichero>>
-		
-2.- Control de Errores
-	'
-	'	Definición de errores
-	'
-	Public Const OBP<<clase>>ErrorBase = nn00
-	Public Const ERR_<<clase>>INVALIDDIRTY = (OBP<<clase>>ErrorBase + 1)
-	Public Const ERR_<<clase>>INVALIDCHECKCLASSSTORAGE = (OBP<<clase>>ErrorBase + 2)
-	Public Const ERR_<<clase>>INVALIDNEW = (OBP<<clase>>ErrorBase + 3)
-	'
-	'  Mensajes
-	'
-	Public Const MSG_<<clase>>INVALIDDIRTY = "Invalid Data Type Expected Boolean."
-	Public Const MSG_<<clase>>INVALIDCHECKCLASSSTORAGE = "Invalid Data Type Expected Boolean."
-	Public Const MSG_<<clase>>INVALIDNEW = "Invalid Data Type Expected Boolean."
-
-	'
-	'   Constantes
-	'
-	Public Const ERR_TODO = 999
-	Public Const MSG_TODO = "Rutina pendiente de codificar."
-
-	'
-	' ErrorHandling
-	'
-	Public [Type_Parrafo] PARRAFO
-	  On Error GoTo PARRAFO_Error
-		'
-		'  
-		Err.Raise ERR_TODO, "File.PARRAFO", MSG_TODO
-		'		
-	  On Error GoTo 0
-	PARRAFO__CleanExit:
-		Exit [Type_Parrafo]
-			
-	PARRAFO_Error:
-		Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-		ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-		'   Audita el error
-		Call HandleException(ErrNumber, ErrDescription, "File.PARRAFO", ErrSource)
-		'   Lanza el Error
-		Err.Raise ErrNumber, "File.PARRAFO", ErrDescription
-		'   Informa del error
-		Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, ThisWorkbook.Name)
-		Call Trace("CERRAR")
-	End [Type_Parrafo]
-	
-3.- Formularios
-	' 
-	'  Manejo de controles de formularios
-	'
-		Los controles de formularios son:
-			1.- Etiquetas
-			2.- Cajas de texto
-			3.- Cuadro de Lista
-			4.- Cuadro Combinado
-			5.- Casilla (CheckBox)
-			6.- Botón de Opción (OptionBox)
-			7.- Botón Alternar
-			8.- Marco
-			9.- Boton de comando
-			10.- Barra de tabulaciones
-			11.- Página Multiple
-			12.- Barra de desplazamiento
-			13.- Botón de número
-			14.- Imagen
-			15.- RefEdit
-			
-	3.1. Etiquetas
-		'
-		' Definición 
-		Dim const mLitBaseDatosVacia as string = "Base de datos vacia."
-		Dim const mLitBaseDatosConDatos as string = "Se han encontrado $0 registros."
-		'
-		'
-		If mReg = 0 Then
-			Me.lblMensaje = mLitBaseDatosVacia
-		Else
-			Me.lblMensaje = Replace(mLitBaseDatosConDatos, "$0", Format(mReg, "#,##0"))
-		End If
-		
-	3.2. Cajas de texto
-		En función del tipo de dato que tengamos en la Caja de Texto podemos utilizar varias rutinas de control y edición.
-		'
-		'
-	3.3. Listas desplegables
-		'
-		'	Carga de elementos de una lista a partir de una matriz
-		'
-		Const CONSTANTE_NOMBRES = "Elemento01;Elemento02;Elemento03"
-		Dim ELEMENTOS as Variant
-		Dim i         as Integer       
-		'
-		ELEMENTOS = Split ( CONSTANTE_NOMBRES, ";")
-		For i = 0 to Ubound(ELEMENTOS)
-			ListBox.AddItem ELEMENTOS(i)
-		Next i
-		ListBox.ListIndex = -1  ' No se selecciona ningún elemento
-		'
-		'	Evento al seleccionar el elemento	
-		'
-		Private Sub ListBox_Click()
-			ELEMENTO_SELECCIONADO = ListBox.Value
-		End Sub
-
-		
-	3.4. Check Box
-	
-4.- Mensajes y cajas de dialogo
-	Para enviar un mensaje al usuario se utiliza la instrucción MsgBox
-	
-		MsgBox(prompt[, buttons][, title][, helpfile, context])
-	
-		MsgBox("Mensaje al Operador", VbOKOnly + VbExclamation, "Título del mensaje")
-		
-	Esta función puede devolver un resultado tratada como pregunta:
-		vbOK 		1 Aceptar 
-		vbCancel 	2 Cancelar 
-		vbAbort 	3 Anular 
-		vbRetry 	4 Reintentar 
-		vbIgnore 	5 Ignorar 
-		vbYes 		6 Sí 
-		vbNo 		7 No 
-		
-5.- Validaciones
-	
-	Private Function IsValid() As Boolean
-		Dim m_bError As Boolean					'Variable de control de al menos un error
-		m_bError = True							'No existen errores por defecto	
-		m_sMensaje = ""
-		'
-		'		Validacion de campo obligatorio
-		'
-		If (Len(txtTexto.Text) = 0) Then
-			m_sMensaje = m_sMensaje & MSG_NOTEXTO
-			m_bError = False
-		End If
-		'
-		'		Validación de campo no numérico
-		'    
-		If (Len(txtNumero.Text) > 0) and (not IsNumeric(txtNumero.Text)) Then
-			m_sMensaje = m_sMensaje & MSG_NONUMERO
-			m_bError = False
-		End If
-		'
-		'		Validación de Campo no fecha
-		'
-		If (Len(txtFecha.Text) = 0) and (not IsDate(txtFecha.Text) Then	
-			m_sMensaje = m_sMensaje & MSG_NODATE
-			m_bError = False
-		End If
-		'
-		'		Validación de combo no seleccionado 
-		'
-		If (cboControl.ListIndex = -1 ) Then	
-			m_sMensaje = m_sMensaje & MSG_NOCOMBO
-			m_bError = False
-		End If
-		'
-		'	
-		'
-		If (Not m_bError) Then
-			m_sMensaje = MSG_HAYERROR & m_sMensaje
-		End If
-		IsValid = m_bError
-	End Function
-	
-	
-	'
-	'	Otro ejemplo de validación múltiple con dos rutinas: una para control y otra para mensajes
-	'---------------------------------------------------------------------------------------------
-	'
-	'	Se definen códigos de errores para las validaciones (potencias del numero 2)
-	'
-	Private mErrorValidacion                    As Long       ' Control de errores de validación
-	Private Const ERR_CAMPOOBLIGATORIO          As Long = 1
-	Private Const ERR_CAMPONONUMERICO           As Long = 2
-	Private Const ERR_FECHANOVALIDA             As Long = 4
-	Private Const ERR_DATONOSELECCIONADO        As Long = 8
-	'
-	'   y los mensajes de las validaciones
-	'
-	Private Const MSG_ERRORESVALIDACION         As String = "Los datos del formulario no cumplen las siguientes validaciones:" & vbCrLf
-	Private Const MSG_CAMPOOBLIGATORIO          As String = "* El campo xxxx es un campo obligatorio."
-	Private Const MSG_CAMPONONUMERICO           As String = "* Debe introducir un dato numérico."
-	Private Const MSG_FECHANOVALIDA             As String = "* La fecha no es una fecha válida."
-	Private Const MSG_DATONOSELECCIONADO        As String = "* No se ha seleccionado ningún elemento."
-	'
-	'	Función de validación
-	'	
-	Private Function IsValid() As Boolean
-		'
-		'   Inicializamos variables de control
-		'
-		 mErrorValidacion = 0
-        '
-		'		Validación de campo obligatorio
-		'
-		If (Len(txtTexto.Text) = 0) Then
-			mErrorValidacion = mErrorValidacion + ERR_CAMPOOBLIGATORIO
-		End If
-		'
-		'		Validación de campo no numérico
-		'    
-		If (Len(txtNumero.Text) > 0) and (not IsNumeric(txtNumero.Text)) Then
-			mErrorValidacion = mErrorValidacion + ERR_CAMPONONUMERICO
-		End If
-		'
-		'		Validación de Campo no fecha
-		'
-		If (Len(txtFecha.Text) = 0) and (not IsDate(txtFecha.Text) Then	
-			mErrorValidacion = mErrorValidacion + ERR_FECHANOVALIDA
-		End If
-		'
-		'		Validación de combo no seleccionado 
-		'
-		If (cboControl.ListIndex = -1 ) Then	
-			mErrorValidacion = mErrorValidacion + ERR_DATONOSELECCIONADO
-		End If
-		'
-		'
-		'   Evaluamos el código de error
-		'
-		If mErrorValidacion = 0 Then
-			IsValid = True
-		Else
-			IsValid = False
-		End If
-	End Function
-	'
-	'	Edición del mensaje de error
-	'
-	Private Function MensajeValidacion() As String
-		Dim sResult             As String
-        '
-		'   Si no hay error inicializamos el mensaje
-		'
-		If mErrorValidacion = 0 Then
-			sResult = ""
-		Else
-			'
-			'   Si hay algún error inicializamos la cabecera del error
-			'
-			sResult = MSG_ERRORESVALIDACION
-		End If
+    Obtener la hora actual: ? format(Now(),"ddd, dd/MMM/yyyy hh:mm:ss",vbMonday)
     
-		If (mErrorValidacion And ERR_CAMPOOBLIGATORIO) Then
-			sResult = sResult & vbTab & MSG_ERRORESVALIDACION & vbCrLf
-		End If
-			
-		If (mErrorValidacion And ERR_CAMPONONUMERICO) Then
-			sResult = sResult & vbTab & MSG_CAMPONONUMERICO & vbCrLf
-		End If
-		
-		If (mErrorValidacion And ERR_FECHANOVALIDA) Then
-			sResult = sResult & vbTab & MSG_FECHANOVALIDA & vbCrLf
-		End If
-		
-		If (mErrorValidacion And ERR_DATONOSELECCIONADO) Then
-			sResult = sResult & vbTab & MSG_DATONOSELECCIONADO & vbCrLf
-		End If		
-		'
-		'   Devolvemos el mensaje
-		'
-		MensajeValidacion = sResult
-	End Function
-	
-	
-6.- Howto
-	* Manejo y edición de Celdas
-	* Tratamiento de desplazacimentos dentro de un rango
-	* Propiedades de la celda: Bordes, Letra,  Colores y formatos
-	
-7.- Instrucciones más comunes.
-	7.1 Instrucciones condicionales
-		Elegir la instrucción condicional a utilizar
-		If...Then...Else: Salto a una instrucción cuando una condición es True o False
-			If Variable > 0 then 
-				<instrucciones True>
-			Else
-				<Intrucciones False>
-			End if
-		
-		
-		Select Case: Selección de la instrucción a ejecutar en función de un conjunto de condiciones 
-		
-			Function Bonificación(rendimiento, salario)
-				Select Case rendimiento
-					Case 1
-						Bonificación = salario * 0.1
-					Case 2, 3
-						Bonificación = salario * 0.09
-					Case 4 To 6
-						Bonificación = salario * 0.07
-					Case Is > 8
-						Bonificación = 100
-					Case Else
-						Bonificación = 0
-				End Select
-			End Function
+01.- Documentación
+    
+    a) Cabecera de Modulo
+        ' *============================================================================*
+        ' *
+        ' *     Fichero    : <<nombre fichero>>.bas
+        ' *
+        ' *     Autor      : Carlos Almela Baeza
+        ' *     Creación   : ddd, dd/MMM/yyyy hh:mm:ss
+        ' *     Versión    : 1.0
+        ' *     Propósito  : 
+        ' *
+        ' *============================================================================*
+        Option Explicit
+        Option Base 0
+    
+    
+    b) Cabecera de Clase
+        ' *============================================================================*
+        ' *
+        ' *     Fichero    : <<nombre fichero>>.cls
+        ' *
+        ' *     Autor      : Carlos Almela Baeza
+        ' *     Creación   : ddd, dd/MMM/yyyy hh:mm:ss
+        ' *     Versión    : 1.0
+        ' *     Propósito  : 
+        ' *
+        ' *============================================================================*
+        Option Explicit
+        Option Base 0
+    
+    d) Informacion Propiedad, Funcion, Procedimiento
+        '------------------------------------------------------------------------------*
+        ' Procedimiento  : <<nombre Procedimiento>>
+        ' Fecha          : dd/MMM/yyyy
+        ' Propósito      :
+        ' Parámetros     :
+        '------------------------------------------------------------------------------*
+        '
+        '------------------------------------------------------------------------------*
+        ' Función        : <<nombre Función>>
+        ' Fecha          : dd/MMM/yyyy
+        ' Propósito      :
+        ' Parámetros     :
+        ' Retorno        : 
+        '------------------------------------------------------------------------------*
+        '
+        '
+        '------------------------------------------------------------------------------*
+        ' Propiedad      : <<nombre Propiedad>>
+        ' Fecha          : dd/MMM/yyyy
+        ' Propósito      :
+        '------------------------------------------------------------------------------*
+        '
+    e) pie del fichero  
+        ' *===========(EOF): <<nombre fichero>>
+    f) secciones
+        '
+        '--- Variables Privadas -------------------------------------------------------*            
+        '--- Constantes ---------------------------------------------------------------*
+        '--- Mensajes -----------------------------------------------------------------*
+        '--- Errores ------------------------------------------------------------------*
+        '--- Propiedades --------------------------------------------------------------*
+        '--- Métodos Privados ---------------------------------------------------------*
+        '--- Métodos Públicos ---------------------------------------------------------*
+
+    g) Clase completa
+        ' *============================================================================*
+        ' *
+        ' *     Fichero    : <<nombre fichero>>.cls
+        ' *
+        ' *     Autor      : Carlos Almela Baeza
+        ' *     Creación   : ddd, dd/MMM/yyyy hh:mm:ss
+        ' *     Versión    : 1.0
+        ' *     Propósito  :
+        ' *
+        ' *============================================================================*
+        Option Explicit
+        Option Base 0
+        '
+        '--- Variables Privadas -------------------------------------------------------*
+        '--- Constantes ---------------------------------------------------------------*
+        '--- Mensajes -----------------------------------------------------------------*
+        '--- Errores ------------------------------------------------------------------*
+        '--- Propiedades --------------------------------------------------------------*
+        '--- Métodos Privados ---------------------------------------------------------*
+        Private Sub Class_Initialize()
+
+        End Sub
+
+        Private Sub Class_Terminate()
+
+        End Sub
+        '--- Métodos Públicos ---------------------------------------------------------*
+        '------------------------------------------------------------------------------*
+        ' Procedimiento  : <<nombre propiedad>>
+        ' Fecha          : dd/MMM/yyyy
+        ' Propósito      :
+        ' Parámetros     :
+        '------------------------------------------------------------------------------*
+        '' *===========(EOF): <<nombre fichero>>
+        
+02.- Control de Errores
+    '
+    '   Definición de errores
+    '
+    Public Const OBP<<clase>>ErrorBase = nn00
+    Public Const ERR_<<clase>>INVALIDDIRTY = (OBP<<clase>>ErrorBase + 1)
+    Public Const ERR_<<clase>>INVALIDCHECKCLASSSTORAGE = (OBP<<clase>>ErrorBase + 2)
+    Public Const ERR_<<clase>>INVALIDNEW = (OBP<<clase>>ErrorBase + 3)
+    '
+    '  Mensajes
+    '
+    Public Const MSG_<<clase>>INVALIDDIRTY = "Invalid Data Type Expected Boolean."
+    Public Const MSG_<<clase>>INVALIDCHECKCLASSSTORAGE = "Invalid Data Type Expected Boolean."
+    Public Const MSG_<<clase>>INVALIDNEW = "Invalid Data Type Expected Boolean."
+
+    '
+    '   Constantes
+    '
+    Public Const ERR_TODO = 999
+    Public Const MSG_TODO = "Rutina pendiente de codificar."
+
+    '
+    ' ErrorHandling
+    '
+    Public [Type_Parrafo] PARRAFO
+      On Error GoTo PARRAFO_Error
+        '
+        '  
+        Err.Raise ERR_TODO, "File.PARRAFO", MSG_TODO
+        '       
+      On Error GoTo 0
+    PARRAFO__CleanExit:
+        Exit [Type_Parrafo]
+            
+    PARRAFO_Error:
+        Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+        ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+        '   Audita el error
+        Call HandleException(ErrNumber, ErrDescription, "File.PARRAFO", ErrSource)
+        '   Lanza el Error
+        Err.Raise ErrNumber, "File.PARRAFO", ErrDescription
+        '   Informa del error
+        Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, ThisWorkbook.Name)
+        Call Trace("CERRAR")
+    End [Type_Parrafo]
+    
+03.- Formularios
+    ' 
+    '  Manejo de controles de formularios
+    '
+        Los controles de formularios son:
+            1.- Etiquetas
+            2.- Cajas de texto
+            3.- Cuadro de Lista
+            4.- Cuadro Combinado
+            5.- Casilla (CheckBox)
+            6.- Botón de Opción (OptionBox)
+            7.- Botón Alternar
+            8.- Marco
+            9.- Boton de comando
+            10.- Barra de tabulaciones
+            11.- Página Multiple
+            12.- Barra de desplazamiento
+            13.- Botón de número
+            14.- Imagen
+            15.- RefEdit
+            
+    3.1. Etiquetas
+        '
+        ' Definición 
+        Dim const mLitBaseDatosVacia as string = "Base de datos vacia."
+        Dim const mLitBaseDatosConDatos as string = "Se han encontrado $0 registros."
+        '
+        '
+        If mReg = 0 Then
+            Me.lblMensaje = mLitBaseDatosVacia
+        Else
+            Me.lblMensaje = Replace(mLitBaseDatosConDatos, "$0", Format(mReg, "#,##0"))
+        End If
+        
+    3.2. Cajas de texto
+        En función del tipo de dato que tengamos en la Caja de Texto podemos utilizar varias rutinas de control y edición.
+        '
+        '   Tipos de datos: Texto libre, Texto limitado, Numero entero, Numero decimal
+        
+    3.3. Listas desplegables
+        '
+        '   Carga de elementos de una lista a partir de una matriz
+        '
+        Const CONSTANTE_NOMBRES = "Elemento01;Elemento02;Elemento03"
+        Dim ELEMENTOS as Variant
+        Dim i         as Integer       
+        '
+        ELEMENTOS = Split ( CONSTANTE_NOMBRES, ";")
+        For i = 0 to Ubound(ELEMENTOS)
+            ListBox.AddItem ELEMENTOS(i)
+        Next i
+        ListBox.ListIndex = -1  ' No se selecciona ningún elemento
+        '
+        '   Evento al seleccionar el elemento   
+        '
+        Private Sub ListBox_Click()
+            ELEMENTO_SELECCIONADO = ListBox.Value
+        End Sub
+
+        
+    3.4. Check Box
+    
+04.- Mensajes y cajas de dialogo
+    Para enviar un mensaje al usuario se utiliza la instrucción MsgBox
+    
+        MsgBox(prompt[, buttons][, title][, helpfile, context])
+    
+        MsgBox("Mensaje al Operador", VbOKOnly + VbExclamation, "Título del mensaje")
+        
+    Esta función puede devolver un resultado tratada como pregunta:
+        vbOK        1 Aceptar 
+        vbCancel    2 Cancelar 
+        vbAbort     3 Anular 
+        vbRetry     4 Reintentar 
+        vbIgnore    5 Ignorar 
+        vbYes       6 Sí 
+        vbNo        7 No 
+        
+05.- Validaciones
+    
+    Private Function IsValid() As Boolean
+        Dim m_bError As Boolean                 'Variable de control de al menos un error
+        m_bError = True                         'No existen errores por defecto 
+        m_sMensaje = ""
+        '
+        '       Validacion de campo obligatorio
+        '
+        If (Len(txtTexto.Text) = 0) Then
+            m_sMensaje = m_sMensaje & MSG_NOTEXTO
+            m_bError = False
+        End If
+        '
+        '       Validación de campo no numérico
+        '    
+        If (Len(txtNumero.Text) > 0) and (not IsNumeric(txtNumero.Text)) Then
+            m_sMensaje = m_sMensaje & MSG_NONUMERO
+            m_bError = False
+        End If
+        '
+        '       Validación de Campo no fecha
+        '
+        If (Len(txtFecha.Text) = 0) and (not IsDate(txtFecha.Text) Then 
+            m_sMensaje = m_sMensaje & MSG_NODATE
+            m_bError = False
+        End If
+        '
+        '       Validación de combo no seleccionado 
+        '
+        If (cboControl.ListIndex = -1 ) Then    
+            m_sMensaje = m_sMensaje & MSG_NOCOMBO
+            m_bError = False
+        End If
+        '
+        '   
+        '
+        If (Not m_bError) Then
+            m_sMensaje = MSG_HAYERROR & m_sMensaje
+        End If
+        IsValid = m_bError
+    End Function
+    
+    
+    '
+    '   Otro ejemplo de validación múltiple con dos rutinas: una para control y otra para mensajes
+    '---------------------------------------------------------------------------------------------
+    '
+    '   Se definen códigos de errores para las validaciones (potencias del numero 2)
+    '
+    Private mErrorValidacion                    As Long       ' Control de errores de validación
+    Private Const ERR_CAMPOOBLIGATORIO          As Long = 1
+    Private Const ERR_CAMPONONUMERICO           As Long = 2
+    Private Const ERR_FECHANOVALIDA             As Long = 4
+    Private Const ERR_DATONOSELECCIONADO        As Long = 8
+    '
+    '   y los mensajes de las validaciones
+    '
+    Private Const MSG_ERRORESVALIDACION         As String = "Los datos del formulario no cumplen las siguientes validaciones:" & vbCrLf
+    Private Const MSG_CAMPOOBLIGATORIO          As String = "* El campo xxxx es un campo obligatorio."
+    Private Const MSG_CAMPONONUMERICO           As String = "* Debe introducir un dato numérico."
+    Private Const MSG_FECHANOVALIDA             As String = "* La fecha no es una fecha válida."
+    Private Const MSG_DATONOSELECCIONADO        As String = "* No se ha seleccionado ningún elemento."
+    '
+    '   Función de validación
+    '   
+    Private Function IsValid() As Boolean
+        '
+        '   Inicializamos variables de control
+        '
+         mErrorValidacion = 0
+        '
+        '       Validación de campo obligatorio
+        '
+        If (Len(txtTexto.Text) = 0) Then
+            mErrorValidacion = mErrorValidacion + ERR_CAMPOOBLIGATORIO
+        End If
+        '
+        '       Validación de campo no numérico
+        '    
+        If (Len(txtNumero.Text) > 0) and (not IsNumeric(txtNumero.Text)) Then
+            mErrorValidacion = mErrorValidacion + ERR_CAMPONONUMERICO
+        End If
+        '
+        '       Validación de Campo no fecha
+        '
+        If (Len(txtFecha.Text) = 0) and (not IsDate(txtFecha.Text) Then 
+            mErrorValidacion = mErrorValidacion + ERR_FECHANOVALIDA
+        End If
+        '
+        '       Validación de combo no seleccionado 
+        '
+        If (cboControl.ListIndex = -1 ) Then    
+            mErrorValidacion = mErrorValidacion + ERR_DATONOSELECCIONADO
+        End If
+        '
+        '
+        '   Evaluamos el código de error
+        '
+        If mErrorValidacion = 0 Then
+            IsValid = True
+        Else
+            IsValid = False
+        End If
+    End Function
+    '
+    '   Edición del mensaje de error
+    '
+    Private Function MensajeValidacion() As String
+        Dim sResult             As String
+        '
+        '   Si no hay error inicializamos el mensaje
+        '
+        If mErrorValidacion = 0 Then
+            sResult = ""
+        Else
+            '
+            '   Si hay algún error inicializamos la cabecera del error
+            '
+            sResult = MSG_ERRORESVALIDACION
+        End If
+    
+        If (mErrorValidacion And ERR_CAMPOOBLIGATORIO) Then
+            sResult = sResult & vbTab & MSG_ERRORESVALIDACION & vbCrLf
+        End If
+            
+        If (mErrorValidacion And ERR_CAMPONONUMERICO) Then
+            sResult = sResult & vbTab & MSG_CAMPONONUMERICO & vbCrLf
+        End If
+        
+        If (mErrorValidacion And ERR_FECHANOVALIDA) Then
+            sResult = sResult & vbTab & MSG_FECHANOVALIDA & vbCrLf
+        End If
+        
+        If (mErrorValidacion And ERR_DATONOSELECCIONADO) Then
+            sResult = sResult & vbTab & MSG_DATONOSELECCIONADO & vbCrLf
+        End If      
+        '
+        '   Devolvemos el mensaje
+        '
+        MensajeValidacion = sResult
+    End Function
+    
+    
+06.- Howto
+    * Manejo y edición de Celdas
+    * Tratamiento de desplazacimentos dentro de un rango
+    * Propiedades de la celda: Bordes, Letra,  Colores y formatos
+    
+07.- Instrucciones más comunes.
+    7.1 Instrucciones condicionales
+        Elegir la instrucción condicional a utilizar
+        If...Then...Else: Salto a una instrucción cuando una condición es True o False
+            If Variable > 0 then 
+                <instrucciones True>
+            Else
+                <Intrucciones False>
+            End if
+        
+        
+        Select Case: Selección de la instrucción a ejecutar en función de un conjunto de condiciones 
+        
+            Function Bonificación(rendimiento, salario)
+                Select Case rendimiento
+                    Case 1
+                        Bonificación = salario * 0.1
+                    Case 2, 3
+                        Bonificación = salario * 0.09
+                    Case 4 To 6
+                        Bonificación = salario * 0.07
+                    Case Is > 8
+                        Bonificación = 100
+                    Case Else
+                        Bonificación = 0
+                End Select
+            End Function
 
 
 
-	
-	7.2 Bucles  e Iteraciones
-		Do...Loop: Seguir en el bucle mientras o hasta una condición sea True.
-		For...Next: Utilizar un contador para ejecutar las instrucciones un número determinado de veces.
-		For Each...Next: Repetición del grupo de instrucciones para cada uno de los objetos de una colección.
-		
-		'
-		'	Bucle For con contadores
-		'
-		Dim Palabras, Caracteres, MiCadena
-		For Palabras = 10 To 1 Step -1     			' Establece 10 repeticiones.
-			For Caracteres = 0 To 9    				' Establece 10 repeticiones.
-				MiCadena = MiCadena & Caracteres    ' Agrega un número a la cadena.
-			Next Caracteres    						' Incrementa el contador
-			MiCadena = MiCadena & " "    			' Agrega un espacio.
-		Next Palabras
+    
+    7.2 Bucles  e Iteraciones
+        Do...Loop: Seguir en el bucle mientras o hasta una condición sea True.
+        For...Next: Utilizar un contador para ejecutar las instrucciones un número determinado de veces.
+        For Each...Next: Repetición del grupo de instrucciones para cada uno de los objetos de una colección.
+        
+        '
+        '   Bucle For con contadores
+        '
+        Dim Palabras, Caracteres, MiCadena
+        For Palabras = 10 To 1 Step -1              ' Establece 10 repeticiones.
+            For Caracteres = 0 To 9                 ' Establece 10 repeticiones.
+                MiCadena = MiCadena & Caracteres    ' Agrega un número a la cadena.
+            Next Caracteres                         ' Incrementa el contador
+            MiCadena = MiCadena & " "               ' Agrega un espacio.
+        Next Palabras
 
-		'
-		'	Bucle For con Colecciones de objetos
-		'
-		Dim Found, MiObjeto, MiColección
-		Found = False    							' Inicializa variable.
-		For Each MiObjeto In MiColección    		' Itera por cada elemento. 
-			If MiObjeto.Text = "Hola" Then    		' Si Texto es igual "Hola".
-				Found = True    					' Establece como Verdadero.
-				Exit For    						' Sale del bucle.
-			End If
-		Next
-		'
-		'	Bucle condicional 
-		'
-		Dim Contador
-		Contador = 0    				' Inicializa la variable.
-		While Contador < 20    			' Comprueba el valor del Contador.
-			Contador = Contador + 1    	' Incrementa Contador.
-		Wend    						' Finaliza el bucle End While cuando Contador > 19.
-		Debug.Print Contador    		' Imprime 20 la ventana Inmediato
-		'
-		'	Bucle Do	
-		'
-		Dim Comprobar, Contador
-		Comprobar = True: Contador = 0    	' Inicializa variables.
-		Do    								' Bucle externo.
-			Do While Contador < 20    		' Bucle interno.
-				Contador = Contador + 1    	' Incrementa el contador.
-				If Contador = 10 Then    	' Si la condición es verdadera.
-					Comprobar = False    	' Establece el valor a False.
-					Exit Do    				' Sale del bucle interno.
-				End If
-			Loop
-		Loop Until Comprobar = False    	' Sale inmediatamente del bucle externo.
-	
-	7.3 Devolver cadenas desde funciones
-		Chr$ 				                  ChrB$ 
-		Command$                              Right$ 
-		CurDir$                               RightB$ 
-		Date$                                 RTrim$ 
-		Dir$                                  Space$ 
-		Error$                                Str$ 
-		Format$                               String$ 
-		Hex$                                  Time$ 
-		Input$                                Trim$ 
-		InputB$                               Ucase$ 
-		LCase$                                LTrim$ 
-		Left$                                 Mid$ 
-		LeftB$                                MidB$ 
-		Oct$                     
-	
-	7.4 Escribir datos en archivos
-			Cuando se trabaja con grandes cantidades de datos, es a menudo conveniente escribir o leer datos de un archivo. La instrucción Open permite crear y acceder a archivos directamente. Open proporciona tres tipos de acceso a archivos: 
-			Acceso secuencial (modos Input, Output y Append) se utiliza para escribir archivos de texto, tales como registros de errores e informes.
-			Acceso directo (modo Random) se utiliza para leer y escribir datos en un archivo sin cerrarlo. Los archivos de acceso directo conservan la información en registros, lo que permite recuperarla de forma rápida.
-			Acceso binario (modo Binary) se utiliza para leer y escribir en cualquier byte de un archivo, sirve para almacenar o presentar una imagen de mapa de bits. 
-			Nota    La instrucción Open no se debe utilizar para abrir archivos del mismo tipo que la aplicación. Por ejemplo, no use Open para abrir un documento de Word, unahoja de cálculo de Microsoft Excel o una base de datos de Microsoft Access. Si se hiciera, se perdería la integridad del archivo se corromperían los datos almacenados. 
-			La siguiente tabla muestra las instrucciones normalmente utilizadas para escribir y leer datos en o de un archivo.
-			
-			Tipo de acceso 				Escribir datos 		Leer datos 
-			Secuencial 					Print #,Write # 	Input # 
-			Directo 					Put 				Get 
-			Binario 					Put 				Get 
-			
-			7.4.1 Tipos de accesos 	
-				- Secuencial
-				- Directo
-				- Binario
-			7.4.1 Escribir datos 
-			7.4.1 Leer datos
-			
-	7.5 Trabajo con colecciones
-		- Declaración de un objeto Colección
-			Dim X As New Collection
-			'
-			'
-			'
-			Dim X As Collection
-			Set X = New  Collection
-		
-		- Agregar una clase a la colección
-			
-			object.Add item, key, before, after
-			
-			Part		Descripción
-			object		Necesario. Una expresión de objeto que se evalúa como un objeto en la lista se aplica a .
-			item		Necesario. Una expresión de cualquier tipo que especifica el miembro que se debe agregar a la colección.
-			Key 		Opcional. Una expresión de cadena exclusiva que especifica una cadena clave que se puede usar, en lugar de un índice posicional, para obtener acceso a un miembro de la colección.
-			before		Opcional. Una expresión que especifica una posición relativa en la colección. El miembro que se va a agregar se coloca en la colección antes del miembro identificado __ por el argumentoBefore. Si una expresión numérica, Before debe ser un número comprendido entre 1 y el valor de la propiedad Count de la colección. En expresiones de cadena, before debe corresponder a la clave que se especificó al agregar a la colección el miembro al que se hace referencia. Puede especificar una posición before o after, pero no ambas.
-			after		Opcional. Una expresión que especifica una posición relativa en la colección. El miembro que se desea agregar se sitúa en la colección detrás del miembro que identifica el argumento after. En expresiones numéricas, after debe ser un número comprendido entre 1 y el valor de la propiedad Count de la colección. En expresiones de cadena, after debe corresponder a la clave que se especificó al agregar a la colección el miembro al que se hace referencia. Puede especificar una posición before o after, pero no ambas.			
-			
-			Dim mInteger as integer
-			
-			mInteger = 20
-			
-			X.Add item := mInteger, key := CStr(mInteger)
-			
-		- Evaluar el número de elementos de la colección
-			Debug.print	'La colección tiene : ' &  x.Count 
-			
-		- Acceder a un elemento de la colección
-			Syntax
-				object.Item(index)
-			Part				Descripción
-			object				Necesario. Una expresión de objeto que se evalúa como un objeto en la lista se aplica a .
-			index				Obligatorio. Una expresión que especifica la posición de un miembro de la colección. Si es una expresión numérica, index debe ser un número comprendido entre 1 y el valor de la propiedad Count de la colección. Si una expresión de cadena, index debe corresponder al argumento key especificado cuando se agregó a la colección el miembro al que se hace referencia.
-			
-			Observaciones
+        '
+        '   Bucle For con Colecciones de objetos
+        '
+        Dim Found, MiObjeto, MiColección
+        Found = False                               ' Inicializa variable.
+        For Each MiObjeto In MiColección            ' Itera por cada elemento. 
+            If MiObjeto.Text = "Hola" Then          ' Si Texto es igual "Hola".
+                Found = True                        ' Establece como Verdadero.
+                Exit For                            ' Sale del bucle.
+            End If
+        Next
+        '
+        '   Bucle condicional 
+        '
+        Dim Contador
+        Contador = 0                    ' Inicializa la variable.
+        While Contador < 20             ' Comprueba el valor del Contador.
+            Contador = Contador + 1     ' Incrementa Contador.
+        Wend                            ' Finaliza el bucle End While cuando Contador > 19.
+        Debug.Print Contador            ' Imprime 20 la ventana Inmediato
+        '
+        '   Bucle Do    
+        '
+        Dim Comprobar, Contador
+        Comprobar = True: Contador = 0      ' Inicializa variables.
+        Do                                  ' Bucle externo.
+            Do While Contador < 20          ' Bucle interno.
+                Contador = Contador + 1     ' Incrementa el contador.
+                If Contador = 10 Then       ' Si la condición es verdadera.
+                    Comprobar = False       ' Establece el valor a False.
+                    Exit Do                 ' Sale del bucle interno.
+                End If
+            Loop
+        Loop Until Comprobar = False        ' Sale inmediatamente del bucle externo.
+    
+    7.3 Devolver cadenas desde funciones
+        Chr$                                  ChrB$ 
+        Command$                              Right$ 
+        CurDir$                               RightB$ 
+        Date$                                 RTrim$ 
+        Dir$                                  Space$ 
+        Error$                                Str$ 
+        Format$                               String$ 
+        Hex$                                  Time$ 
+        Input$                                Trim$ 
+        InputB$                               Ucase$ 
+        LCase$                                LTrim$ 
+        Left$                                 Mid$ 
+        LeftB$                                MidB$ 
+        Oct$                     
+    
+    7.4 Escribir datos en archivos
+            Cuando se trabaja con grandes cantidades de datos, es a menudo conveniente escribir o leer datos de un archivo. La instrucción Open permite crear y acceder a archivos directamente. Open proporciona tres tipos de acceso a archivos: 
+            Acceso secuencial (modos Input, Output y Append) se utiliza para escribir archivos de texto, tales como registros de errores e informes.
+            Acceso directo (modo Random) se utiliza para leer y escribir datos en un archivo sin cerrarlo. Los archivos de acceso directo conservan la información en registros, lo que permite recuperarla de forma rápida.
+            Acceso binario (modo Binary) se utiliza para leer y escribir en cualquier byte de un archivo, sirve para almacenar o presentar una imagen de mapa de bits. 
+            Nota    La instrucción Open no se debe utilizar para abrir archivos del mismo tipo que la aplicación. Por ejemplo, no use Open para abrir un documento de Word, unahoja de cálculo de Microsoft Excel o una base de datos de Microsoft Access. Si se hiciera, se perdería la integridad del archivo se corromperían los datos almacenados. 
+            La siguiente tabla muestra las instrucciones normalmente utilizadas para escribir y leer datos en o de un archivo.
+            
+            Tipo de acceso              Escribir datos      Leer datos 
+            Secuencial                  Print #,Write #     Input # 
+            Directo                     Put                 Get 
+            Binario                     Put                 Get 
+            
+            7.4.1 Tipos de accesos  
+                - Secuencial
+                - Directo
+                - Binario
+            7.4.1 Escribir datos 
+            7.4.1 Leer datos
+            
+    7.5 Trabajo con colecciones
+        - Declaración de un objeto Colección
+            Dim X As New Collection
+            '
+            '
+            '
+            Dim X As Collection
+            Set X = New  Collection
+        
+        - Agregar una clase a la colección
+            
+            object.Add item, key, before, after
+            
+            Part        Descripción
+            object      Necesario. Una expresión de objeto que se evalúa como un objeto en la lista se aplica a .
+            item        Necesario. Una expresión de cualquier tipo que especifica el miembro que se debe agregar a la colección.
+            Key         Opcional. Una expresión de cadena exclusiva que especifica una cadena clave que se puede usar, en lugar de un índice posicional, para obtener acceso a un miembro de la colección.
+            before      Opcional. Una expresión que especifica una posición relativa en la colección. El miembro que se va a agregar se coloca en la colección antes del miembro identificado __ por el argumentoBefore. Si una expresión numérica, Before debe ser un número comprendido entre 1 y el valor de la propiedad Count de la colección. En expresiones de cadena, before debe corresponder a la clave que se especificó al agregar a la colección el miembro al que se hace referencia. Puede especificar una posición before o after, pero no ambas.
+            after       Opcional. Una expresión que especifica una posición relativa en la colección. El miembro que se desea agregar se sitúa en la colección detrás del miembro que identifica el argumento after. En expresiones numéricas, after debe ser un número comprendido entre 1 y el valor de la propiedad Count de la colección. En expresiones de cadena, after debe corresponder a la clave que se especificó al agregar a la colección el miembro al que se hace referencia. Puede especificar una posición before o after, pero no ambas.          
+            
+            Dim mInteger as integer
+            
+            mInteger = 20
+            
+            X.Add item := mInteger, key := CStr(mInteger)
+            
+        - Evaluar el número de elementos de la colección
+            Debug.print 'La colección tiene : ' &  x.Count 
+            
+        - Acceder a un elemento de la colección
+            Syntax
+                object.Item(index)
+            Part                Descripción
+            object              Necesario. Una expresión de objeto que se evalúa como un objeto en la lista se aplica a .
+            index               Obligatorio. Una expresión que especifica la posición de un miembro de la colección. Si es una expresión numérica, index debe ser un número comprendido entre 1 y el valor de la propiedad Count de la colección. Si una expresión de cadena, index debe corresponder al argumento key especificado cuando se agregó a la colección el miembro al que se hace referencia.
+            
+            Observaciones
 
-			Si el valor proporcionado como index no coincide con ningún miembro existente de la colección, se produce un error. El método Item es el método predeterminado para una colección. Por lo tanto, las siguientes líneas de código son equivalentes:
-			
-					Print MyCollection(1)
-					Print MyCollection.Item(1)
-		
-		Ejemplo
+            Si el valor proporcionado como index no coincide con ningún miembro existente de la colección, se produce un error. El método Item es el método predeterminado para una colección. Por lo tanto, las siguientes líneas de código son equivalentes:
+            
+                    Print MyCollection(1)
+                    Print MyCollection.Item(1)
+        
+        Ejemplo
 
-			En este ejemplo, se usa el método Item para recuperar una referencia a un objeto de una colección. Si Birthdays se supone que es un objeto de colección , el código siguiente recupera de la colección las referencias a los objetos que representan el cumpleaños de Bill Soto y el cumpleaños de Adam Smith, usando las claves "SmithBill" y "SmithAdam" como Índice . argumentos.
-			Tenga en cuenta que la primera llamada especifica explícitamente el método Item pero la segunda, no. Ambas llamadas funcionan porque el método Item es el valor predeterminado para un objeto Collection. Las referencias, asignadas a SmithBillBD y SmithAdamBD mediante Set, se pueden usar para tener acceso a las propiedades y a los métodos de los objetos especificados.
-			Para ejecutar este código, cree la colección y rellénela con al menos los dos miembros a los que se hace referencia.
-			VB
+            En este ejemplo, se usa el método Item para recuperar una referencia a un objeto de una colección. Si Birthdays se supone que es un objeto de colección , el código siguiente recupera de la colección las referencias a los objetos que representan el cumpleaños de Bill Soto y el cumpleaños de Adam Smith, usando las claves "SmithBill" y "SmithAdam" como Índice . argumentos.
+            Tenga en cuenta que la primera llamada especifica explícitamente el método Item pero la segunda, no. Ambas llamadas funcionan porque el método Item es el valor predeterminado para un objeto Collection. Las referencias, asignadas a SmithBillBD y SmithAdamBD mediante Set, se pueden usar para tener acceso a las propiedades y a los métodos de los objetos especificados.
+            Para ejecutar este código, cree la colección y rellénela con al menos los dos miembros a los que se hace referencia.
+            VB
 
-			Copiar
-			Dim SmithBillBD As Object
-			Dim SmithAdamBD As Object
-			Dim Birthdays
-			Set SmithBillBD = Birthdays.Item("SmithBill")
-			Set SmithAdamBD = Birthdays("SmithAdam")
+            Copiar
+            Dim SmithBillBD As Object
+            Dim SmithAdamBD As Object
+            Dim Birthdays
+            Set SmithBillBD = Birthdays.Item("SmithBill")
+            Set SmithAdamBD = Birthdays("SmithAdam")
 
-		- Eliminar elementos de la colección
-		    Sintaxis
-				object.Remove(index)
-				
-			La sintaxis del método Remove tiene el siguiente calificador de objetos y parte:
-		
-			Part			Descripción
-			object			Necesario. Una expresión de objeto que se evalúa como un objeto en la lista se aplica a .
-			index			Obligatorio. Una expresión que especifica la posición de un miembro de la colección. Si es una expresión numérica, index debe ser un número comprendido entre 1 y el valor de la propiedad Count de la colección. Si una expresión de cadena, index debe corresponder al argumento key especificado cuando se agregó a la colección el miembro al que se hace referencia.
-		
-			Observaciones
+        - Eliminar elementos de la colección
+            Sintaxis
+                object.Remove(index)
+                
+            La sintaxis del método Remove tiene el siguiente calificador de objetos y parte:
+        
+            Part            Descripción
+            object          Necesario. Una expresión de objeto que se evalúa como un objeto en la lista se aplica a .
+            index           Obligatorio. Una expresión que especifica la posición de un miembro de la colección. Si es una expresión numérica, index debe ser un número comprendido entre 1 y el valor de la propiedad Count de la colección. Si una expresión de cadena, index debe corresponder al argumento key especificado cuando se agregó a la colección el miembro al que se hace referencia.
+        
+            Observaciones
 
-			Si el valor proporcionado como index no coincide con un miembro existente de la colección, se produce un error.
-			
-			Ejemplo
+            Si el valor proporcionado como index no coincide con un miembro existente de la colección, se produce un error.
+            
+            Ejemplo
 
-			Este ejemplo ilustra el uso del método Remove para quitar objetos de un objeto Collection, MyClasses. Este código quita el objeto cuyo índice es 1 en cada iteración del bucle.
-				Dim Num, MyClasses
-				For Num = 1 To MyClasses.Count    
-					MyClasses.Remove 1    ' Remove the first object each time
-							' through the loop until there are 
-							' no objects left in the collection.
-				Next Num
+            Este ejemplo ilustra el uso del método Remove para quitar objetos de un objeto Collection, MyClasses. Este código quita el objeto cuyo índice es 1 en cada iteración del bucle.
+                Dim Num, MyClasses
+                For Num = 1 To MyClasses.Count    
+                    MyClasses.Remove 1    ' Remove the first object each time
+                            ' through the loop until there are 
+                            ' no objects left in the collection.
+                Next Num
 
 
 
-8.- Matrices
-	8.1. Definición
-		Podemos definir una matriz de dos formas: estatica o dinámica
-		Estática:
-			' Formato estatico de dos dimensiones de 11 elementos
-			Dim MiMatriz(10, 10) As Integer		
-			' Una matriz Integer utiliza 22 bytes (11 elementos * 2 bytes).
-			ReDim MiMatrizInteger(10) As Integer
+08.- Matrices
+    8.1. Definición
+        Podemos definir una matriz de dos formas: estatica o dinámica
+        Estática:
+            ' Formato estatico de dos dimensiones de 11 elementos
+            Dim MiMatriz(10, 10) As Integer     
+            ' Una matriz Integer utiliza 22 bytes (11 elementos * 2 bytes).
+            ReDim MiMatrizInteger(10) As Integer
 
-			' Una matriz Double-precision utiliza 88 bytes (11 elementos * 8 bytes).
-			ReDim MiMatrizDoble(10) As Double
+            ' Una matriz Double-precision utiliza 88 bytes (11 elementos * 8 bytes).
+            ReDim MiMatrizDoble(10) As Double
 
-			' Una matriz Variant utiliza al menos 176 bytes (11 elementos * 16 bytes).
-			ReDim MiMatrizVariant(10)
+            ' Una matriz Variant utiliza al menos 176 bytes (11 elementos * 16 bytes).
+            ReDim MiMatrizVariant(10)
 
-			' La matriz Integer utiliza 100 * 100 * 2 bytes (20.000 bytes).
-			ReDim MiMatrizInteger(99, 99) As Integer 
+            ' La matriz Integer utiliza 100 * 100 * 2 bytes (20.000 bytes).
+            ReDim MiMatrizInteger(99, 99) As Integer 
 
-			' La matriz Double-precision utiliza 100 * 100 * 8 bytes (80.000 bytes).
-			ReDim MiMatrizDoble (99, 99) As Double 
+            ' La matriz Double-precision utiliza 100 * 100 * 8 bytes (80.000 bytes).
+            ReDim MiMatrizDoble (99, 99) As Double 
 
-			' La matriz Variant utiliza al menos 160.000 bytes (100 * 100 * 16 bytes).
-			ReDim MiMatrizVariant(99, 99)
-		
-		Dinámica:
-			Dim MatrizSingle() As Single
-		
-			'La instrucción ReDim se puede utilizar en un procedimiento, 
-			'dentro del alcance de la matriz, para cambiar el número de dimensiones, 
-			'definir el número de elementos y para definir los límites superior 
-			'e inferior para cada dimensión. Se puede usar la instrucción 
-			'ReDim para modificar la matriz dinámica cuantas veces sea necesario. 
-			'Sin embargo, cada vez que se hace, se pierden los valores almacenados
-			'en la matriz. Se puede usar la instrucción ReDim Preserve para ampliar '
-			'una matriz conservando los valores que contiene. 
-			'Por ejemplo, la siguiente instrucción añade 10 nuevos elementos a 
-			'la matriz MatrizVar sin perder los valores almacenados en los elementos originales.
+            ' La matriz Variant utiliza al menos 160.000 bytes (100 * 100 * 16 bytes).
+            ReDim MiMatrizVariant(99, 99)
+        
+        Dinámica:
+            Dim MatrizSingle() As Single
+        
+            'La instrucción ReDim se puede utilizar en un procedimiento, 
+            'dentro del alcance de la matriz, para cambiar el número de dimensiones, 
+            'definir el número de elementos y para definir los límites superior 
+            'e inferior para cada dimensión. Se puede usar la instrucción 
+            'ReDim para modificar la matriz dinámica cuantas veces sea necesario. 
+            'Sin embargo, cada vez que se hace, se pierden los valores almacenados
+            'en la matriz. Se puede usar la instrucción ReDim Preserve para ampliar '
+            'una matriz conservando los valores que contiene. 
+            'Por ejemplo, la siguiente instrucción añade 10 nuevos elementos a 
+            'la matriz MatrizVar sin perder los valores almacenados en los elementos originales.
 
-			ReDim Preserve MatrizVar(UBound(MatrizVar) + 10)
+            ReDim Preserve MatrizVar(UBound(MatrizVar) + 10)
 
-	8.2 Utilización de variables matriz	
-		Inicialización
-				'Para dar valor a un elemento individual, es preciso 
-				'especificar el índice del elemento. El siguiente 
-				'ejemplo asigna un valor inicial de 20 a todos los
-				'elementos de la matriz.
+    8.2 Utilización de variables matriz 
+        Inicialización
+                'Para dar valor a un elemento individual, es preciso 
+                'especificar el índice del elemento. El siguiente 
+                'ejemplo asigna un valor inicial de 20 a todos los
+                'elementos de la matriz.
 
-			Sub LlenarMatriz()
-				Dim curGastos(364) As Currency
-				Dim intI As Integer
-				For intI = 0 to 364
-					curGastos(intI) = 20
-				Next
-			End Sub
-		
-		Cambiar el límite inferior 
-			'Se puede usar la instrucción Option Base al principio de un 
-			'módulo para cambiar el índice predefinido del primer elemento
-			'del 0 al 1. En el siguiente ejemplo, la instrucción Option 
-			'Base cambia el índice del primer elemento y la instrucción 
-			'Dim declara la variable matriz curGastos con 365 elementos.
+            Sub LlenarMatriz()
+                Dim curGastos(364) As Currency
+                Dim intI As Integer
+                For intI = 0 to 364
+                    curGastos(intI) = 20
+                Next
+            End Sub
+        
+        Cambiar el límite inferior 
+            'Se puede usar la instrucción Option Base al principio de un 
+            'módulo para cambiar el índice predefinido del primer elemento
+            'del 0 al 1. En el siguiente ejemplo, la instrucción Option 
+            'Base cambia el índice del primer elemento y la instrucción 
+            'Dim declara la variable matriz curGastos con 365 elementos.
 
-				Option Base 1
-				Dim curGastos(365) As Currency
+                Option Base 1
+                Dim curGastos(365) As Currency
 
-			'También se puede fijar de forma explícita el límite inferior 
-			'de una matriz mediante el uso de la cláusula To tal y como 
-			'muestra el siguiente ejemplo.
+            'También se puede fijar de forma explícita el límite inferior 
+            'de una matriz mediante el uso de la cláusula To tal y como 
+            'muestra el siguiente ejemplo.
 
-				Dim curGastos(1 To 365) As Currency
-				Dim strDiaSemana(7 To 13) As String
+                Dim curGastos(1 To 365) As Currency
+                Dim strDiaSemana(7 To 13) As String
 
-		Almacenar valores Variant en matrices
-			'Hay dos formas de crear matrices de valores Variant. 
-			'Una forma consiste en declarar una matriz como del 
-			'tipo de datos Variant, tal y como muestra el siguiente ejemplo:
+        Almacenar valores Variant en matrices
+            'Hay dos formas de crear matrices de valores Variant. 
+            'Una forma consiste en declarar una matriz como del 
+            'tipo de datos Variant, tal y como muestra el siguiente ejemplo:
 
-				Dim varDatos(3) As Variant
-				varDatos(0) = "Cristina Martínez"
-				varDatos(1) = "C/ Don Ramón de la Cruz, 73"
-				varDatos(2) = 38
-				varDatos(3) = Format("06-09-1952", "Fecha general")
+                Dim varDatos(3) As Variant
+                varDatos(0) = "Cristina Martínez"
+                varDatos(1) = "C/ Don Ramón de la Cruz, 73"
+                varDatos(2) = 38
+                varDatos(3) = Format("06-09-1952", "Fecha general")
 
-			'La otra forma consiste en asignar la matriz que devuelve la 
-			'función Matriz a una variable Variant, tal y como muestra 
-			'el siguiente ejemplo.
+            'La otra forma consiste en asignar la matriz que devuelve la 
+            'función Matriz a una variable Variant, tal y como muestra 
+            'el siguiente ejemplo.
 
-				Dim varDatos As Variant
-				varDatos = Array("Cristina Martínez", "C/Don Ramón de la Cruz, 73", 38, _
-				Format("06-09-1952", "Fecha general"))
+                Dim varDatos As Variant
+                varDatos = Array("Cristina Martínez", "C/Don Ramón de la Cruz, 73", 38, _
+                Format("06-09-1952", "Fecha general"))
 
-			'Los elementos de una matriz de valores Variant se identifican 
-			'mediante su índice, sea cual sea la técnica que se haya usado 
-			'para crear la matriz. Por ejemplo, la siguiente instrucción 
-			'podría añadirse a cualquiera de los ejemplos anteriores.
+            'Los elementos de una matriz de valores Variant se identifican 
+            'mediante su índice, sea cual sea la técnica que se haya usado 
+            'para crear la matriz. Por ejemplo, la siguiente instrucción 
+            'podría añadirse a cualquiera de los ejemplos anteriores.
 
-				MsgBox "Los datos de " & varDatos(0) & " se han guardado."
+                MsgBox "Los datos de " & varDatos(0) & " se han guardado."
 
-	Utilizar matrices con múltiples dimensiones
-			'En Visual Basic se pueden declarar matrices con hasta 60 dimensiones. 
-			'Por ejemplo, la siguiente instrucción declara una matriz de dos dimensiones, de 5 por 10.
+    Utilizar matrices con múltiples dimensiones
+            'En Visual Basic se pueden declarar matrices con hasta 60 dimensiones. 
+            'Por ejemplo, la siguiente instrucción declara una matriz de dos dimensiones, de 5 por 10.
 
-				Dim sngMulti(1 To 5, 1 To 10) As Single
+                Dim sngMulti(1 To 5, 1 To 10) As Single
 
-			'Si considera a la matriz como una tabla de dos entradas, el primer 
-			'argumento representaría a las filas y el segundo a las columnas.
+            'Si considera a la matriz como una tabla de dos entradas, el primer 
+            'argumento representaría a las filas y el segundo a las columnas.
 
-			'Utilice instrucciones For...Next para operar con matrices de dimensiones 
-			'múltiples. El siguiente procedimiento llena una matriz bidimensional con valores Single.
+            'Utilice instrucciones For...Next para operar con matrices de dimensiones 
+            'múltiples. El siguiente procedimiento llena una matriz bidimensional con valores Single.
 
-				Sub LlenaMatrizMulti()
-					Dim intI As Integer, intJ As Integer
-					Dim sngMulti(1 To 5, 1 To 10) As Single
-					
-					' Llena matriz con valores.
-					For intI = 1 To 5
-						For intJ = 1 To 10
-							sngMulti(intI, intJ) = intI * intJ
-							Debug.Print sngMulti(intI, intJ)
-						Next intJ
-					Next intI
-				End Sub
+                Sub LlenaMatrizMulti()
+                    Dim intI As Integer, intJ As Integer
+                    Dim sngMulti(1 To 5, 1 To 10) As Single
+                    
+                    ' Llena matriz con valores.
+                    For intI = 1 To 5
+                        For intJ = 1 To 10
+                            sngMulti(intI, intJ) = intI * intJ
+                            Debug.Print sngMulti(intI, intJ)
+                        Next intJ
+                    Next intI
+                End Sub
 
-	8.3 Funciones con Matrices	
-		UBound: Devuelve un tipo Long que contiene el mayor subíndice disponible para la dimensión indicada de una matriz.
-		Sintaxis: UBound(nombre_matriz[, dimensión])
+    8.3 Funciones con Matrices  
+        UBound: Devuelve un tipo Long que contiene el mayor subíndice disponible para la dimensión indicada de una matriz.
+        Sintaxis: UBound(nombre_matriz[, dimensión])
 
-			Dim Mayor
-			Dim MiMatriz(1 To 10, 5 To 15, 10 To 20)    ' Declara las variables de matriz.
-			Dim UnaMatriz(10)
-			Mayor = UBound(MiMatriz, 1)    ' Devuelve 10.
-			Mayor = UBound(MiMatriz, 3)    ' Devuelve 20.
-			Mayor = UBound(UnaMatriz)    ' Devuelve 10.
+            Dim Mayor
+            Dim MiMatriz(1 To 10, 5 To 15, 10 To 20)    ' Declara las variables de matriz.
+            Dim UnaMatriz(10)
+            Mayor = UBound(MiMatriz, 1)    ' Devuelve 10.
+            Mayor = UBound(MiMatriz, 3)    ' Devuelve 20.
+            Mayor = UBound(UnaMatriz)    ' Devuelve 10.
 
-		Option Base {0 | 1} : Se usa en el nivel de módulo para declarar el límite inferior predeterminado para subíndices de matriz.
+        Option Base {0 | 1} : Se usa en el nivel de módulo para declarar el límite inferior predeterminado para subíndices de matriz.
 
-			Option Base 1    ' Establece los subíndices de matriz predeterminados a 1.
+            Option Base 1    ' Establece los subíndices de matriz predeterminados a 1.
 
-			Dim Menor
-			Dim MiMatriz(20), Matriz2D(3, 4)    ' Declara las variables de la matriz.
-			Dim MatrizCero(0 To 5)    ' Elude el subíndice base predeterminado.
-			' Utilice la función LBound para determinar los límites inferiores de las matrices.
-			Menor = LBound(MiMatriz)    ' Devuelve 1.
-			Menor = LBound(Matriz2D, 2)    ' Devuelve 1.
-			Menor = LBound(MatrizCero)    ' Devuelve 0
-	
-		LBound: Devuelve un tipo Long que contiene el subíndice más pequeño disponible para la dimensión indicada de una matriz.
-		Sintaxis: LBound(nombre_matriz[, dimensión])
-		ejemplo: Ver ejemplo anterior
-		
-		ReDim : Se utiliza en el nivel de procedimiento para reasignar espacio de almacenamiento para variables de matriz dinámica.
-		Sintaxis :	ReDim [Preserve] nombre_variable(subíndices) [As tipo] [, nombre_variable(subíndices) [As tipo]] . . .
-		Ejemplos:
-			Dim MiMatriz() As Integer    ' Declara una matriz dinámica.
-			Redim MiMatriz(5)            ' Asigna 5 elementos.
-			For I = 1 To 5               ' Bucle 5 veces.
-				MiMatriz(I) = I          ' Inicializa la matriz.
-			Next I
+            Dim Menor
+            Dim MiMatriz(20), Matriz2D(3, 4)    ' Declara las variables de la matriz.
+            Dim MatrizCero(0 To 5)    ' Elude el subíndice base predeterminado.
+            ' Utilice la función LBound para determinar los límites inferiores de las matrices.
+            Menor = LBound(MiMatriz)    ' Devuelve 1.
+            Menor = LBound(Matriz2D, 2)    ' Devuelve 1.
+            Menor = LBound(MatrizCero)    ' Devuelve 0
+    
+        LBound: Devuelve un tipo Long que contiene el subíndice más pequeño disponible para la dimensión indicada de una matriz.
+        Sintaxis: LBound(nombre_matriz[, dimensión])
+        ejemplo: Ver ejemplo anterior
+        
+        ReDim : Se utiliza en el nivel de procedimiento para reasignar espacio de almacenamiento para variables de matriz dinámica.
+        Sintaxis :  ReDim [Preserve] nombre_variable(subíndices) [As tipo] [, nombre_variable(subíndices) [As tipo]] . . .
+        Ejemplos:
+            Dim MiMatriz() As Integer    ' Declara una matriz dinámica.
+            Redim MiMatriz(5)            ' Asigna 5 elementos.
+            For I = 1 To 5               ' Bucle 5 veces.
+                MiMatriz(I) = I          ' Inicializa la matriz.
+            Next I
 
-		La instrucción siguiente cambia el tamaño de la matriz y borra los elementos.
+        La instrucción siguiente cambia el tamaño de la matriz y borra los elementos.
 
-			Redim MiMatriz(10)           ' Cambia el tamaño a 10 elementos.
-			For I = 1 To 10              ' Bucle 10 veces.
-				MiMatriz(I) = I          ' Inicializa la matriz.
-			Next I
+            Redim MiMatriz(10)           ' Cambia el tamaño a 10 elementos.
+            For I = 1 To 10              ' Bucle 10 veces.
+                MiMatriz(I) = I          ' Inicializa la matriz.
+            Next I
 
-		La instrucción siguiente cambia el tamaño de la matriz pero no borra elementos.
-			
-			Redim Preserve MiMatriz(15)  ' Cambia el tamaño a 15 elementos.
+        La instrucción siguiente cambia el tamaño de la matriz pero no borra elementos.
+            
+            Redim Preserve MiMatriz(15)  ' Cambia el tamaño a 15 elementos.
 
-9.- Manejo de cadenas de caracteres
-		Definición 
-			Dim mStr as String
-		
-		Funciones de manejo de cadenas
-			* Len(string | varname)
-			
-			* InStr([ start ], string1, string2, [ compare ])
-				Devuelve un valor Variant (Long) que especifica la posición de la primera 
-				ocurrencia de una cadena dentro de otra.
-				start:  Posición de inicio dentro de la cadena donde se empieza a buscar
-				string1: Cadena en la que se realiza la busqueda
-				string2: Cadena a buscar
-				compare: La configuración del argumento compare es la siguiente: 
-				Constante				Valor		Descripción
-				vbUseCompareOption		-1			Realiza una comparación con la configuración 
-				                                     de la instrucción Option Compare.
-				vbBinaryCompare			 0			Lleva a cabo una comparación binaria.
-				vbTextCompare			 1			Lleva a cabo una comparación textual.
-				vbDatabaseCompare		 2			Solo Microsoft Access. Realiza una comparación 
-				                                    que se basa en la información de la base de datos.
-				Ejemplo:
-					Dim SearchString, SearchChar, MyPos
-					SearchString ="XXpXXpXXPXXP"    ' String to search in.
-					SearchChar = "P"    ' Search for "P".
-					' A textual comparison starting at position 4. Returns 6.
-					MyPos = Instr(4, SearchString, SearchChar, 1)    
-					' A binary comparison starting at position 1. Returns 9.
-					MyPos = Instr(1, SearchString, SearchChar, 0)
-					' Comparison is binary by default (last argument is omitted).
-					MyPos = Instr(SearchString, SearchChar)    ' Returns 9.
-					MyPos = Instr(1, SearchString, "W")    ' Returns 0.				
-			
-			* InstrRev(stringcheck, stringmatch, [ start, [ compare ]])
-				Devuelve la posición de una ocurrencia de una cadena dentro de otra, desde el final de la cadena.
-				stringcheck:	Obligatorio. Expresión de cadena en la que se busca.
-				stringmatch: 	Necesario. Expresión de cadena en la que se busca.
-				start:			Opcional. Expresión numérica que define la posición inicial de cada búsqueda. Si se omite, se usa -1, lo que significa que la búsqueda comienza en la posición del último carácter. Si start contiene Null, se produce un error.
-				compare			Opcional. Valor numérico que indica el tipo de comparación que se usa al evaluar subcadenas. Si se omite, se realiza una comparación binaria. Vea la sección Configuración para ver los valores.
-			
-			* LCase (cadena)
-				Devuelve un valor de String que se ha convertido en minúsculas.
-				Ejemplo:
-					Dim UpperCase, LowerCase
-					Uppercase = "Hello World 1234"    ' String to convert.
-					Lowercase = Lcase(UpperCase)      ' Returns "hello world 1234".
-			* UCase (cadena)
-			* Left(string, length)
-			* Right(string, length)
-			* LTrim, RTrim y Trim
-			* Mid(string, start, [ length ])
-			* Replace(expression, find, replace, [ start, [ count, [ compare ]]])
-			* Space(número)
-			* Split(expression, [ delimiter, [ limit, [ compare ]]])
-			* Join(sourceArray, [ __ delimitador])
-			* StrComp (cadena1, cadena2, [ comparar ])
-			* StrConv(string, conversion, [ LCID ])
-			* String(number, character)
-			* StrReverse (expresión)
-			* FormatCurrency(Expression, [ NumDigitsAfterDecimal, [ IncludeLeadingDigit, [ UseParensForNegativeNumbers, [ GroupDigits ]]]])
-				Devuelve una expresión con formato de valor de moneda usando el símbolo de moneda definido en el panel de control del sistema.
-				Part							Descripción				
-				Expression						Obligatorio. Expresión a la que se va a aplicar formato.
-				NumDigitsAfterDecimal			Opcional. Valor numérico que indica cuántas posiciones a la derecha del decimal se muestran. El valor predeterminado es-1, que indica que se usa la configuración regional del equipo.
-				Argumentos includeleadingdigit	Opcional. Constante de tres estados que indica si se muestra o no un cero inicial para los valores de fracciones. Vea la sección Configuración de valores.
-				UseParensForNegativeNumbers		Opcional. Constante de tres estados que indica si se colocan o no valores negativos entre paréntesis. Consulte los valores en la sección Configuración.
-				GroupDigits						Opcional. Constante TriState que indica si los números se agrupan mediante el delimitador de grupo especificado en la configuración regional del equipo. Vea la sección Configuración de valores.				
-			* FormatDateTime(Date, [ NamedFormat ])
-			* FormatNumber(Expression, [ NumDigitsAfterDecimal, [ IncludeLeadingDigit, [ UseParensForNegativeNumbers, [ GroupDigits ]]]])
-			* FormatPercent(Expression, [ NumDigitsAfterDecimal, [ IncludeLeadingDigit, [ UseParensForNegativeNumbers, [ GroupDigits ]]]])
+09.- Manejo de cadenas de caracteres
+        Definición 
+            Dim mStr as String
+        
+        Funciones de manejo de cadenas
+            * Len(string | varname)
+            
+            * InStr([ start ], string1, string2, [ compare ])
+                Devuelve un valor Variant (Long) que especifica la posición de la primera 
+                ocurrencia de una cadena dentro de otra.
+                start:  Posición de inicio dentro de la cadena donde se empieza a buscar
+                string1: Cadena en la que se realiza la busqueda
+                string2: Cadena a buscar
+                compare: La configuración del argumento compare es la siguiente: 
+                Constante               Valor       Descripción
+                vbUseCompareOption      -1          Realiza una comparación con la configuración 
+                                                     de la instrucción Option Compare.
+                vbBinaryCompare          0          Lleva a cabo una comparación binaria.
+                vbTextCompare            1          Lleva a cabo una comparación textual.
+                vbDatabaseCompare        2          Solo Microsoft Access. Realiza una comparación 
+                                                    que se basa en la información de la base de datos.
+                Ejemplo:
+                    Dim SearchString, SearchChar, MyPos
+                    SearchString ="XXpXXpXXPXXP"    ' String to search in.
+                    SearchChar = "P"    ' Search for "P".
+                    ' A textual comparison starting at position 4. Returns 6.
+                    MyPos = Instr(4, SearchString, SearchChar, 1)    
+                    ' A binary comparison starting at position 1. Returns 9.
+                    MyPos = Instr(1, SearchString, SearchChar, 0)
+                    ' Comparison is binary by default (last argument is omitted).
+                    MyPos = Instr(SearchString, SearchChar)    ' Returns 9.
+                    MyPos = Instr(1, SearchString, "W")    ' Returns 0.             
+            
+            * InstrRev(stringcheck, stringmatch, [ start, [ compare ]])
+                Devuelve la posición de una ocurrencia de una cadena dentro de otra, desde el final de la cadena.
+                stringcheck:    Obligatorio. Expresión de cadena en la que se busca.
+                stringmatch:    Necesario. Expresión de cadena en la que se busca.
+                start:          Opcional. Expresión numérica que define la posición inicial de cada búsqueda. Si se omite, se usa -1, lo que significa que la búsqueda comienza en la posición del último carácter. Si start contiene Null, se produce un error.
+                compare         Opcional. Valor numérico que indica el tipo de comparación que se usa al evaluar subcadenas. Si se omite, se realiza una comparación binaria. Vea la sección Configuración para ver los valores.
+            
+            * LCase (cadena)
+                Devuelve un valor de String que se ha convertido en minúsculas.
+                Ejemplo:
+                    Dim UpperCase, LowerCase
+                    Uppercase = "Hello World 1234"    ' String to convert.
+                    Lowercase = Lcase(UpperCase)      ' Returns "hello world 1234".
+            * UCase (cadena)
+            * Left(string, length)
+            * Right(string, length)
+            * LTrim, RTrim y Trim
+            * Mid(string, start, [ length ])
+            * Replace(expression, find, replace, [ start, [ count, [ compare ]]])
+            * Space(número)
+            * Split(expression, [ delimiter, [ limit, [ compare ]]])
+            * Join(sourceArray, [ __ delimitador])
+            * StrComp (cadena1, cadena2, [ comparar ])
+            * StrConv(string, conversion, [ LCID ])
+            * String(number, character)
+            * StrReverse (expresión)
+            * FormatCurrency(Expression, [ NumDigitsAfterDecimal, [ IncludeLeadingDigit, [ UseParensForNegativeNumbers, [ GroupDigits ]]]])
+                Devuelve una expresión con formato de valor de moneda usando el símbolo de moneda definido en el panel de control del sistema.
+                Part                            Descripción             
+                Expression                      Obligatorio. Expresión a la que se va a aplicar formato.
+                NumDigitsAfterDecimal           Opcional. Valor numérico que indica cuántas posiciones a la derecha del decimal se muestran. El valor predeterminado es-1, que indica que se usa la configuración regional del equipo.
+                Argumentos includeleadingdigit  Opcional. Constante de tres estados que indica si se muestra o no un cero inicial para los valores de fracciones. Vea la sección Configuración de valores.
+                UseParensForNegativeNumbers     Opcional. Constante de tres estados que indica si se colocan o no valores negativos entre paréntesis. Consulte los valores en la sección Configuración.
+                GroupDigits                     Opcional. Constante TriState que indica si los números se agrupan mediante el delimitador de grupo especificado en la configuración regional del equipo. Vea la sección Configuración de valores.               
+            * FormatDateTime(Date, [ NamedFormat ])
+            * FormatNumber(Expression, [ NumDigitsAfterDecimal, [ IncludeLeadingDigit, [ UseParensForNegativeNumbers, [ GroupDigits ]]]])
+            * FormatPercent(Expression, [ NumDigitsAfterDecimal, [ IncludeLeadingDigit, [ UseParensForNegativeNumbers, [ GroupDigits ]]]])
 
-			
+            
 
-			
-			
+            
+            
 10.- Definición de Variables
-	La Declaración de variables 	Public, Dim, Private, VarType, Estructuras, Enum, Type
-	
-	
-		Constante			Valor			Descripción
-		vbEmpty				0				Sin inicializar (predeterminado).
-		vbNull				1 				Contiene datos no válidos.
-		vbInteger			2 				Integer
-		vbLong				3 				Entero largo.
-		vbSingle			4 				Número de punto flotante de precisión sencilla
-		vbDouble			5 				Número de punto flotante de doble precisión
-		vbCurrency			6 				Moneda
-		vbDate				7 				Fecha
-		vbString			8 				String
-		vbObject			9 				Objeto
-		vbError				10 				Error
-		vbBoolean			11 				Boolean
-		vbVariant			12				Variante (solo para matrices de variantes).
-		vbDataObject		13 				Objetos de acceso a datos.
-		vbDecimal			14 				Decimal
-		vbByte				432				Byte
-		vbLongLong			20				Entero LongLong (válido solo en plataformas de 64 bits)
-		vbUserDefinedType	36				Variantes que contienen tipos definidos por el usuario
-		vbArray				8192			Matriz
-	
-	Enum
-		Sintaxis
-		[ Public | Private ] Enum NombreVariable
-			memberName [= expresióndeconstante ] 
-			memberName [= expresióndeconstante ] 
-			...
-		End Enum
-	
+    La Declaración de variables     Public, Dim, Private, VarType, Estructuras, Enum, Type
+    
+    
+        Constante           Valor           Descripción
+        vbEmpty             0               Sin inicializar (predeterminado).
+        vbNull              1               Contiene datos no válidos.
+        vbInteger           2               Integer
+        vbLong              3               Entero largo.
+        vbSingle            4               Número de punto flotante de precisión sencilla
+        vbDouble            5               Número de punto flotante de doble precisión
+        vbCurrency          6               Moneda
+        vbDate              7               Fecha
+        vbString            8               String
+        vbObject            9               Objeto
+        vbError             10              Error
+        vbBoolean           11              Boolean
+        vbVariant           12              Variante (solo para matrices de variantes).
+        vbDataObject        13              Objetos de acceso a datos.
+        vbDecimal           14              Decimal
+        vbByte              432             Byte
+        vbLongLong          20              Entero LongLong (válido solo en plataformas de 64 bits)
+        vbUserDefinedType   36              Variantes que contienen tipos definidos por el usuario
+        vbArray             8192            Matriz
+    
+    Enum
+        Sintaxis
+        [ Public | Private ] Enum NombreVariable
+            memberName [= expresióndeconstante ] 
+            memberName [= expresióndeconstante ] 
+            ...
+        End Enum
+    
 EOF File: Code_Snippets_LotExcel.txt
