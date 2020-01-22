@@ -3,22 +3,22 @@ Fecha   : 16/10/2016 16:24:00
 Objetivo: Reunir códigos de código Visual Basic del proyecto Lot_Excel
 
 Indice:
-    01.- Documentacion
-        Comentarios del código para que sea más legible e interpretable
+    01.- Documentación
+         Comentarios del código para que sea más legible e interpretable
     02.- Control de Errores
-        Rutinas de control y log de errores 
+         Rutinas de control y log de errores 
     03.- Formularios
-        Rutinas de control y manejo de Objetos de formularios 
+         Rutinas de control y manejo de Objetos de formularios 
     04.- Mensajes y cajas de dialogo
-        Ejemplos de cajas de control y dialogo
+         Ejemplos de cajas de control y dialogo
     05.- Validaciones
-        Validaciones de tipos de campos y variables
+         Validaciones de tipos de campos y variables
     06.- HowTo
-        Ejemplos de rutinas para realizar tareas y procesos tipo
+         Ejemplos de rutinas para realizar tareas y procesos tipo
     07.- Instrucciones mas comunes
-        Patrones para bucles, evaluadores, colecciones
+         Patrones para bucles, evaluadores, colecciones
     08.- Manejo de Matrices
-        Definición y uso de variables matriz
+         Definición y uso de variables matriz
     09.- Manejo de cadenas de caracteres
     10.- Definición de Variables
 

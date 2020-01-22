@@ -317,6 +317,8 @@ End Function
 '------------------------------------------------------------------------------*
 '
 Public Function SelectByFechas(parFechaIni As Date, parFechaFin As Date, parTabla As NombreTabla) As Range
+    Dim mColumn As Integer
+    
 On Error GoTo SelectByFechas_Error
     '
     '   Obtiene el rango de la tabla a consultar
@@ -326,6 +328,15 @@ On Error GoTo SelectByFechas_Error
     mRows = mRango.Rows.Count
     '
     '   Obtiene la columna de fechas que es la tercera
+    '
+    Select Case parTabla
+        Case tblBonoloto, tblPrimitiva, tblGordo, tblEuromillon: mColumn = 2
+        Case tblParametros: mColumn = 8
+        Case tblBoleto: mColumn = 5
+        Case tblApuestas: mColumn = 4
+    End Select
+    '
+    '
     '
     Set mColumna = mRango.Offset(0, 2).Resize(1, 1).EntireColumn
     '

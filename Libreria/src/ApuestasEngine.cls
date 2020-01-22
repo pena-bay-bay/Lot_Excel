@@ -29,12 +29,16 @@ Private Const ERR_APUESTAIDNOTFOUND = 3052
 Private Const ERR_FECHASAPUESTANOTFOUND = 3053
 Private Const ERR_APUESTADUPLICADO = 3054
 Private Const ERR_APUESTASBOLETONOTFOUND = 3055
+Private Const ERR_APUESTASBYIDSNOTFOUND = 3056
+Private Const ERR_APUESTASBYFECHASNOTFOUND = 3057
 '--- Mensajes -----------------------------------------------------------------*
 Private Const MSG_APUESTANOTFOUND As String = "Apuesta no encontranda"
 Private Const MSG_APUESTAIDNOTFOUND As String = "Apuesta de Id: #, no encontrada"
 Private Const MSG_FECHASAPUESTANOTFOUND  As String = "Apuesta de fecha:#, no encontrada"
 Private Const MSG_APUESTADUPLICADO  As String = "Apuesta de fecha: # ya existe"
 Private Const MSG_APUESTASBOLETONOTFOUND  As String = "Apuesta de boleto: # no encontradas"
+Private Const MSG_APUESTASBYIDSNOTFOUND  As String = "Apuesta entre id: #1 y #2 no encontradas"
+Private Const MSG_APUESTASBYFECHASNOTFOUND  As String = "Apuesta entre fechas: #1 y #2 no encontradas"
 '--- Variables Privadas -------------------------------------------------------*
 Private mDBase      As DataBaseExcel
 Private mCol        As Apuestas
@@ -112,10 +116,8 @@ End Function
 ' Retorno        : Objeto Apuesta
 '------------------------------------------------------------------------------*
 Public Function GetApuestaById(datId As Integer) As Apuesta
-    Dim i As Integer
     Dim mNum As Numero
     Dim mStr As String
-    Dim mVar As Variant
     
   On Error GoTo GetApuestaById_Error
     '
@@ -129,35 +131,7 @@ Public Function GetApuestaById(datId As Integer) As Apuesta
         '
         '   Creamos el objeto Sorteo
         '
-        Set mObj = New Apuesta
-        '
-        '   Asignamos atributos al objeto
-        '
-        With mObj
-            .Id = mRange.Cells(1, 1).Value
-            .IdBoleto = mRange.Cells(1, 2).Value
-            .Juego = mRange.Cells(1, 3).Value
-            .FechaSorteo = mRange.Cells(1, 4).Value
-            .EsMultiple = IIf(mRange.Cells(1, 5).Value = "Si", True, False)
-            For i = 1 To 11
-                mVar = mRange.Cells(1, 5 + i).Value
-                If Not IsEmpty(mVar) And IsNumeric(mVar) Then
-                    Set mNum = New Numero
-                    mNum.Valor = CInt(mVar)
-                    .Numeros.Add mNum
-                End If
-            Next i
-            For i = 1 To 5
-                mVar = mRange.Cells(1, 16 + i).Value
-                If Not IsEmpty(mVar) And IsNumeric(mVar) Then
-                    Set mNum = New Numero
-                    mNum.Valor = CInt(mVar)
-                    .Estrellas.Add mNum
-                End If
-            Next i
-            .Coste = mRange.Cells(1, 22).Value
-            .ImportePremios = mRange.Cells(1, 23).Value
-        End With
+        Set mObj = GetApuestaFromRange(mRange)
     Else
         mStr = Replace(MSG_APUESTANOTFOUND, "#", CStr(datId))
         Err.Raise ERR_APUESTAIDNOTFOUND, "SorteoEngine.GetApuestaById", mStr
@@ -381,19 +355,71 @@ End Function
 
 '------------------------------------------------------------------------------*
 ' Procedimiento  : GetApuestasInIds
-' Fecha          : dd/MMM/yyyy
-' Propósito      :
-' Parámetros     :
-' Retorno        :
+' Fecha          : sá., 12/oct/2019 18:55:01
+' Propósito      : Obtener las apuestas entre dos identificadores
+' Parámetros     : Id inicial y final y juego
+' Retorno        : Colección de apuestas
 '------------------------------------------------------------------------------*
 Public Function GetApuestasInIds(datIni As Integer, datFin As Integer, _
                                 datJuego As Juego) As Apuestas
+    Dim mStr As String
 
   On Error GoTo GetApuestasInIds_Error
     '
+    '   Obtenemos el rango de filas entre ambos Id de la tabla apuestas
     '
-    Err.Raise ERR_TODO, "ApuestasEngine.GetApuestasInIds", MSG_TODO
-    
+    Set mRange = mDBase.SelectByIds(datIni, datFin, tblApuestas)
+    '
+    '   Si no hay errores
+    '
+    If mDBase.ErrNumber = 0 Then
+        '
+        '   Creamos la colección
+        '
+        Set mCol = New Apuestas
+        '
+        '   Bucle de lectura y selección
+        '
+        For Each mFila In mRange.Rows
+            '
+            '   Si es una fila del juego
+            '
+            If (mFila.Cells(1, 3).Value = datJuego) Or (datJuego = SinJuego) Then
+                '
+                '   Creamos la apuesta
+                '
+                Set mObj = GetApuestaFromRange(mFila)
+                '
+                '   Agregamos apuesta a la colección
+                '
+                mCol.Add mObj
+            End If
+        Next
+        If mCol.Count = 0 Then
+            '
+            '   Componemos el mensaje
+            '
+            mStr = Replace(MSG_APUESTASBYIDSNOTFOUND, "#1", CStr(datIni))
+            mStr = Replace(mStr, "#2", CStr(datFin))
+            Err.Raise ERR_APUESTASBYIDSNOTFOUND, "SorteoEngine.GetApuestasInIds", mStr
+        End If
+    Else
+        '
+        '   Componemos el mensaje
+        '
+        mStr = Replace(MSG_APUESTASBYIDSNOTFOUND, "#1", CStr(datIni))
+        mStr = Replace(mStr, "#2", CStr(datFin))
+        Err.Raise ERR_APUESTASBYIDSNOTFOUND, "SorteoEngine.GetApuestasInIds", mStr
+    End If
+    '
+    '   Devolvemos la colección
+    '
+    Set GetApuestasInIds = mCol
+    '
+    '   Eliminamos objetos
+    '
+    Set mCol = Nothing
+    Set mObj = Nothing
   On Error GoTo 0
 GetApuestasInIds__CleanExit:
     Exit Function
@@ -406,19 +432,30 @@ GetApuestasInIds_Error:
 End Function
 '------------------------------------------------------------------------------*
 ' Procedimiento  : GetApuestasInFechas
-' Fecha          : dd/MMM/yyyy
-' Propósito      :
-' Parámetros     :
-' Retorno        :
+' Fecha          : sá., 12/oct/2019 19:35:20
+' Propósito      : Obtener apuestas entre dos fechas
+' Parámetros     : Fecha inicial, fecha final  y juego
+' Retorno        : Colección de apuestas encontradas
 '------------------------------------------------------------------------------*
 Public Function GetApuestasInFechas(datFechaIni As Date, datFechaFin As Date, _
                                    datJuego As Juego) As Apuestas
+    Dim mStr As String
 
   On Error GoTo GetApuestasInFechas_Error
     '
+    '   TODO:  Montar una consulta en una columna con rangos extraer tuplas
+    '
     '
     Err.Raise ERR_TODO, "ApuestasEngine.GetApuestasInFechas", MSG_TODO
-    
+    '
+    '   Devolvemos la colección
+    '
+    Set GetApuestasInFechas = mCol
+    '
+    '   Eliminamos objetos
+    '
+    Set mCol = Nothing
+    Set mObj = Nothing
   On Error GoTo 0
 GetApuestasInFechas__CleanExit:
     Exit Function
@@ -454,5 +491,64 @@ GetIdUltimoApuesta_Error:
     Call HandleException(ErrNumber, ErrDescription, "ApuestasEngine.GetIdUltimoApuesta", ErrSource)
     Err.Raise ErrNumber, "ApuestasEngine.GetIdUltimoApuesta", ErrDescription
 End Function
-
+'------------------------------------------------------------------------------*
+' Procedimiento  : GetApuestaFromRange
+' Fecha          : sá., 12/oct/2019 18:50:10
+' Propósito      : Devolver una apuesta desde un rango
+' Parámetros     :
+'------------------------------------------------------------------------------*
+'
+Private Function GetApuestaFromRange(datRango As Range) As Apuesta
+    Dim i As Integer
+    Dim mVar As Variant
+    Dim mNum As Numero
+    
+ On Error GoTo GetApuestaFromRange_Error
+    '
+    '   Creamos el objeto Sorteo
+    '
+    Set mObj = New Apuesta
+    '
+    '   Asignamos atributos al objeto
+    '
+    With mObj
+        .Id = mRange.Cells(1, 1).Value
+        .IdBoleto = mRange.Cells(1, 2).Value
+        .Juego = mRange.Cells(1, 3).Value
+        .FechaSorteo = mRange.Cells(1, 4).Value
+        .EsMultiple = IIf(mRange.Cells(1, 5).Value = "Si", True, False)
+        For i = 1 To 11
+            mVar = mRange.Cells(1, 5 + i).Value
+            If Not IsEmpty(mVar) And IsNumeric(mVar) Then
+                Set mNum = New Numero
+                mNum.Valor = CInt(mVar)
+                .Numeros.Add mNum
+            End If
+        Next i
+        For i = 1 To 5
+            mVar = mRange.Cells(1, 16 + i).Value
+            If Not IsEmpty(mVar) And IsNumeric(mVar) Then
+                Set mNum = New Numero
+                mNum.Valor = CInt(mVar)
+                .Estrellas.Add mNum
+            End If
+        Next i
+        .Coste = mRange.Cells(1, 22).Value
+        .ImportePremios = mRange.Cells(1, 23).Value
+    End With
+    '
+    '   Devolvemos el objeto
+    '
+    Set GetApuestaFromRange = mObj
+    
+  On Error GoTo 0
+GetApuestaFromRange__CleanExit:
+  Exit Function
+            
+GetApuestaFromRange_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "ApuestasEngine.GetApuestaFromRange", ErrSource)
+    Err.Raise ErrNumber, "ApuestasEngine.GetApuestaFromRange", ErrDescription
+End Function
 '' *===========(EOF): BoletosEngine.cls

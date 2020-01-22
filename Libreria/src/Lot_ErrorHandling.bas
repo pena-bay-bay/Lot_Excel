@@ -44,7 +44,9 @@ Public Function HandleException(ByVal ErrorNumber As Long, _
     Else
         Call Trace(strMsg)
     End If
-    
+    '
+    '   TODO: Almacenar los errores hasta que una llamada indique que guarde el error
+    '
 End Function
 ' *============================================================================*
 ' *         Funcion:        Trace
