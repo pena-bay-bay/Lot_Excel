@@ -187,15 +187,15 @@ Public Sub Crear_Barra_Herramientas(Nombre_Barra As String)
                 '
                 ' Añade y crea un boton para la función "Calcular la Sugerencia"
                 '
-'                Set btnValidar = my_barra.Controls.Add(msoControlButton)
-'                With btnValidar
-'                    .Caption = "Sugerencias"
-'                    .Enabled = True
-'                    .Visible = True
-'                    .FaceId = 341
-'                    .Style = msoButtonIconAndCaption
-'                    .OnAction = "btn_SugerirApuestas"
-'                End With
+                Set btnValidar = my_barra.Controls.Add(msoControlButton)
+                With btnValidar
+                    .Caption = "Sugerencias"
+                    .Enabled = True
+                    .Visible = True
+                    .FaceId = 341
+                    .Style = msoButtonIconAndCaption
+                    .OnAction = "btn_SugerirApuestas"
+                End With
                 '
                 ' Añade y crea un boton para la función "Comprobar Metodo"
                 '

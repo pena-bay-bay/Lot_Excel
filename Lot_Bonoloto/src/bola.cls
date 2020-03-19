@@ -25,8 +25,7 @@ Private m_iMediana              As Integer
 Private m_dTiempo_Medio         As Double
 Private m_iMaximo_Tm            As Integer
 Private m_iMinimo_Tm            As Integer
-Private m_iDesviacion_Tm        As Integer
-'Private m_iVariacion_tm         As Double
+Private m_dDesviacion_Tm        As Double
 Private m_dProb_TiempoMedio     As Double
 Private m_dtUltima_Fecha        As Date
 Private m_frecuencias           As Variant
@@ -38,6 +37,7 @@ Private m_vMatriz_Fechas        As Variant
 Private m_iColor_Probabilidad   As Integer
 Private m_iColor_Tiempo_Medio   As Integer
 Private m_iColor_Frecuencias    As Integer
+Private mValorHomogeneo         As Double
 '---------------------------------------------------------------------------------------
 Public colRegistros             As Collection   ' Colección de Numeros de registros
 Public colFechasAparicion       As Collection   ' Colección de fechas de aparicion
@@ -57,10 +57,11 @@ Private Sub Class_Initialize()
     Set colRegistros = New Collection
     Set colFechasAparicion = New Collection
     Set colTiemposMedios = New Collection
-    Rango_Frecuencias = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100)
-'   Rango_Frecuencias = Array(3, 6, 9, 15, 25, 50, 100)
+'   Rango_Frecuencias = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100)
+    Rango_Frecuencias = Array(3, 6, 9, 15, 25, 50)
     m_apariciones = -1
     m_dProb_TiempoMedio = -1
+    mValorHomogeneo = 0
 End Sub
 
 ' *============================================================================*
@@ -168,7 +169,7 @@ Public Sub Actualizar(datRegAnalisis As Integer)
         m_dTiempo_Medio = .Average(vValores)
         m_iMaximo_Tm = .Max(vValores)
         m_iMinimo_Tm = .Min(vValores)
-        m_iDesviacion_Tm = .AveDev(vValores)
+        m_dDesviacion_Tm = .AveDev(vValores)
         m_iModa = GetModa(vValores)
         m_iMediana = .Median(vValores)
         m_frecuencias = .Frequency(vValores, Rango_Frecuencias)
@@ -178,7 +179,7 @@ Public Sub Actualizar(datRegAnalisis As Integer)
     '
     If m_dProb_TiempoMedio = -1 Then
             mu = m_dTiempo_Medio
-            Sigma = m_iDesviacion_Tm
+            Sigma = m_dDesviacion_Tm
             x = m_ausencias
             If Sigma > 0 And mu > 0 Then
                 m_dProb_TiempoMedio = (1 / (Sigma * Sqr(2 * PI))) * (Exp(-0.5 * ((x - mu / Sigma) ^ 2)))
@@ -455,8 +456,8 @@ End Property
 ' Objeto        :
 '---------------------------------------------------------------------------------------
 '
-Public Property Get Desviacion_Tm() As Integer
-    Desviacion_Tm = m_iDesviacion_Tm
+Public Property Get Desviacion_Tm() As Double
+    Desviacion_Tm = m_dDesviacion_Tm
 End Property
 
 '---------------------------------------------------------------------------------------
@@ -493,7 +494,20 @@ End Property
 Public Property Get Moda() As Integer
     Moda = m_iModa
 End Property
+'------------------------------------------------------------------------------*
+' Procedimiento  : ValorHomogeneo
+' Fecha          : dd/MMM/yyyy
+' Propósito      : Incluir el valor homogeneo de la colección para la bola
+' Parámetros     : Almacena el cálculo de la homogeneización de Probabilidad
+'                  + TiempoMedio + Frecuencia
+'------------------------------------------------------------------------------*
+Public Property Get ValorHomogeneo() As Double
+    ValorHomogeneo = mValorHomogeneo
+End Property
 
+Public Property Let ValorHomogeneo(vNewData As Double)
+    mValorHomogeneo = vNewData
+End Property
 ' *============================================================================*
 ' *     Procedure  : ProximaFecha
 ' *     Fichero    : bola
@@ -508,57 +522,82 @@ Public Property Get ProximaFecha() As Date
     Dim mx_dias     As Integer
     Dim mn_I        As Integer
     Dim mx_I        As Integer
+    Dim mInfo       As InfoSorteo
+    Dim mDias       As Integer
 
-   On Error GoTo ProximaFecha_Error
-   '    Si las ausencias están comprendidas en la media +- RaizQ(varianza)
-   '        proxima fecha es = ultima fecha + ausencias o tiempo medio
-   '    Sino
-   '        averiguar si ausencias está en el rango de frecuencias y esta el
-    'TODO
+  On Error GoTo ProximaFecha_Error
+    '
+    '   Si no hemos calculado la fecha
+    '
     If m_dtProximaFecha = 0 Then
         '
-        '   Proxima Fecha de aparición
+        '   Inicializamos el número de sorteos a calcular
         '
-        '   Primero localiza la ausencia en el rango de frecuencias
-        For i = 0 To UBound(Rango_Frecuencias) - 1
-            If Rango_Frecuencias(i) >= m_ausencias Then
-                mn_I = i
-                Exit For
-            End If
-        Next i
-        
-        '   Despues busca el rango de mayor apariciones
-        '   al finalizar suma ese rango al último registro
-        '   y se va a localizar una fecha a DB
-        mx_I = UBound(Rango_Frecuencias) + 1
-        '
-        ' Si hay frecuenciasRango_Frecuencias
-        If Not (IsEmpty(m_frecuencias)) Then
+        mDias = 0
+        ' Evaluamos si ausencias es mayor o menor que Tiempo medio
+        ' Si es menor, próxima aparicion es igual a la ultima aparición mas tiempo
+        ' medio
+        If m_ausencias < m_dTiempo_Medio Then
+            mDias = CInt(m_dTiempo_Medio)
+        Else
+            ' Si la ausencia es mayor que el Tiempo Medio
+            ' Localizamos el rango de frecuencias con mas probabilidad
             '
-            '   y la ausencia es inferior al max de las frecuencias
+            ' Primero localiza la ausencia en el rango de frecuencias
+            For i = 0 To UBound(Rango_Frecuencias) - 1
+                If Rango_Frecuencias(i) >= m_ausencias Then
+                    mn_I = i
+                    Exit For
+                End If
+            Next i
+            '   Despues busca el rango de mayor apariciones
+            '   al finalizar suma ese rango al último registro
+            '   y se va a localizar una fecha a DB
+            mx_I = UBound(Rango_Frecuencias) + 1
             '
-            If (mn_I < mx_I) Then
+            ' Si hay frecuenciasRango_Frecuencias
+            If Not (IsEmpty(m_frecuencias)) Then
                 '
-                '   Localiza desde las ausencias hasta el máximo de frecuencias
-                '   la max frecuencia
-                For i = mn_I To mx_I
-                    If (m_frecuencias(i + 1, 1) > mx_Frec) Then
-                        mx_Frec = m_frecuencias(i + 1, 1)
-                        mx_dias = i
+                '   y la ausencia es inferior al max de las frecuencias
+                '
+                If (mn_I < mx_I) Then
+                    '
+                    '   Localiza desde las ausencias hasta el máximo de frecuencias
+                    '   la max frecuencia
+                    For i = mn_I To mx_I
+                        If (m_frecuencias(i + 1, 1) > mx_Frec) Then
+                            mx_Frec = m_frecuencias(i + 1, 1)
+                            mDias = Rango_Frecuencias(i)
+                        End If
+                    Next i
+                    If mDias = 0 Then
+                        If m_iMaximo_Tm >= m_ausencias Then
+                            mDias = m_iMaximo_Tm
+                         Else
+                            mDias = m_ausencias
+                        End If
                     End If
-                Next i
-                If mx_dias > 0 Then
-                    m_dtProximaFecha = GetFechaRegistro(m_iUltimoRegistro + mx_dias)
+                End If
+            Else
+                '
+                '   Si no hay frecuencias asumimos el máximo del numero si es mayor que las ausencias
+                '
+                If m_iMaximo_Tm > m_ausencias Then
+                    mDias = m_iMaximo_Tm
                 Else
-                    m_dtProximaFecha = GetFechaRegistro(m_iUltimoRegistro + m_iMaximo_Tm)
+                    mDias = m_ausencias
                 End If
             End If
-        Else
-            m_dtProximaFecha = GetFechaRegistro(m_iUltimoRegistro + m_iMaximo_Tm)
         End If
-        If m_dtProximaFecha = 0 Then
-            m_dtProximaFecha = MX_FECHA
-        End If
+    End If
+    '
+    '   Sumamos los dias a la última fecha
+    '
+    If mDias = 0 Then
+        m_dtProximaFecha = MX_FECHA
+    Else
+        Set mInfo = New InfoSorteo
+        m_dtProximaFecha = mInfo.AddDiasSorteo(m_dtUltima_Fecha, mDias)
     End If
     
     ProximaFecha = m_dtProximaFecha

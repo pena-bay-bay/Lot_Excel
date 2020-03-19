@@ -7,8 +7,8 @@ Attribute VB_Name = "Lot_Constantes"
 ' Version   : 1.8.01
 '---------------------------------------------------------------------------------------
 '// Variables de versión de la librería
-Public Const lotVersion = "2020.01"
-Public Const lotFeVersion = "jue, 02/01/2020 20:24"
+Public Const lotVersion = "2020.02"
+Public Const lotFeVersion = "mie, 18/03/2020 20:16"
 Public Const NOMBRE_APLICACION = "Bonoloto"
 
 '// Variables relacionadas con el bombo
@@ -164,11 +164,12 @@ Public Enum ModalidadJuego
     LP_LB_6_49 = 1
     GP_5_54 = 2
     EU_5_50 = 3
+    EU_2_12 = 4
 End Enum
 '
 '
 '
-Public Const NOMBRE_MODALIDADES_JUEGO As String = "6 Bolas de 49;5 bolas de 54;5 bolas de 50"
+Public Const NOMBRE_MODALIDADES_JUEGO As String = "6 Bolas de 49;5 bolas de 54;5 bolas de 50;2 bolas de 12"
 '
 '
 '
@@ -201,16 +202,19 @@ End Enum
 '
 '
 '
-Public Const NOMBRES_PROCEDIMIENTOMETODO = "Sin Definir;Estadistico;Algoritmo Genético;Red Neuronal;Estadisticas Combinaciones"
+Public Const NOMBRES_PROCEDIMIENTOMETODO = "Sin Definir;Aleatorio;Bombo;Estadistico;Estadisticas Dos Variables"
 '
 '
 '
 Public Enum ProcedimientoMetodo
     mtdSinDefinir = 0
-    mtdEstadistico = 1
-    mtdAlgoritmoAG = 2
-    mtdRedNeuronal = 3
-    mtdEstadCombinacion = 4
+    mtdAleatorio = 1
+    mtdBombo = 2
+    mtdEstadistico = 3
+    mtdEstaDosVariables = 4
+    mtdAlgoritmoAG = 5
+    mtdRedNeuronal = 6
+    mtdEstadCombinacion = 7
 End Enum
 '
 '
