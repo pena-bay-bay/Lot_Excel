@@ -21,6 +21,9 @@ Indice:
          Definición y uso de variables matriz
     09.- Manejo de cadenas de caracteres
     10.- Definición de Variables
+	11.- Formatos
+	12.- Lista de operadores por categorias
+	13.- Funciones
 
     Obtener la hora actual: ? format(Now(),"ddd, dd/MMM/yyyy hh:mm:ss",vbMonday)
     
@@ -172,6 +175,43 @@ Indice:
         Call Trace("CERRAR")
     End [Type_Parrafo]
     
+	Sentencias On Error 
+		Puedes usar la sentencia "On Error" para especificar que pasa cuando ocurre un error:
+			On Error Resume Next - devuelve el control a la siguiente sentencia en la que sucedio el error		  
+			On Error Resume LineLabel - Devuelve el control a la linea especificada en la etiqueta
+			On Error Resume [0] - Returns control to the statement at which the error occurred (statement is re-run)
+			On Error Goto LineLabel - Execution jumps to the line label when an error occurs
+			On Error Goto 0 - Resets the Err object and resets the Err.Number to zero.
+	Resume
+		The Resume statement can be used to resume execution after an error handling routine has finished.
+		If the error occurred in the same procedure as the error handler, execution resumes with the statement that caused the error.
+		If the error occurred in a called procedure, execution resumes at the statement that last called out of the procedure containing the error handling routine.
+	Resume Next
+		Be careful when using the "On Error Resume Next". This will sometimes ignore errors that shouldn't be ignored.
+		Specifies that if a run-time error occurs in the line immediately following this statement, then execution continues to the next line.
+		This causes execution to continue with the statement immediately following the statement that caused the run-time error or with the statement immediately following the most recent call out of the procedure containing the On Error Resume Next statement.
+	Changing at RunTime (Access only)
+		The error trapping option can be viewed and modified using the Application.GetOption and Application.SetOption methods
+
+		Application.SetOption("Error Trapping", 2) 
+		Debug.Print Application.GetOption("Error Trapping") 
+
+	Err Object
+		You can use the Err object to obtain information about the error.
+		The Err object contains information about any run-time errors.
+		When a run time error occurs, the properties of the Err object are filled with information that uniquely identifies the error and contains information that can be used to handle the error.
+		Error handling relies on the value in the Number property of the Err object to determine the cause of the error.
+
+
+		Property		Description
+		Number			The error number. If this is zero then no error has occurred.
+		Description		A short description of the error
+		Source			The project name from the Properties dialog box.
+		HelpContext		The context ID for a particular error in a help file.
+		HelpFile		A folder location and filename of the help file.
+		LastDllError	A system error code produced by a call to a DLL or external library (ie an APi call)
+
+	
 03.- Formularios
     ' 
     '  Manejo de controles de formularios
@@ -179,8 +219,8 @@ Indice:
         Los controles de formularios son:
             1.- Etiquetas
             2.- Cajas de texto
-            3.- Cuadro de Lista
-            4.- Cuadro Combinado
+            3.- Listas desplegables
+            4.- Listas Multicolumna
             5.- Casilla (CheckBox)
             6.- Botón de Opción (OptionBox)
             7.- Botón Alternar
@@ -220,7 +260,20 @@ Indice:
 			Me.txtPorcent.Text = Format(mPorcent, "0.00%") 		' Porcentaje
 		
 		Verificación del tipo de contenido
+		' Texto
+			If len(txtTextoLibre.Text) = 0 Then 
+				MsgBox "Elemento vacío, es obligatorio completar"
+			End If
 			
+		' Fecha u Hora
+			If Not IsDate(txtFecha.Text) Then 
+				MsgBox "Es necesaria una fecha válida."
+			End If
+			
+		' Importe, Numero  o Porcentaje
+			If Not IsNumeric(txtNumero.Text) Then
+				MsgBox "Es necesario un importe válido."	
+			End IF
 		
     3.3. Listas desplegables
         '
@@ -243,9 +296,58 @@ Indice:
         End Sub
 
         
-    3.4.- Cuadro Combinado
+    3.4.- Lista Multicolumna
+		* Inicializacion del Control
+				TODO: Definición y eventos.
+			Las listas multicolumna pueden tener una acción de selección múltiple con una checkbox, 
+			para ello seleccionaremos el modo de la  propiedad 
+			Atributos de la lista multicolumna: 
+				* ColumnHeads = False
+				* ColumnWidths = "15;40"
+				* MultiSelect = fmMultiSelectMulti
+				* BoundColumn = 1  ' Id
+				* List 
+				* ListCount
+				* ListIndex
+				* ListStyle = fmListStyleOption
+				* 
+			
+				
+				+------+------+-----------+     HeadColumn = true   ' 
+				+------+------+-----------+
+				| [ ]  xx     xxxxxxxxxxx |  
+				| [ ]  xx     xxxxxxxxxxx |
+				| [ ]  xx     xxxxxxxxxxx |
+				| [ ]  xx     xxxxxxxxxxx |
+				| [ ]  xx     xxxxxxxxxxx |
+				| [ ]  xx     xxxxxxxxxxx |
+				+------+------+-----------+
+			
+			ListBox1.
+			
+			
+			Eventos Click
+		
+		* Carga de una lista de selección:
+		* Eventos del control 
+		* Utilización del control
+		
     3.5.- Casilla (CheckBox)
-    3.6.- Botón de Opción (OptionBox)
+		* Inicialización del control
+				
+			chkBox.Value = true		' La asignación dispara el evento Click
+						
+		* Eventos y utilización del control
+			
+			Private Sub chkBox_Click()
+				If chkBox.Value Then 
+					chkBox.Caption = "Verdadero"		
+				Else
+					chkBox.Caption = "Falso"		
+				End If
+			End Sub 
+		
+    3.6.- Botón de Opción (OptionBox)		
     3.7.- Botón Alternar
     3.8.- Marco
     3.9.- Boton de comando
@@ -420,6 +522,7 @@ Indice:
     * Manejo y edición de Celdas
     * Tratamiento de desplazacimentos dentro de un rango
     * Propiedades de la celda: Bordes, Letra,  Colores y formatos
+	* Propiedades de estylo de los controles
     
 07.- Instrucciones más comunes.
     7.1 Instrucciones condicionales
@@ -552,7 +655,7 @@ Indice:
             
             object.Add item, key, before, after
             
-            Part        Descripción
+            Part____	Descripción___________________
             object      Necesario. Una expresión de objeto que se evalúa como un objeto en la lista se aplica a .
             item        Necesario. Una expresión de cualquier tipo que especifica el miembro que se debe agregar a la colección.
             Key         Opcional. Una expresión de cadena exclusiva que especifica una cadena clave que se puede usar, en lugar de un índice posicional, para obtener acceso a un miembro de la colección.
@@ -903,105 +1006,504 @@ Indice:
         End Enum
     
 
-Formatos 
+11.- Formatos 
 
-	Dim MyTime, MyDate, MyStr
-	MyTime = #17:04:23#
-	MyDate = #January 27, 1993#
+		Dim MyTime, MyDate, MyStr
+		MyTime = #17:04:23#
+		MyDate = #January 27, 1993#
 
-	' Returns current system time in the system-defined long time format.
-	MyStr = Format(Time, "Long Time")
+		' Returns current system time in the system-defined long time format.
+		MyStr = Format(Time, "Long Time")
 
-	' Returns current system date in the system-defined long date format.
-	MyStr = Format(Date, "Long Date")
+		' Returns current system date in the system-defined long date format.
+		MyStr = Format(Date, "Long Date")
 
-	MyStr = Format(MyTime, "h:m:s")    ' Returns "17:4:23".
-	MyStr = Format(MyTime, "hh:mm:ss am/pm")    ' Returns "05:04:23 pm".
-	MyStr = Format(MyTime, "hh:mm:ss AM/PM")    ' Returns "05:04:23 PM".
-	MyStr = Format(MyDate, "dddd, mmm d yyyy")    ' Returns "Wednesday, Jan 27 1993".
-	' If format is not supplied, a string is returned.
-	MyStr = Format(23)    ' Returns "23".
+		MyStr = Format(MyTime, "h:m:s")    ' Returns "17:4:23".
+		MyStr = Format(MyTime, "hh:mm:ss am/pm")    ' Returns "05:04:23 pm".
+		MyStr = Format(MyTime, "hh:mm:ss AM/PM")    ' Returns "05:04:23 PM".
+		MyStr = Format(MyDate, "dddd, mmm d yyyy")    ' Returns "Wednesday, Jan 27 1993".
+		' If format is not supplied, a string is returned.
+		MyStr = Format(23)    ' Returns "23".
 
-	' User-defined formats.
-	MyStr = Format(5459.4, "##,##0.00")    ' Returns "5,459.40".
-	MyStr = Format(334.9, "###0.00")    ' Returns "334.90".
-	MyStr = Format(5, "0.00%")    ' Returns "500.00%".
-	MyStr = Format("HELLO", "<")    ' Returns "hello".
-	MyStr = Format("This is it", ">")    ' Returns "THIS IS IT".
+		' User-defined formats.
+		MyStr = Format(5459.4, "##,##0.00")    ' Returns "5,459.40".
+		MyStr = Format(334.9, "###0.00")    ' Returns "334.90".
+		MyStr = Format(5, "0.00%")    ' Returns "500.00%".
+		MyStr = Format("HELLO", "<")    ' Returns "hello".
+		MyStr = Format("This is it", ">")    ' Returns "THIS IS IT".
 
-	Nombre de formato	Descripción
-	General Date	Muestra una fecha y/o hora, por ejemplo, 4/3/93 05:34 P. M.. Si no hay ninguna parte fraccionaria, muestra solo una fecha, por ejemplo, 4/3/93. Si no hay parte entera, muestra solo la hora, por ejemplo, 05:34 P. M.. La presentación de la fecha depende de la configuración del sistema.
-	Long Date	Muestra una fecha de acuerdo con el formato de fecha larga del sistema.
-	Medium Date	Muestra una fecha con el formato de fecha mediana apropiado para la versión del lenguaje de la aplicación host.
-	Short Date	Muestra una fecha con el formato de fecha corta del sistema.
-	Long Time	Muestra una hora con el formato de hora larga del sistema; incluye horas, minutos, segundos.
-	Medium Time	Muestra la hora con formato de 12 horas con horas y minutos, y el designador AM/PM.
-	Short Time	Muestra una hora con el formato de 24 horas, por ejemplo, 17:45.
+		Nombre de formato	Descripción
+		-----------------	-----------------------------------------------------------------------
+		"General Date"		Muestra una fecha y/o hora, por ejemplo, 4/3/93 05:34 P. M.. 
+							Si no hay ninguna parte fraccionaria, muestra solo una fecha, 
+							por ejemplo, 4/3/93. Si no hay parte entera, muestra solo la hora, 
+							por ejemplo, 05:34 P. M.. La presentación de la fecha 
+							depende de la configuración del sistema.
+		"Long Date"			Muestra una fecha de acuerdo con el formato de fecha larga del sistema.
+		"Medium Date"		Muestra una fecha con el formato de fecha mediana 
+							apropiado para la versión del lenguaje de la aplicación host.
+		"Short Date"		Muestra una fecha con el formato de fecha corta del sistema.
+		"Long Time"			Muestra una hora con el formato de hora larga del sistema; 
+							incluye horas, minutos, segundos.
+		"Medium Time"		Muestra la hora con formato de 12 horas con horas y minutos, 
+							y el designador AM/PM.
+		"Short Time"		Muestra una hora con el formato de 24 horas, por ejemplo, 17:45.
 
-	Nombre de formato	Descripción
-	General Number	Muestra el número sin separador de miles.
-	Currency	Muestra el número con el separador de miles, si corresponde; muestra dos dígitos a la derecha del separador decimal. El resultado depende de la configuración regional del sistema.
-	Fixed	Muestra el menos un digito a la izquierda y dos dígitos a la derecha del separador decimal.
-	Standard	Muestra el número con el separador de miles, al menos un dígito a la izquierda y dos dígitos a la derecha del separador decimal.
-	Percent	Muestra un número multiplicado por 100 con un signo de porcentaje (%) anexado a la derecha; siempre muestra dos dígitos a la derecha del separador decimal.
-	Scientific	Usa la notación científica estándar.
-	Yes/No	Muestra No si el número es 0; de lo contrario, muestra Yes.
-	True/False	Muestra False si el número es 0; de lo contrario, muestra True.
-	On/Off	Muestra Off si el número es 0; de lo contrario, muestra On.
+		Nombre de formato	Descripción
+		"General Number"	Muestra el número sin separador de miles.
+		"Currency"			Muestra el número con el separador de miles, si corresponde; 
+							muestra dos dígitos a la derecha del separador decimal. 
+							El resultado depende de la configuración regional del sistema.
+		"Fixed"				Muestra el menos un digito a la izquierda y dos dígitos a la 
+							derecha del separador decimal.
+		"Standard"			Muestra el número con el separador de miles, al menos un dígito 
+							a la izquierda y dos dígitos a la derecha del separador decimal.
+		"Percent"			Muestra un número multiplicado por 100 con un signo de porcentaje 
+							(%) anexado a la derecha; siempre muestra dos dígitos a la derecha
+							del separador decimal.
+		"Scientific"		Usa la notación científica estándar.
+		"Yes/No"			Muestra No si el número es 0; de lo contrario, muestra Yes.
+		"True/False"		Muestra False si el número es 0; de lo contrario, muestra True.
+		"On/Off"			Muestra Off si el número es 0; de lo contrario, muestra On.
 
-	Carácter	Descripción
-	@	Marcador de posición de carácter. Muestra un carácter o un espacio. Si la cadena tiene un carácter en la posición en la que aparece la almohadilla (@) en la cadena de formato, lo muestra; de lo contrario, muestra un espacio en esa posición. Los marcadores de posición se rellenan de derecha a izquierda, a menos que haya un carácter de signo de exclamación (!) en la cadena de formato.
-	&	Marcador de posición de carácter. Muestra un carácter o nada. Si la cadena tiene un carácter en la posición en la que aparece la y comercial (&), la muestra; en caso contrario, no muestra nada. Los marcadores de posición se rellenan de derecha a izquierda, a menos que haya un carácter de signo de exclamación (!) en la cadena de formato.
-	<	Fuerza minúsculas. Muestra todos los caracteres en minúsculas.
-	>	Fuerza mayúsculas. Muestra todos los caracteres en mayúsculas.
-	!	Fuerza el relleno de marcadores de posición de izquierda a derecha. El comportamiento predeterminado es rellenar los marcadores de posición de derecha a izquierda.
+		Carácter	Descripción
+		--------	-----------------------------------------------------------------------
+		@			Marcador de posición de carácter. Muestra un carácter o un espacio. 
+					Si la cadena tiene un carácter en la posición en la que aparece la 
+					almohadilla (@) en la cadena de formato, lo muestra; de lo contrario, 
+					muestra un espacio en esa posición. Los marcadores de posición se 
+					rellenan de derecha a izquierda, a menos que haya un carácter de 
+					signo de exclamación (!) en la cadena de formato.
+		&			Marcador de posición de carácter. Muestra un carácter o nada. 
+					Si la cadena tiene un carácter en la posición en la que aparece la y 
+					comercial (&), la muestra; en caso contrario, no muestra nada. Los 
+					marcadores de posición se rellenan de derecha a izquierda, a menos 
+					que haya un carácter de signo de exclamación (!) en la cadena de formato.
+		<			Fuerza minúsculas. Muestra todos los caracteres en minúsculas.
+		>			Fuerza mayúsculas. Muestra todos los caracteres en mayúsculas.
+		!			Fuerza el relleno de marcadores de posición de izquierda a derecha. 
+					El comportamiento predeterminado es rellenar los marcadores de 
+					posición de derecha a izquierda.
 
-	Carácter	Descripción
-	(:)	Separador de fecha. En algunas configuraciones regionales, pueden usarse otros caracteres para representar el separador de hora. El separador de hora separa horas, minutos y segundos cuando se da formato a valores de hora. El carácter real utilizado como separador de hora en el resultado con formato depende de la configuración del sistema.
-	(/)	Separador de fecha. En algunas configuraciones regionales, pueden usarse otros caracteres para representar el separador de fecha. El separador de fecha separa el día, mes y año cuando se da formato a valores de fecha. El carácter real utilizado como separador de fecha en el resultado con formato depende de la configuración del sistema.
-	c	Muestra la fecha como ddddd y muestra la hora como ttttt, en ese orden. Muestra solo la información de fecha si no hay una parte fraccionaria en el número de serie de la fecha; se muestra solo la información de hora si no hay una parte entera.
-	d	Muestra el día como un número sin un cero inicial (1–31).
-	dd	Muestra el día como un número con un cero inicial (01–31).
-	ddd	Muestra el día como una abreviatura (Dom–Sáb). Localizada.
-	dddd	Muestra el día como nombre completo (domingo–sábado). Localizada.
-	ddddd	Muestra la fecha como fecha completa (incluido el día, el mes y el año) con el formato de acuerdo a la configuración del formato de fecha corta del sistema. El formato de fecha corta predeterminado es m/d/yy.
-	dddddd	Muestra un número de serie de fecha como fecha completa (incluido el día, el mes y el año) con formato de acuerdo a la configuración de fecha larga que reconoce el sistema. El formato de fecha larga predeterminado es mmmm dd, yyyy.
-	w	Muestra el día de la semana como un número (1 para domingo hasta 7 para sábado).
-	ww	Muestra la semana del año como un número (1–54).
-	m	Muestra el mes como un número sin un cero inicial (1–12). Si m va inmediatamente después de h o hh, se muestra el minuto en lugar del mes.
-	mm	Muestra el mes como un número con un cero inicial (01–12). Si m va inmediatamente después de h o hh, se muestra el minuto en lugar del mes.
-	mmm	Muestra el mes como una abreviatura (Ene–Dic). Localizada.
-	mmmm	Muestra el mes como un nombre de mes completo (enero–diciembre). Localizada.
-	q	Muestra el trimestre del año como un número (1–4).
-	y	Muestra el día del año como un número (1–366).
-	yy	Muestra el año como un numero de 2 dígitos (00–99).
-	yyyy	Muestra el año como un numero de 4 dígitos (100–9999).
-	h	Muestra la hora como un número sin cero inicial (0–23).
-	hh	Muestra la hora como un número con cero inicial (00–23).
-	n	Muestra el minuto como un número sin cero inicial (0–59).
-	nn	Muestra el minuto como un número con cero inicial (00–59).
-	s	Muestra el segundo como un número sin cero inicial (0–59).
-	ss	Muestra el segundo como un número con cero inicial (00–59).
-	ttttt	Muestra la hora como una hora completa (hora, minuto y segundo), usando el separador de hora definido por el formato de hora reconocido por el sistema. Se muestra un cero inicial si la opción de cero inicial está seleccionada y la hora es anterior a las 10:00 A. M. o P. M. El formato de hora predeterminado es h:mm:ss.
-	AM/PM	Usa el reloj de 12 horas y muestra AM en mayúsculas con cualquier hora antes del mediodía; muestra PM en mayúsculas con cualquier hora entre el mediodía y las 11:59 P.M.
-	am/pm	Usa el reloj de 12 horas y muestra AM en minúsculas con cualquier hora antes del mediodía; muestra PM en minúsculas con cualquier hora entre el mediodía y 11:59 P.M.
-	A/P	Usa el reloj de 12 horas y muestra una A en mayúsculas con cualquier hora antes del mediodía; muestra una P mayúscula con cualquier hora entre el mediodía y las 11:59 P.M.
-	a/p	Usa un reloj de 12 horas y muestra una A en minúsculas con cualquier hora antes del mediodía; muestra una P en minúsculas con cualquier hora entre el mediodía y las 11:59 P.M.
-	AMPM	Utiliza el reloj de 12 horas y muestra el literal de cadena AM definida por el sistema con las horas antes del mediodía, muestra el cadena PM definido por el sistema con las horas entre el mediodía y las 11:59 P. M. AMPM puede ser mayúscula o minúscula, pero el uso de mayúsculas o minúsculas de la cadena mostrada coincide con el de la cadena definida por la configuración del sistema. El formato predeterminado es AM/PM. Si el sistema está establecido en el reloj de 24 horas, la cadena suele establecerse en una cadena de longitud cero.
+		Carácter	Descripción
+		--------	------------------------------------------------------------------------
+		(:)			Separador de fecha. En algunas configuraciones regionales, pueden usarse 
+					otros caracteres para representar el separador de hora. El separador de 
+					hora separa horas, minutos y segundos cuando se da formato a valores de 
+					hora. El carácter real utilizado como separador de hora en el resultado 
+					con formato depende de la configuración del sistema.
+		(/)			Separador de fecha. En algunas configuraciones regionales, pueden usarse 
+					otros caracteres para representar el separador de fecha. El separador de 
+					fecha separa el día, mes y año cuando se da formato a valores de fecha. 
+					El carácter real utilizado como separador de fecha en el resultado con 
+					formato depende de la configuración del sistema.
+		c			Muestra la fecha como ddddd y muestra la hora como ttttt, en ese orden. 
+					Muestra solo la información de fecha si no hay una parte fraccionaria en
+					el número de serie de la fecha; se muestra solo la información de hora 
+					si no hay una parte entera.
+		d			Muestra el día como un número sin un cero inicial (1–31).
+		dd			Muestra el día como un número con un cero inicial (01–31).
+		ddd			Muestra el día como una abreviatura (Dom–Sáb). Localizada.
+		dddd		Muestra el día como nombre completo (domingo–sábado). Localizada.
+		ddddd		Muestra la fecha como fecha completa (incluido el día, el mes y el año) 
+					con el formato de acuerdo a la configuración del formato de fecha corta 
+					del sistema. El formato de fecha corta predeterminado es m/d/yy.
+		dddddd		Muestra un número de serie de fecha como fecha completa (incluido el 
+					día, el mes y el año) con formato de acuerdo a la configuración de 
+					fecha larga que reconoce el sistema. El formato de fecha larga 
+					predeterminado es mmmm dd, yyyy.
+		w			Muestra el día de la semana como un número (1 para domingo 
+					hasta 7 para sábado).
+		ww			Muestra la semana del año como un número (1–54).
+		m			Muestra el mes como un número sin un cero inicial (1–12). Si m va 
+					inmediatamente después de h o hh, se muestra el minuto en lugar del mes.
+		mm			Muestra el mes como un número con un cero inicial (01–12). Si m va 
+					inmediatamente después de h o hh, se muestra el minuto en lugar del mes.
+		mmm			Muestra el mes como una abreviatura (Ene–Dic). Localizada.
+		mmmm		Muestra el mes como un nombre de mes completo (enero–diciembre). Localizada.
+		q			Muestra el trimestre del año como un número (1–4).
+		y			Muestra el día del año como un número (1–366).
+		yy			Muestra el año como un numero de 2 dígitos (00–99).
+		yyyy		Muestra el año como un numero de 4 dígitos (100–9999).
+		h			Muestra la hora como un número sin cero inicial (0–23).
+		hh			Muestra la hora como un número con cero inicial (00–23).
+		n			Muestra el minuto como un número sin cero inicial (0–59).
+		nn			Muestra el minuto como un número con cero inicial (00–59).
+		s			Muestra el segundo como un número sin cero inicial (0–59).
+		ss			Muestra el segundo como un número con cero inicial (00–59).
+		ttttt		Muestra la hora como una hora completa (hora, minuto y segundo), usando el 
+					separador de hora definido por el formato de hora reconocido por el sistema. 
+					Se muestra un cero inicial si la opción de cero inicial está seleccionada y 
+					la hora es anterior a las 10:00 A. M. o P. M. El formato de hora 
+					predeterminado es h:mm:ss.
+		AM/PM		Usa el reloj de 12 horas y muestra AM en mayúsculas con cualquier hora 
+					antes del mediodía; muestra PM en mayúsculas con cualquier hora entre 
+					el mediodía y las 11:59 P.M.
+		am/pm		Usa el reloj de 12 horas y muestra AM en minúsculas con cualquier hora 
+					antes del mediodía; muestra PM en minúsculas con cualquier hora entre 
+					el mediodía y 11:59 P.M.
+		A/P			Usa el reloj de 12 horas y muestra una A en mayúsculas con cualquier 
+					hora antes del mediodía; muestra una P mayúscula con cualquier hora 
+					entre el mediodía y las 11:59 P.M.
+		a/p			Usa un reloj de 12 horas y muestra una A en minúsculas con cualquier 
+					hora antes del mediodía; muestra una P en minúsculas con cualquier 
+					hora entre el mediodía y las 11:59 P.M.
+		AMPM		Utiliza el reloj de 12 horas y muestra el literal de cadena AM definida 
+					por el sistema con las horas antes del mediodía, muestra el cadena PM definido 
+					por el sistema con las horas entre el mediodía y las 11:59 P. M. AMPM puede 
+					ser mayúscula o minúscula, pero el uso de mayúsculas o minúsculas 
+					de la cadena mostrada coincide con el de la cadena definida por la 
+					configuración del sistema. El formato predeterminado es AM/PM. Si el 
+					sistema está establecido en el reloj de 24 horas, la cadena suele 
+					establecerse en una cadena de longitud cero.
 
-	Carácter	Descripción
-	Ninguno	Muestra el número sin formato.
-	(0)	Marcador de posición de dígitos. Muestra un dígito o un cero. Si la expresión tiene un dígito en la posición donde aparece el 0 en la cadena de formato, lo muestra; en caso contrario, muestra un cero en esa posición. Si el número tiene menos dígitos que ceros (a ambos lados de la coma decimal) en la expresión de formato, muestra ceros iniciales o finales. Si el número tiene más dígitos a la derecha del separador decimal que ceros a la derecha del separador decimal en la expresión de formato, redondea el número a tantos decimales como el número de ceros. Si el número tiene más dígitos a la izquierda del separador decimal que ceros a la izquierda del separador decimal en la expresión de formato, muestra los dígitos adicionales sin cambios.
-	(#)	Marcador de posición de dígitos. Muestra un dígito o nada. Si la expresión tiene un dígito en la posición en la que aparece # en la cadena de formato, lo muestra; de lo contrario, no muestra nada en esa posición. Este símbolo funciona como un marcador de posición de dígito 0, excepto en que los ceros iniciales y finales no se muestran si el número tiene los mismos dígitos o menos dígitos que caracteres # hay en el lado del separador decimal en la expresión de formato.
-	(.)	Marcador de posición decimal. En algunas configuraciones regionales, se usa una coma como separador decimal. El marcador de posición decimal determina el número de dígitos que aparecen a la izquierda y derecha del separador decimal. Si la expresión de formato contiene solamente signos de número a la izquierda de este símbolo, los números menores que 1 comienzan con un separador decimal. Para mostrar un cero inicial con números fraccionarios, utilice 0 como primer marcador de posición de dígitos a la izquierda del separador decimal. El carácter real utilizado como marcador de posición de decimal en el resultado con formato depende del formato de número reconocido por su sistema.
-	(%)	Marcador de posición de porcentaje. Multiplica la expresión por 100. El carácter de porcentaje (%) se inserta en la posición en la que aparece en la cadena de formato.
-	(,)	Separador de miles. En algunas configuraciones regionales, se utiliza un punto como separador de miles. El separador de miles separa los millares de las centenas en un número que tiene cuatro o más dígitos a la izquierda del separador decimal. El uso estándar del separador de miles se especifica si el formato contiene un separador de miles rodeado de marcadores de posición de dígitos (0 o #). Dos separadores de miles adyacentes o un separador de miles inmediatamente a la izquierda del separador decimal (independientemente de si se especifica un valor decimal) significa "reducir el número dividiéndolo por 1000, redondearlo según sea necesario." Por ejemplo, puede usar la cadena de formato "##0,," para representar 100 millones como 100. Los números menores que 1 millón se muestran como 0. Dos separadores de miles adyacentes en cualquier posición que no sea inmediatamente a la izquierda del separador decimal se consideran simplemente como una especificación del uso de un separador de miles. El carácter real utilizado como separador de miles en el resultado con formato depende del formato de número reconocido por su sistema.
-	(:)	Separador de fecha. En algunas configuraciones regionales, se pueden usar otros caracteres para representar el separador de hora. El separador de hora separa horas, minutos y segundos cuando se da formato a valores de hora. El carácter real utilizado como separador de hora en el resultado con formato depende de la configuración del sistema.
-	(/)	Separador de fecha. En algunas configuraciones regionales, pueden usarse otros caracteres para representar el separador de fecha. El separador de fecha separa el día, mes y año cuando se da formato a valores de fecha. El carácter real utilizado como separador de fecha en el resultado con formato depende de la configuración del sistema.
-	(E- E+ e- e+)	Formato científico. Si la expresión de formato contiene al menos un marcador de posición de dígitos (0 o #) a la derecha de E-, E+, e- o e+, se muestra el número en formato científico y E o e se inserta entre el número y su exponente. El número de marcadores de posición de dígitos a la derecha determina el número de dígitos en el exponente. Use E- o e- para colocar un signo menos junto a los exponentes negativos. Use E+ o e+ para colocar un signo menos junto a los exponentes negativos y un signo más junto a los positivos.
-	- + $ ( )	Mostrar un carácter literal. Para mostrar un carácter distinto a los que aparecen en la lista, ponga antes de él una barra inversa (\) o póngalo entre comillas (" ").
-	(\)	Muestra el siguiente carácter en la cadena de formato. Para mostrar un carácter que tiene un significado especial como carácter literal, coloque antes una barra diagonal inversa (\). La barra en sí no se muestra. Usar una barra diagonal inversa es lo mismo que incluir el siguiente carácter entre comillas dobles. Para mostrar una barra diagonal inversa, use dos barras diagonales inversas (\\). Ejemplos de caracteres que no se pueden mostrar como caracteres literales son los caracteres de formato de fecha y de hora (a, c, d, h, m, n, p, q, s, t, w, y, / y :), los caracteres de formato numérico (#, 0, %, E, e, coma y punto) y los caracteres de formato de cadena (@, &, <, > y !).
-	("ABC")	Muestra la cadena dentro de las comillas dobles (" "). Para incluir una cadena en formato desde dentro del código, debe usar Chr(34) para encerrar el texto (34 es el código de carácter para un signo de comillas (")).
+		Carácter____	Descripción
+		Ninguno			Muestra el número sin formato.
+		(0)				Marcador de posición de dígitos. Muestra un dígito o un cero. 
+						Si la expresión tiene un dígito en la posición donde aparece 
+						el 0 en la cadena de formato, lo muestra; en caso contrario, 
+						muestra un cero en esa posición. Si el número tiene menos 
+						dígitos que ceros (a ambos lados de la coma decimal) en la 
+						expresión de formato, muestra ceros iniciales o finales. Si 
+						el número tiene más dígitos a la derecha del separador decimal 
+						que ceros a la derecha del separador decimal en la expresión de 
+						formato, redondea el número a tantos decimales como el número de
+						ceros. Si el número tiene más dígitos a la izquierda del 
+						separador decimal que ceros a la izquierda del separador 
+						decimal en la expresión de formato, muestra los dígitos 
+						adicionales sin cambios.
+		(#)				Marcador de posición de dígitos. Muestra un dígito o nada. 
+						Si la expresión tiene un dígito en la posición en la que aparece 
+						# en la cadena de formato, lo muestra; de lo contrario, 
+						no muestra nada en esa posición. Este símbolo funciona como 
+						un marcador de posición de dígito 0, excepto en que los ceros 
+						iniciales y finales no se muestran si el número tiene los mismos 
+						dígitos o menos dígitos que caracteres # hay en el lado del 
+						separador decimal en la expresión de formato.
+		(.)				Marcador de posición decimal. En algunas configuraciones 
+						regionales, se usa una coma como separador decimal. El marcador 
+						de posición decimal determina el número de dígitos que aparecen 
+						a la izquierda y derecha del separador decimal. Si la expresión 
+						de formato contiene solamente signos de número a la izquierda de 
+						este símbolo, los números menores que 1 comienzan con un separador 
+						decimal. Para mostrar un cero inicial con números fraccionarios,
+						utilice 0 como primer marcador de posición de dígitos a la 
+						izquierda del separador decimal. El carácter real utilizado 
+						como marcador de posición de decimal en el resultado con formato 
+						depende del formato de número reconocido por su sistema.
+		(%)				Marcador de posición de porcentaje. Multiplica la expresión 
+						por 100. El carácter de porcentaje (%) se inserta en la posición 
+						en la que aparece en la cadena de formato.
+		(,)				Separador de miles. En algunas configuraciones regionales, se 
+						utiliza un punto como separador de miles. El separador de miles 
+						separa los millares de las centenas en un número que tiene cuatro
+						o más dígitos a la izquierda del separador decimal. El uso estándar
+						del separador de miles se especifica si el formato contiene 
+						un separador de miles rodeado de marcadores de posición de dígitos 
+						(0 o #). Dos separadores de miles adyacentes o un separador de miles 
+						inmediatamente a la izquierda del separador decimal (independientemente
+						de si se especifica un valor decimal) significa "reducir el número 
+						dividiéndolo por 1000, redondearlo según sea necesario." 
+						Por ejemplo, puede usar la cadena de formato "##0,," para 
+						representar 100 millones como 100. Los números menores que 
+						1 millón se muestran como 0. Dos separadores de miles adyacentes 
+						en cualquier posición que no sea inmediatamente a la izquierda 
+						del separador decimal se consideran simplemente como una especificación 
+						del uso de un separador de miles. El carácter real utilizado como 
+						separador de miles en el resultado con formato depende del formato 
+						de número reconocido por su sistema.
+		(:)				Separador de fecha. En algunas configuraciones regionales, 
+						se pueden usar otros caracteres para representar el separador de hora. 
+						El separador de hora separa horas, minutos y segundos cuando se da 
+						formato a valores de hora. El carácter real utilizado como separador 
+						de hora en el resultado con formato depende de la configuración del sistema.
+		(/)				Separador de fecha. En algunas configuraciones regionales, pueden 
+						usarse otros caracteres para representar el separador de fecha. 
+						El separador de fecha separa el día, mes y año cuando se da formato 
+						a valores de fecha. El carácter real utilizado como separador de 
+						echa en el resultado con formato depende de la configuración del sistema.
+		(E- E+ e- e+)	Formato científico. Si la expresión de formato contiene al menos un 
+						marcador de posición de dígitos (0 o #) a la derecha de E-, E+, e- o e+, 
+						se muestra el número en formato científico y E o e se inserta entre el 
+						número y su exponente. El número de marcadores de posición de dígitos a 
+						la derecha determina el número de dígitos en el exponente. Use E- o e- 
+						para colocar un signo menos junto a los exponentes negativos. Use E+ o e+ 
+						para colocar un signo menos junto a los exponentes negativos y un signo 
+						más junto a los positivos.
+		- + $ ( )		Mostrar un carácter literal. Para mostrar un carácter distinto a los que 
+						aparecen en la lista, ponga antes de él una barra inversa (\) o 
+						póngalo entre comillas (" ").
+		(\)				Muestra el siguiente carácter en la cadena de formato. Para mostrar 
+						un carácter que tiene un significado especial como carácter literal, 
+						coloque antes una barra diagonal inversa (\). La barra en sí no se 
+						muestra. Usar una barra diagonal inversa es lo mismo que incluir el 
+						siguiente carácter entre comillas dobles. 
+						Para mostrar una barra diagonal inversa, use dos barras diagonales 
+						inversas (\\). 	Ejemplos de caracteres que no se pueden mostrar como 
+						caracteres literales son los caracteres de formato de fecha y de hora
+						(a, c, d, h, m, n, p, q, s, t, w, y, / y :), los caracteres de formato 
+						numérico (#, 0, %, E, e, coma y punto) y los caracteres de formato de 
+						cadena (@, &, <, > y !).
+		("ABC")			Muestra la cadena dentro de las comillas dobles (" "). Para incluir 
+						una cadena en formato desde dentro del código, debe usar Chr(34) 
+						para encerrar el texto (34 es el código de carácter para un signo 
+						de comillas (")).
+
+12.- Lista de operadores por categorias 
+	Categorías de operadores
+	Operadores										Descripción
+	Operadores aritméticos							Estos operadores realizan cálculos matemáticos.
+		Operador ^			number ^ exponent
+		Operador *			number1 * number2 
+		Operador /      	expression1 / expression2
+		Operador </span> 	expression1 \ expression2  		Divide dos numeros y devuelve un entero
+		Mod (operador)		result = number1 Mod number2  	Devuelve el resto de una división
+		Operador+ (unario y binario)
+		Operador- (unario y binario)
+
+	Operadores de asignación						Estos operadores realizan operaciones de asignación.
+		
+	Operadores de comparación						Estos operadores realizan comparaciones.
+	Operadores de concatenación						Estos operadores combinan cadenas.
+	Operadores lógicos y operadores bit a bit		Estos operadores realizan operaciones lógicas.
+	Operadores de desplazamiento de bits			Estos operadores realizan desplazamientos aritméticos en los patrones de bits.
+	Operadores varios								Estos operadores realizan operaciones misceláneas.
+
+	Operaciones matematicas y lógicas
+		result = number1 Mod number2
+		
+
+
+
+
+
+
+		Tipos					Descripción												Operadores
+		Operadores aritméticos	Operadores usados para realizar cálculos matemáticos.	*signo
+																						^signo
+																						/signo
+																						\signo
+																						Modsigno
+																						+signo
+																						-signo
+		Operadores de comparación	Operadores usados para realizar comparaciones.	= signo
+																					Is signo
+																					Like signo
+		Operadores de concatenación	Operadores usados para realizar concatenaciones.	& signo
+																						+ signo
+		Operadores lógicos	Operadores usados para realizar operaciones lógicas.	And signo
+																					Eqv signo
+																					Imp signo
+																					Not signo
+																					Or signo
+																					Xor signo
+
+
+13.- Funciones 
+		Funciones de conversión
+			Asc
+			Chr
+			CVErr
+			Format
+			Hexa
+			Oct
+			Str
+			Val
+		Funciones matemáticas
+			Abs
+			Atn
+			Cos
+			Derived math
+			Exp
+					Dim MyAngle, MyHSin
+					' Define angle in radians.
+					MyAngle = 1.3    
+					' Calculate hyperbolic sine.
+					MyHSin = (Exp(MyAngle) - Exp(-1 * MyAngle)) / 2  
+			Int, Fix
+					Dim MyNumber
+					MyNumber = Int(99.8)    ' Returns 99.
+					MyNumber = Fix(99.2)    ' Returns 99.
+
+					MyNumber = Int(-99.8)    ' Returns -100.
+					MyNumber = Fix(-99.8)    ' Returns -99.
+
+					MyNumber = Int(-99.2)    ' Returns -100.
+					MyNumber = Fix(-99.2)    ' Returns -99.
+			Log
+			Rnd
+			Sgn
+			Sin
+			Sqr
+			Tan
+		Funciones de conversión de tipo
+			Sintaxis
+			CBool(expression)
+			CByte(expression)
+			CCur(expression)
+			CDate(expression)
+			CDbl(expression)
+			CDec(expression)
+			CInt(expression)
+			CLng(expression)
+			CLngLng(expression) (válida solo en plataformas de 64 bits).
+			CLngPtr(expression)
+			CSng(expression)
+			CStr(expression)
+			CVar(expression)
+		Otras funciones
+			Array
+				Dim A As Variant, B As Long, i As Long
+				A = Array(10, 20, 30)  ' A is a three element list by default indexed 0 to 2
+				B = A(2)               ' B is now 30
+				ReDim Preserve A(4)    ' Extend A's length to five elements
+				A(4) = 40              ' Set the fifth element's value
+				For i = LBound(A) To UBound(A)
+					Debug.Print "A(" & i & ") = " & A(i)
+				Next i
+				
+			CallByName
+				Option Explicit
+
+				Private Sub Form_Load()
+					Label1.Caption = "Move"        ' Name of Move method.
+				End Sub
+
+				Private Sub Command1_Click()
+					If Command1.Left <> 0 Then
+						CallByName Command1, Label1.Caption, vbMethod, 0, 0
+					Else
+						CallByName Command1, Label1.Caption, vbMethod, 500, 500
+					End If
+				End Sub
+				
+			Choose
+				Function GetChoice(Ind As Integer)
+					GetChoice = Choose(Ind, "Speedy", "United", "Federal")
+				End Function
+				
+			Command
+			CreateObject
+			CurDir
+			Date
+			DateAdd
+			DateDiff
+			DatePart
+			DateSerial
+			DateValue
+			Day
+			DDB
+			Dir
+			DoEvents
+			Environ
+			EOF
+			Error
+			FileAttr
+			FileDateTime
+			FileLen
+			Filter
+			FormatCurrency
+			FormatDateTime
+			FormatNumber
+			FormatPercent
+			FreeFile
+			FV
+			GetAllSettings
+			GetAttr
+			GetObject
+			GetSetting
+			Hour
+			IIf
+			IMEStatus
+			Input
+			InputBox
+			InStr
+				Dim SearchString, SearchChar, MyPos
+				SearchString ="XXpXXpXXPXXP"    ' String to search in.
+				SearchChar = "P"    ' Search for "P".
+
+				' A textual comparison starting at position 4. Returns 6.
+				MyPos = Instr(4, SearchString, SearchChar, 1)    
+
+				' A binary comparison starting at position 1. Returns 9.
+				MyPos = Instr(1, SearchString, SearchChar, 0)
+
+				' Comparison is binary by default (last argument is omitted).
+				MyPos = Instr(SearchString, SearchChar)    ' Returns 9.
+
+				MyPos = Instr(1, SearchString, "W")    ' Returns 0.
+			InStrRev
+			IPmt
+			IRR
+			IsArray
+			IsDate
+			IsEmpty
+			IsError
+			IsMissing
+			IsNull
+			IsNumeric
+			IsObject
+			Join
+			LBound
+			LCase
+			Left
+			Len
+			Loc
+			LOF
+			LTrim, RTrim y Trim
+			MacID
+			MacScript
+			Mid
+			Minute
+			MIRR
+			Month
+			MonthName
+			MsgBox
+			Now
+			NPer
+			NPV
+			Partition
+			Pmt
+			PPmt
+			PV
+			QBColor
+			Rate
+			Replace
+			RGB
+			Right
+			Round
+			Second
+			Seek
+			Shell
+			SLN
+			Space
+			Spc
+			Split
+			StrComp
+			StrConv
+			String
+			StrReverse
+			Switch
+			SYD
+			Tab
+			Time
+			Timer
+			TimeSerial
+			TimeValue
+			TypeName
+			UBound
+			UCase
+			VarType
+			Weekday
+			WeekdayName
+			Year
+
+
+
+
+
+
+
 
 
 EOF File: Code_Snippets_LotExcel.txt

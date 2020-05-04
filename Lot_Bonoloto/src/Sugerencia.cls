@@ -7,32 +7,30 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-'---------------------------------------------------------------------------------------
-' Module    : Sugerencia
-' Author    : Charly
-' Date      : 13/04/2012
-' Purpose   :
-'---------------------------------------------------------------------------------------
-
+' *============================================================================*
+' *
+' *     Fichero    : Sugerencia.cls
+' *
+' *     Autor      : Carlos Almela Baeza
+' *     Creación   : vie, 13/abr/2012 hh:mm:ss
+' *     Versión    : 1.0
+' *     Propósito  :
+' *
+' *============================================================================*
 Option Explicit
-
-Public Entidad As EntidadNegocio
-Public metodo As metodo
-Public Parametros As ParametrosMuestra
+Option Base 0
+'
+'--- Variables Privadas -------------------------------------------------------*
 Private m_colBolas As Bolas
 Private m_eModalidad As ModalidadJuego
 Private m_objCombinacion As Combinacion
-
-Private Sub Class_Initialize()
-    Set m_colBolas = New Bolas
-    Set m_objCombinacion = New Combinacion
-End Sub
-
-Private Sub Class_Terminate()
-    Set m_colBolas = Nothing
-    Set m_objCombinacion = Nothing
-End Sub
-
+'--- Constantes ---------------------------------------------------------------*
+'--- Mensajes -----------------------------------------------------------------*
+'--- Errores ------------------------------------------------------------------*
+'--- Propiedades --------------------------------------------------------------*
+Public Entidad As EntidadNegocio
+Public Metodo As Metodo
+Public Parametros As ParametrosMuestra
 
 Public Property Get Bolas() As Bolas
     Set Bolas = m_colBolas
@@ -58,6 +56,25 @@ Public Property Set Combinacion(objCombinacion As Combinacion)
     Set m_objCombinacion = objCombinacion
 End Property
 
+
+'--- Métodos Privados ---------------------------------------------------------*
+Private Sub Class_Initialize()
+    Set m_colBolas = New Bolas
+    Set m_objCombinacion = New Combinacion
+    m_eModalidad = LP_LB_6_49
+End Sub
+
+Private Sub Class_Terminate()
+    Set m_colBolas = Nothing
+    Set m_objCombinacion = Nothing
+End Sub
+'--- Métodos Públicos ---------------------------------------------------------*
+'------------------------------------------------------------------------------*
+' Procedimiento  : <<nombre propiedad>>
+' Fecha          : dd/MMM/yyyy
+' Propósito      :
+' Parámetros     :
+'------------------------------------------------------------------------------*
 Public Function Validar() As Boolean
     Dim bResult As Boolean
     Validar = bResult
@@ -72,4 +89,11 @@ Public Function ToString() As String
     Dim sResult As String
     ToString = sResult
 End Function
+
+'' *===========(EOF): Sugerencia.cls
+
+
+
+
+
 

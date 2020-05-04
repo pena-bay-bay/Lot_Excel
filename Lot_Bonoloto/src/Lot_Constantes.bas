@@ -202,7 +202,7 @@ End Enum
 '
 '
 '
-Public Const NOMBRES_PROCEDIMIENTOMETODO = "Sin Definir;Aleatorio;Bombo;Estadistico;Estadisticas Dos Variables"
+Public Const NOMBRES_AGRUPACION = "Sin Definir; Decenas; Septenas; Paridad; Peso; Terminacion "
 '
 '
 '
@@ -219,15 +219,15 @@ End Enum
 '
 '
 '
+Public Const NOMBRES_PROCEDIMIENTOMETODO = "Sin Definir;Aleatorio;Bombo;Estadistico;Estadisticas Dos Variables;Algoritmo AG;Red Neuronal;Estadistica Combinaciones"
+'
+'
+'
 Public Enum TipoAperturaFichero
     OpenForInput = 1
     OpenForAppend = 2
     OpenForOutput = 3
 End Enum
-'
-'
-'
-Public Const NOMBRES_AGRUPACION = "Sin Definir; Decenas; Septenas; Paridad; Peso; Terminacion "
 '
 '   Definición de premios
 '                                          R   ;5; 4;   3;     2;     1
