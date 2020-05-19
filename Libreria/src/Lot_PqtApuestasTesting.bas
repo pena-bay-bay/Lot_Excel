@@ -878,15 +878,35 @@ Private Sub ApuestaEngineTest()
 '    End If
 '    On Error GoTo ApuestaEngineTest_Error
     '
-    '  10.- Prueba del método GetApuestasInFechas
+    '  10.- Prueba del método GetApuestasInIds
     '
-    Debug.Print vbTab & "10.- GetApuestasInFechas "
+    Debug.Print vbTab & "10.- GetApuestasInIds "
+    Set mCol = mEng.GetApuestasInIds(2, 4, LoteriaPrimitiva)
+    PrintApuestas mCol
+    
+    On Error Resume Next
+    Set mCol = mEng.GetApuestasInIds(2, 4, bonoloto)
+    If Err.Number <> 0 Then
+        Debug.Print "Apuestas no encontradas: (#" & Err.Number & ") " & Err.Description
+    End If
+    
     '
-    '  11.- Prueba del método GetApuestasInIds
+    '  11.- Prueba del método GetApuestasInFechas
     '
-    '
-    '
-    '
+    Debug.Print vbTab & "11.- GetApuestasInFechas "
+    Set mCol = mEng.GetApuestasInFechas(#8/20/2019#, #8/20/2019#, SinJuego)
+    PrintApuestas mCol
+
+    On Error Resume Next
+    Set mCol = mEng.GetApuestasInFechas(#8/25/2019#, #8/25/2019#, bonoloto)
+    If Err.Number <> 0 Then
+        Debug.Print "Apuestas no encontradas: (#" & Err.Number & ") " & Err.Description
+    End If
+
+
+
+
+'
     Err.Raise ERR_TODO, "Lot_PqtApuestasTesting.ApuestaEngineTest", MSG_TODO
   
   On Error GoTo 0

@@ -89,9 +89,7 @@ PeriodoTest__CleanExit:
 PeriodoTest_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-    '   Audita el error
     Call HandleException(ErrNumber, ErrDescription, "Lot_PqtNucleoTesting.PeriodoTest", ErrSource)
-    '   Informa del error
     Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, ThisWorkbook.Name)
     Call Trace("CERRAR")
 End Sub
@@ -199,9 +197,7 @@ ParametrosTest__CleanExit:
 ParametrosTest_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-    '   Audita el error
     Call HandleException(ErrNumber, ErrDescription, "Lot_PqtNucleoTesting.ParametrosTest", ErrSource)
-    '   Informa del error
     Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, Application.Caption)
     Call Trace("CERRAR")
 End Sub
@@ -259,9 +255,7 @@ ParametroTest__CleanExit:
 ParametroTest_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-    '   Audita el error
     Call HandleException(ErrNumber, ErrDescription, "Lot_PqtNucleoTesting.ParametroTest", ErrSource)
-    '   Informa del error
     Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, ThisWorkbook.Name)
     Call Trace("CERRAR")
 End Sub
@@ -374,9 +368,7 @@ ParametrosEngineTest__CleanExit:
 ParametrosEngineTest_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-    '   Audita el error
     Call HandleException(ErrNumber, ErrDescription, "Lot_PqtNucleoTesting.ParametrosEngineTest", ErrSource)
-    '   Informa del error
     Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, ThisWorkbook.Name)
     Call Trace("CERRAR")
 End Sub
@@ -457,101 +449,6 @@ Private Sub PrintParametros(cObj As Parametros)
         Debug.Print vbTab & mObj.ToString
     Next mObj
 End Sub
-'---------------------------------------------------------------------------------------
-' Procedure : ParametrosMetodoTest
-' Author    : Charly
-' Date      : 19/03/2012
-' Purpose   : Probar la clase ParametrosMetodo
-'---------------------------------------------------------------------------------------
-'
-'Private Sub ParametrosMetodoTest()
-'    Dim m_objParMetodo As ParametrosMetodo
-'
-'    Set m_objParMetodo = New ParametrosMetodo
-'
-'
-'    With m_objParMetodo
-'        .CriteriosAgrupacion = grpDecenas
-'        .CriteriosOrdenacion = ordProbabilidad
-'        .DiasAnalisis = 45
-'        .ID = 1
-'        .ModalidadJuego = LP_LB_6_49
-'        .NumeroSorteos = 40
-'        .Orden = 1
-'        .Pronosticos = 6
-'        .SentidoOrdenacion = True
-'    End With
-'
-'    Debug.Print "==> Pruebas ParametrosMetodoTest"
-'    Debug.Print "Id                       = " & m_objParMetodo.ID
-'    Debug.Print "Juego                    = " & m_objParMetodo.ModalidadJuego
-'    Debug.Print "Criterio Ordenación      = " & m_objParMetodo.CriteriosOrdenacion
-'    Debug.Print "Criterio Agrupación      = " & m_objParMetodo.CriteriosAgrupacion
-'    Debug.Print "Dias de Analisis         = " & m_objParMetodo.DiasAnalisis
-'    Debug.Print "Numero de Sorteos        = " & m_objParMetodo.NumeroSorteos
-'    Debug.Print "Orden                    = " & m_objParMetodo.Orden
-'    Debug.Print "Pronosticos              = " & m_objParMetodo.Pronosticos
-'    Debug.Print "Sentido de la Ordenación = " & m_objParMetodo.SentidoOrdenacion
-'    Debug.Print "OrdenacionToString()     = " & m_objParMetodo.OrdenacionToString()
-'    Debug.Print "AgrupacionToString()     = " & m_objParMetodo.AgrupacionToString()
-'    Debug.Print "ToString()               = " & m_objParMetodo.ToString()
-'
-'End Sub
-
-
-'---------------------------------------------------------------------------------------
-' Procedure : MetodoTest
-' Author    : Charly
-' Date      : 19/03/2012
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-'Public Sub MetodoTest()
-'    Dim m_objMetodo As metodo
-'
-'    Set m_objMetodo = New metodo
-'
-'    With m_objMetodo
-'        .TipoProcedimiento = mtdEstadistico
-'        .EntidadNegocio.FechaModificacion = Date
-'        .EsMultiple = False
-'        .Parametros.CriteriosAgrupacion = grpParidad
-'        .Parametros.CriteriosOrdenacion = ordDesviacion
-'        .Parametros.DiasAnalisis = 42
-'        .Parametros.SentidoOrdenacion = True
-'        .TipoMuestra = True
-'    End With
-'
-'
-'    Debug.Print "==> Pruebas Metodo"
-'    Debug.Print "ClassStorage           =" & m_objMetodo.EntidadNegocio.ClassStorage
-'    Debug.Print "FechaAlta              =" & m_objMetodo.EntidadNegocio.FechaAlta
-'    Debug.Print "FechaBaja              =" & m_objMetodo.EntidadNegocio.FechaBaja
-'    Debug.Print "FechaModificacion      =" & m_objMetodo.EntidadNegocio.FechaModificacion
-'    Debug.Print "Id                     =" & m_objMetodo.EntidadNegocio.ID
-'    Debug.Print "IsDirty                =" & m_objMetodo.EntidadNegocio.IsDirty
-'    Debug.Print "IsNew                  =" & m_objMetodo.EntidadNegocio.IsNew
-'    Debug.Print "MarkForDelete          =" & m_objMetodo.EntidadNegocio.MarkForDelete
-'    Debug.Print "Origen                 =" & m_objMetodo.EntidadNegocio.Origen
-'    Debug.Print "Situacion              =" & m_objMetodo.EntidadNegocio.Situacion
-'    Debug.Print "EsMultiple             =" & m_objMetodo.EsMultiple
-'    Debug.Print "AgrupacionToString     =" & m_objMetodo.Parametros.AgrupacionToString
-'    Debug.Print "CriteriosAgrupacion    =" & m_objMetodo.Parametros.CriteriosAgrupacion
-'    Debug.Print "CriteriosOrdenacion    =" & m_objMetodo.Parametros.CriteriosOrdenacion
-'    Debug.Print "DiasAnalisis           =" & m_objMetodo.Parametros.DiasAnalisis
-'    Debug.Print "Id                     =" & m_objMetodo.Parametros.ID
-'    Debug.Print "ModalidadJuego         =" & m_objMetodo.Parametros.ModalidadJuego
-'    Debug.Print "NumeroSorteos          =" & m_objMetodo.Parametros.NumeroSorteos
-'    Debug.Print "Orden                  =" & m_objMetodo.Parametros.Orden
-'    Debug.Print "OrdenacionToString     =" & m_objMetodo.Parametros.OrdenacionToString
-'    Debug.Print "Pronosticos            =" & m_objMetodo.Parametros.Pronosticos
-'    Debug.Print "SentidoOrdenacion      =" & m_objMetodo.Parametros.SentidoOrdenacion
-'    Debug.Print "ToString               =" & m_objMetodo.Parametros.ToString
-'    Debug.Print "TipoMuestra            =" & m_objMetodo.TipoMuestra
-'    Debug.Print "TipoProcedimiento      =" & m_objMetodo.TipoProcedimiento
-'
-'End Sub
-
 '------------------------------------------------------------------------------*
 ' Procedimiento  : DataBaseExcelTest2
 ' Fecha          : 11/12/2018
@@ -607,10 +504,10 @@ Public Sub DataBaseExcelTest2()
     '
     Set mRango = mObj.GetRowById(3, tblParametros)
     With mRango
-        .Cells(1, 1).Value = 1                          'N
+        .Cells(1, 1).Value = 1                           'N
         .Cells(1, 4).Value = "Texto Actualizado " & Now  'Valor
-        .Cells(1, 6).Value = "Prueba Actualización"     'Concepto
-        .Cells(1, 8).Value = Now                      'FechaModificacion
+        .Cells(1, 6).Value = "Prueba Actualización"      'Concepto
+        .Cells(1, 8).Value = Now                         'FechaModificacion
     End With
     '
     '   Select por Columna
@@ -660,9 +557,7 @@ DataBaseExcelTest2__CleanExit:
 DataBaseExcelTest2_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-    '   Audita el error
     Call HandleException(ErrNumber, ErrDescription, "Lot_PqtNucleoTesting.DataBaseExcelTest2", ErrSource)
-    '   Informa del error
     Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, Application.Caption)
     Call Trace("CERRAR")
 End Sub
@@ -866,12 +761,8 @@ EntidadNegocioTest__CleanExit:
 EntidadNegocioTest_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-    '   Audita el error
     Call HandleException(ErrNumber, ErrDescription, "[File].EntidadNegocioTest", ErrSource)
-    '   Informa del error
     Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, ThisWorkbook.Name)
     Call Trace("CERRAR")
 End Sub
-
-
 ' *===========(EOF): Lot_PqtNucleoTesting.bas

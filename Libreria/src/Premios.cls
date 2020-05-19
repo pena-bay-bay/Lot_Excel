@@ -220,7 +220,7 @@ Private Function GetPremioObtenido() As CategoriaPremio
     '   los numeros acertados y estrellas acertadas
     '
     Select Case Juego
-        Case bonoloto:
+        Case Bonoloto:
             If PronosticosApostados = 5 Then
                 Select Case True
                     Case (NumerosAcertados = 5)
@@ -353,7 +353,7 @@ Private Function GetNumApuestas() As Integer
     '   Evaluamos el número de apuestas segun las bolas acertadas y el juego
     '   EstrellasApostadas,PronosticosApostados
     Select Case Juego
-        Case bonoloto, LoteriaPrimitiva:
+        Case Bonoloto, LoteriaPrimitiva:
             Select Case True
                 Case PronosticosApostados = 6: GetNumApuestas = 1
                 Case PronosticosApostados = 7: GetNumApuestas = 7
@@ -441,7 +441,7 @@ Private Function GetMatrizApuestas() As Collection
     '   Seleccionamos la matriz según el juego
     '
     Select Case Juego
-        Case bonoloto:
+        Case Bonoloto:
             mMatriz = Split(LT_MATRIZMULTIBL001, ";")
         
         Case LoteriaPrimitiva:
@@ -650,7 +650,7 @@ Public Sub SetPremiosDefecto(datJuego As Juego)
     '   Determinamos datos por defecto de la matriz
     '
     Select Case datJuego
-        Case bonoloto: mStr = LT_PREMIOSBONOLOTO
+        Case Bonoloto: mStr = LT_PREMIOSBONOLOTO
         Case LoteriaPrimitiva: mStr = LT_PREMIOSPRIMITIVA
         Case Euromillones: mStr = LT_PREMIOSEUROMILLONES
         Case gordoPrimitiva: mStr = LT_PREMIOSGORDO
@@ -828,6 +828,102 @@ Undelete_Error:
    '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
+'------------------------------------------------------------------------------*
+' Procedimiento  : ToString
+' Fecha          : vi., 22/nov/2019 19:54:21
+' Propósito      : Establecer una cadena de caracteres con los premios
+'------------------------------------------------------------------------------*
+Public Function ToString() As String
+    Dim mStr    As String
+  On Error GoTo ToString_Error
+    '
+    '   Inicializamos resultado
+    '
+    mStr = ""
+    If mCol.Count > 0 Then
+        For Each mPremio In mCol
+            mStr = mStr & CStr(mPremio.Categoria) & "," & CStr(mPremio.Importe) & ";"
+        Next mPremio
+        '
+        '   Eliminamos el último ";"
+        '
+        ToString = Left(mStr, Len(mStr) - 1)
+    Else
+        ToString = "#Sin Definir"
+    End If
+  On Error GoTo 0
+   Exit Function
 
+ToString_Error:
+   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+   Call HandleException(ErrNumber, ErrDescription, "Premios.ToString")
+   Err.Raise ErrNumber, ErrSource, ErrDescription
+End Function
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : Parse
+' Fecha          : vi., 02/dic/2019 19:54:21
+' Propósito      : Establece los premios desde una cadena de caracteres
+'------------------------------------------------------------------------------*
+Public Sub Parse(datStr As String, datJuego As Juego)
+    Dim mStr    As String
+    Dim mVar    As Variant
+    Dim mVar2   As Variant
+    Dim i       As Integer
+ On Error GoTo Parse_Error
+    '
+    '   Inicializamos la colección
+    '
+    Me.Clear
+    '
+    '   Establecemos el juego de los premios
+    '
+    Me.Juego = datJuego
+    '
+    '   Creamos una mariz con las categorias y premio por defecto
+    '
+    mVar = Split(datStr, ";")
+    
+    For i = 0 To UBound(mVar)
+        '
+        '   Creamos un premio
+        '
+        Set mPremio = New Premio
+        '
+        '   Separamos la categoria del importe
+        '
+        mVar2 = Split(mVar(i), ",")
+        '
+        '   Asignamos valores a premio
+        '
+        With mPremio
+            .Categoria = Val(mVar2(0))
+            .Importe = Val(mVar2(1))
+            .ImporteDefault = False
+            .Juego = datJuego
+        End With
+        '
+        '   Agregamos a la colección
+        '
+        Me.Add mPremio
+        '
+        '   Eliminamos Premio
+        '
+        Set mPremio = Nothing
+    Next i
+    '
+    '
+    '
+ On Error GoTo 0
+Parse__CleanExit:
+    Exit Sub
+            
+Parse_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "Premios.Parse", ErrSource)
+    Err.Raise ErrNumber, "Premios.SetPremiosDefecto", ErrDescription
+End Sub
 '' *===========(EOF): Premios.cls
 

@@ -15,6 +15,7 @@ Attribute VB_Name = "Lot_PqtConcursosTesting"
 ' *                    - Sorteo
 ' *                    - Sorteos
 ' *                    - SorteoEngine
+' *                    - SorteoModel
 ' *                    - Premio
 ' *                    - Premios
 ' *
@@ -239,7 +240,7 @@ Private Sub PrintCombinacion(Obj As Combinacion)
     Debug.Print vbTab & "Count               =" & Obj.Count
     Debug.Print vbTab & "Delete()            =" & "#Metodo" 'obj.Delete
     Debug.Print vbTab & "EstaOrdenado        =" & Obj.EstaOrdenado
-    Debug.Print vbTab & "EsValido(bonoloto)  =" & Obj.EsValido(bonoloto)
+    Debug.Print vbTab & "EsValido(bonoloto)  =" & Obj.EsValido(Bonoloto)
     Debug.Print vbTab & "FormulaAltoBajo     =" & Obj.FormulaAltoBajo
     Debug.Print vbTab & "FormulaConsecutivos =" & Obj.FormulaConsecutivos
     Debug.Print vbTab & "FormulaDecenas      =" & Obj.FormulaDecenas
@@ -252,7 +253,6 @@ Private Sub PrintCombinacion(Obj As Combinacion)
     Debug.Print vbTab & "Suma                =" & Obj.Suma
     Debug.Print vbTab & "Texto               =" & Obj.Texto
     Debug.Print vbTab & "ToString(True)      =" & Obj.ToString(True)
-    
 End Sub
 '------------------------------------------------------------------------------*
 ' Procedimiento  : SorteoTest
@@ -274,7 +274,7 @@ Public Sub SorteoTest()
     '
     Set mObj = New Sorteo
     With mObj
-        .Juego = bonoloto
+        .Juego = Bonoloto
         .Dia = "M"
         .Texto = "10-49-15-31-17-7"
         .Complementario = 34
@@ -406,7 +406,7 @@ Private Sub PremioTest()
     With Obj
         .Categoria = Cuarta
         .Importe = 125
-        .Juego = bonoloto
+        .Juego = Bonoloto
         .NumeroAcertantesEspaña = 20
         .NumeroAcertantesEuropa = 15
         .ImporteDefault = False
@@ -430,9 +430,7 @@ PremioTest__CleanExit:
 PremioTest_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-    '   Audita el error
     Call HandleException(ErrNumber, ErrDescription, "Lot_PqtConcursosTesting.PremioTest", ErrSource)
-    '   Informa del error
     Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, ThisWorkbook.Name)
     Call Trace("CERRAR")
 End Sub
@@ -475,7 +473,7 @@ Private Sub PremiosTest()
     '
     '   2.- Prueba método SetPremiosDefecto
     '
-    mObj.SetPremiosDefecto bonoloto
+    mObj.SetPremiosDefecto Bonoloto
     PrintPremios mObj
     '
     '   Euromillon
@@ -506,16 +504,20 @@ Private Sub PremiosTest()
     '
     '   Prueba Get Importe
     '
-    mObj.Juego = bonoloto
+    mObj.Juego = Bonoloto
     mObj.NumerosAcertados = 3
     mObj.PronosticosApostados = 9
     mObj.ReintegroAcertado = True
     PrintPremios mObj
     '
+    '  5.- Parse
+    '
+    '   Definir una cadena con los juegos de bonoloto y cargar premios
+    '
     '   7 apuestas para el juego bonoloto y 6 aciertos
     '
     Set mObj = New Premios
-    mObj.SetPremiosDefecto bonoloto
+    mObj.SetPremiosDefecto Bonoloto
     mObj.NumerosAcertados = 6
     mObj.PronosticosApostados = 7
     mObj.ComplementarioAcertado = False
@@ -525,7 +527,7 @@ Private Sub PremiosTest()
     '   7 apuestas para el juego Gordo y 6 aciertos
     '
     Set mObj = New Premios
-    mObj.SetPremiosDefecto bonoloto
+    mObj.SetPremiosDefecto Bonoloto
     mObj.NumerosAcertados = 6
     mObj.PronosticosApostados = 7
     mObj.ComplementarioAcertado = False
@@ -535,7 +537,7 @@ Private Sub PremiosTest()
     '   5 apuestas para el juego Euromillon y 6 aciertos
     '
     Set mObj = New Premios
-    mObj.SetPremiosDefecto bonoloto
+    mObj.SetPremiosDefecto Bonoloto
     mObj.NumerosAcertados = 6
     mObj.PronosticosApostados = 7
     mObj.ComplementarioAcertado = False
@@ -553,9 +555,7 @@ PremiosTest__CleanExit:
 PremiosTest_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-    '   Audita el error
     Call HandleException(ErrNumber, ErrDescription, "Lot_PqtConcursosTesting.PremiosTest", ErrSource)
-    '   Informa del error
     Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, ThisWorkbook.Name)
     Call Trace("CERRAR")
 End Sub
@@ -577,7 +577,7 @@ Private Sub PrintPremios(mObj As Premios)
     Debug.Print vbTab & "NumerosAcertados       =" & mObj.NumerosAcertados
     Debug.Print vbTab & "PronosticosApostados   =" & mObj.PronosticosApostados
     Debug.Print vbTab & "ReintegroAcertado      =" & mObj.ReintegroAcertado
-    Debug.Print vbTab & "Add()                  =" & "#Metodo" 'mObj.Add
+    Debug.Print vbTab & "Add()                  =" & "#Metodo" ' mObj.Add
     Debug.Print vbTab & "Clear()                =" & "#Metodo" ' mObj.Clear
     Debug.Print vbTab & "Delete()               =" & "#Metodo" ' mObj.Delete
     Debug.Print vbTab & "GetImporteTotalPremios()=" & mObj.GetImporteTotalPremios
@@ -585,6 +585,7 @@ Private Sub PrintPremios(mObj As Premios)
     Debug.Print vbTab & "MarkForDelete()        =" & "#Metodo" ' mObj.MarkForDelete
     Debug.Print vbTab & "MarkSetPremiosDefecto()=" & "#Metodo" ' mObj.MarkSetPremiosDefecto
     Debug.Print vbTab & "Undelete()             =" & "#Metodo" ' mObj.Undelete
+    Debug.Print vbTab & "ToString()             =" & mObj.ToString
     For Each mPrem In mObj.Items
         Debug.Print vbTab & mPrem.ToString
     Next mPrem
@@ -600,8 +601,10 @@ Private Sub InfoSorteoTest()
     Dim i As Integer
     Dim mFechaI As Date
     Dim mFechaF As Date
+ 
+ On Error GoTo InfoSorteoTest_Error
 
-    
+
     Set mInfo = New InfoSorteo
     '
     '  21/5/2014 Miercoles
@@ -611,21 +614,25 @@ Private Sub InfoSorteoTest()
     
     For i = 0 To 7
         mFechaI = mFechaI + i
-        mInfo.Constructor bonoloto
+        mInfo.Constructor Bonoloto
         mFechaF = mInfo.GetProximoSorteo(mFechaI)
         Debug.Print "GetProximoSorteo(" & mFechaI & ", Bonoloto) => "; mFechaF
         Debug.Print "EsFechaSorteo (" & mFechaI & ", Bonoloto) => " & mInfo.EsFechaSorteo(mFechaI)
+        
         mInfo.Constructor gordoPrimitiva
         mFechaF = mInfo.GetProximoSorteo(mFechaI)
         Debug.Print "GetProximoSorteo(" & mFechaI & ", GordoPrimitiva) => "; mFechaF
+        Debug.Print "EsFechaSorteo (" & mFechaI & ", GordoPrimitiva) => " & mInfo.EsFechaSorteo(mFechaI)
+        
         mInfo.Constructor LoteriaPrimitiva
         mFechaF = mInfo.GetProximoSorteo(mFechaI)
         Debug.Print "GetProximoSorteo(" & mFechaI & ", LoteriaPrimitiva) => "; mFechaF
+        Debug.Print "EsFechaSorteo (" & mFechaI & ", LoteriaPrimitiva) => " & mInfo.EsFechaSorteo(mFechaI)
+        
         mInfo.Constructor Euromillones
         mFechaF = mInfo.GetProximoSorteo(mFechaI)
-        
         Debug.Print "GetProximoSorteo(" & mFechaI & ", Euromillones) => "; mFechaF
-        Debug.Print "EsFechaSorteo (" & mFechaI & ", Bonoloto) => " & mInfo.EsFechaSorteo(mFechaI)
+        Debug.Print "EsFechaSorteo (" & mFechaI & ", Euromillones) => " & mInfo.EsFechaSorteo(mFechaI)
     Next i
     '
     '   Sorteos entre dos fechas
@@ -633,12 +640,21 @@ Private Sub InfoSorteoTest()
     mFechaI = #4/26/2015#   'Domingo
     mFechaF = mFechaI
     For i = 1 To 26
-        Debug.Print "Sorteos entre" & mFechaI & " y " & mFechaF
+        Debug.Print "Sorteos entre " & mFechaI & " y " & mFechaF
         Debug.Print "   ==>" & mInfo.GetSorteosEntreFechas(mFechaI, mFechaF)
         mFechaF = mFechaF + 1
     Next i
     
-
+ On Error GoTo 0
+InfoSorteoTest__CleanExit:
+    Exit Sub
+            
+InfoSorteoTest_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "Lot_PqtConcursosTesting.InfoSorteoTest", ErrSource)
+    Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, ThisWorkbook.Name)
+    Call Trace("CERRAR")
 End Sub
 '------------------------------------------------------------------------------*
 ' Procedimiento  : SorteosTest
@@ -660,7 +676,7 @@ Public Sub SorteosTest()
     '
     Set mSort = New Sorteo
     With mSort
-        .Juego = bonoloto
+        .Juego = Bonoloto
         .Dia = "M"
         .Texto = "10-49-15-31-17-7"
         .Complementario = 34
@@ -676,7 +692,7 @@ Public Sub SorteosTest()
     '
     Set mSort = New Sorteo
     With mSort
-        .Juego = bonoloto
+        .Juego = Bonoloto
         .Dia = "X"
         .Texto = "38-31-45-5-48-13"
         .Complementario = 44
@@ -829,12 +845,12 @@ Public Sub SorteoEngineTest()
     Set mEng = New SorteoEngine
     '
     '
-    mEng.Juego = bonoloto
+    mEng.Juego = Bonoloto
     Debug.Print vbTab & "mEng.Juego = " & mEng.Juego
     '
     '   1.- Prueba GetFechaPrimerSorteo
     '
-    mDate = mEng.GetFechaPrimerSorteo(bonoloto)
+    mDate = mEng.GetFechaPrimerSorteo(Bonoloto)
     Debug.Print "Primera fecha sorteo Bonoloto= " & Format(mDate, "dd/mmm/yyyy")
     mDate = mEng.GetFechaPrimerSorteo(LoteriaPrimitiva)
     Debug.Print "Primera fecha sorteo Primitiva= " & Format(mDate, "dd/mmm/yyyy")
@@ -845,7 +861,7 @@ Public Sub SorteoEngineTest()
     '
     '   2.- Prueba GetFechaUltimoSorteo
     '
-    mDate = mEng.GetFechaUltimoSorteo(bonoloto)
+    mDate = mEng.GetFechaUltimoSorteo(Bonoloto)
     Debug.Print "Ultima fecha sorteo Bonoloto= " & Format(mDate, "dd/mmm/yyyy")
     mDate = mEng.GetFechaUltimoSorteo(LoteriaPrimitiva)
     Debug.Print "Ultima fecha sorteo Primitiva= " & Format(mDate, "dd/mmm/yyyy")
@@ -856,7 +872,7 @@ Public Sub SorteoEngineTest()
     '
     '   3.- Prueba GetIdPrimerSorteo
     '
-    mInt = mEng.GetIdPrimerSorteo(bonoloto)
+    mInt = mEng.GetIdPrimerSorteo(Bonoloto)
     Debug.Print "Primer Id Bonoloto= " & CStr(mInt)
     mInt = mEng.GetIdPrimerSorteo(LoteriaPrimitiva)
     Debug.Print "Primer Id Primitiva= " & CStr(mInt)
@@ -867,7 +883,7 @@ Public Sub SorteoEngineTest()
     '
     '   4.- Prueba GetIdUltimoSorteo
     '
-    mInt = mEng.GetIdUltimoSorteo(bonoloto)
+    mInt = mEng.GetIdUltimoSorteo(Bonoloto)
     Debug.Print "Ultimo Id Bonoloto= " & CStr(mInt)
     mInt = mEng.GetIdUltimoSorteo(LoteriaPrimitiva)
     Debug.Print "Ultimo Id Primitiva= " & CStr(mInt)
@@ -885,7 +901,7 @@ Public Sub SorteoEngineTest()
     '
     '   6.- Prueba GetNewSorteo
     '
-    Set mObj = mEng.GetNewSorteo(bonoloto)
+    Set mObj = mEng.GetNewSorteo(Bonoloto)
     PrintSorteo mObj
     Set mObj = mEng.GetNewSorteo(LoteriaPrimitiva)
     PrintSorteo mObj
@@ -897,7 +913,7 @@ Public Sub SorteoEngineTest()
     '   6.- Prueba GetSorteoByFecha
     '
     mDate = #4/1/2019#
-    Set mObj = mEng.GetSorteoByFecha(mDate, bonoloto)
+    Set mObj = mEng.GetSorteoByFecha(mDate, Bonoloto)
     PrintSorteo mObj
     mDate = #3/16/2019#
     Set mObj = mEng.GetSorteoByFecha(mDate, LoteriaPrimitiva)
@@ -912,7 +928,7 @@ Public Sub SorteoEngineTest()
     '   7.- Prueba GetSorteoById
     '
     mInt = 5633   '02/03/2015
-    Set mObj = mEng.GetSorteoById(mInt, bonoloto)
+    Set mObj = mEng.GetSorteoById(mInt, Bonoloto)
     PrintSorteo mObj
     mInt = 2985   '02/02/2017
     Set mObj = mEng.GetSorteoById(mInt, LoteriaPrimitiva)
@@ -928,7 +944,7 @@ Public Sub SorteoEngineTest()
     '
     mDateI = #6/20/2015#
     mDateF = #6/25/2015#
-    Set mCol = mEng.GetSorteosInFechas(mDateI, mDateF, bonoloto)
+    Set mCol = mEng.GetSorteosInFechas(mDateI, mDateF, Bonoloto)
     PrintSorteos mCol
     mDateI = #4/21/2018#
     mDateF = #5/12/2018#
@@ -947,7 +963,7 @@ Public Sub SorteoEngineTest()
     '
     mIntI = 6924
     mIntF = 6928
-    Set mCol = mEng.GetSorteosInIds(mIntI, mIntF, bonoloto)
+    Set mCol = mEng.GetSorteosInIds(mIntI, mIntF, Bonoloto)
     PrintSorteos mCol
     mIntI = 3203
     mIntF = 3208
@@ -967,7 +983,7 @@ Public Sub SorteoEngineTest()
     Set mObj = New Sorteo
     With mObj
         .Id = 6953
-        .Juego = bonoloto
+        .Juego = Bonoloto
         .CombinacionGanadora.Texto = "5-14-25-26-36-3"
         .Complementario = 44
         .Dia = "L"
@@ -1025,11 +1041,11 @@ Public Sub SorteoEngineTest()
     '   11.- Prueba SetSo
     '
     Set mCol = New Sorteos
-    mCol.Juego = bonoloto
+    mCol.Juego = Bonoloto
     Set mObj = New Sorteo
     With mObj
         .Id = 6953
-        .Juego = bonoloto
+        .Juego = Bonoloto
         .CombinacionGanadora.Texto = "5-14-25-26-36-3"
         .Complementario = 44
         .Dia = "L"
@@ -1041,7 +1057,7 @@ Public Sub SorteoEngineTest()
     '
     '
     '
-    Set mObj = mEng.GetSorteoById(6928, bonoloto)
+    Set mObj = mEng.GetSorteoById(6928, Bonoloto)
     mObj.CombinacionGanadora.Texto = "8-9-11-25-28-39"
     mObj.Ordenado = False
     mCol.Add mObj
@@ -1051,7 +1067,7 @@ Public Sub SorteoEngineTest()
     Set mObj = New Sorteo
     With mObj
         .Id = 6954
-        .Juego = bonoloto
+        .Juego = Bonoloto
         .CombinacionGanadora.Texto = "45-33-32-14-22-7"
         .Complementario = 10
         .Dia = "L"
@@ -1121,6 +1137,51 @@ Private Sub SorteoModelTest()
     Set mObj = New SorteoModel
     PrintSorteoModel mObj
     '
+    '   2.- Pruebas con Bonoloto
+    '
+    mObj.Juego = LT_BONOLOTO
+    '
+    '   2.1.- Obtiene el primer sorteo de Bonoloto
+    '
+    mObj.GetFirstSorteo
+    PrintSorteoModel mObj
+    mId = mObj.IdSelected
+    '
+    '   2.2.- Obtiene el Siguiente Sorteo al actual de Bonoloto
+    '
+    mObj.GetNextSorteoRecord mId
+    PrintSorteoModel mObj
+    '
+    '   2.3.- Obtiene el Ultmimo Sorteo de Bonoloto
+    '
+    mObj.GetLastSorteo
+    PrintSorteoModel mObj
+    mId = mObj.IdSelected
+    '
+    '   2.4.- Obtiene el Sorteo anterior al último de Bonoloto
+    '
+    mObj.GetPrevSorteoRecord mId
+    PrintSorteoModel mObj
+    
+'    mObj.SearchSorteos
+    
+    
+    
+    
+    
+    
+    Err.Raise ERR_TODO, "Lot_PqtConcursosTesting.SorteoModelTest", MSG_TODO
+    
+'
+'    mObj.GetPremios
+'    mObj.GetSorteoRecord
+'    mObj.NuevoSorteoRecord
+'    mObj.GuardarSorteoRecord
+'    mObj.EliminarSorteoRecord
+    
+    
+    
+    '
     '   2.- Agregar un Nuevo Sorteo
     '
     mObj.Juego = LT_BONOLOTO
@@ -1147,9 +1208,43 @@ Private Sub SorteoModelTest()
     Else
         Debug.Print vbTab & "#Error SorteoModel.NuevoSorteoRecord (GORDO)"
     End If
-    
+    '
+    '   3.- Buscar un sorteo por ID
+    '
+    Set mObj = New SorteoModel
+    mObj.Juego = Bonoloto
+    If mObj.GetSorteoRecord(7063) Then
+        PrintSorteoModel mObj
+    Else
+        Debug.Print vbTab & "#Error SorteoModel.GetSorteoRecord (BONOLOTO)"
+    End If
+    Set mObj = New SorteoModel
+    mObj.Juego = LoteriaPrimitiva
+    If mObj.GetSorteoRecord(3257) Then
+        PrintSorteoModel mObj
+    Else
+        Debug.Print vbTab & "#Error SorteoModel.GetSorteoRecord (PRIMITIVA)"
+    End If
+    Set mObj = New SorteoModel
+    mObj.Juego = Euromillones
+    If mObj.GetSorteoRecord(1140) Then
+        PrintSorteoModel mObj
+    Else
+        Debug.Print vbTab & "#Error SorteoModel.GetSorteoRecord (EUROMILLON)"
+    End If
+    Set mObj = New SorteoModel
+    mObj.Juego = gordoPrimitiva
+    If mObj.GetSorteoRecord(1133) Then
+        PrintSorteoModel mObj
+    Else
+        Debug.Print vbTab & "#Error SorteoModel.GetSorteoRecord (GORDO)"
+    End If
     '
     '   3.- Guardar un Sorteo
+    '
+      
+    
+    
     '   4.- Eliminar un sorteo
     '   5.- Buscar un sorteo GetSorteoRecord
     '   5.- SearchSorteos
@@ -1170,7 +1265,7 @@ Private Sub SorteoModelTest()
     '
     '
     '
-    Err.Raise ERR_TODO, "Lot_PqtConcursosTesting.SorteoModelTest", MSG_TODO
+
 
  On Error GoTo 0
 SorteoModelTest__CleanExit:
@@ -1194,29 +1289,29 @@ Private Sub PrintSorteoModel(mObj As SorteoModel)
     Dim i As Integer
     Dim j As Integer
     Debug.Print "==> Pruebas SorteoModel"
-    Debug.Print vbTab & "CombinacionGanadora = " & mObj.CombinacionGanadora
-    Debug.Print vbTab & "Complementario      = " & mObj.Complementario
-    Debug.Print vbTab & "DiaSemana           = " & mObj.DiaSemana
-    Debug.Print vbTab & "E1                  = " & mObj.E1
-    Debug.Print vbTab & "E2                  = " & mObj.E2
-    Debug.Print vbTab & "Estrellas           = " & mObj.Estrellas
-    Debug.Print vbTab & "FechaFin            = " & mObj.FechaFin
-    Debug.Print vbTab & "FechaInicio         = " & mObj.FechaInicio
-    Debug.Print vbTab & "FechaSorteo         = " & mObj.FechaSorteo
     Debug.Print vbTab & "IdSelected          = " & mObj.IdSelected
     Debug.Print vbTab & "Juego               = " & mObj.Juego
-    Debug.Print vbTab & "LineasPorPagina     = " & mObj.LineasPorPagina
+    Debug.Print vbTab & "FechaSorteo         = " & mObj.FechaSorteo
+    Debug.Print vbTab & "DiaSemana           = " & mObj.DiaSemana
+    Debug.Print vbTab & "NumSorteo           = " & mObj.NumSorteo
+    Debug.Print vbTab & "Semana              = " & mObj.Semana
+    Debug.Print vbTab & "OrdenAparicion      = " & mObj.OrdenAparicion
+    Debug.Print vbTab & "Reintegro           = " & mObj.Reintegro
+    Debug.Print vbTab & "CombinacionGanadora = " & mObj.CombinacionGanadora
+    Debug.Print vbTab & "Complementario      = " & mObj.Complementario
     Debug.Print vbTab & "N1                  = " & mObj.N1
     Debug.Print vbTab & "N2                  = " & mObj.N2
     Debug.Print vbTab & "N3                  = " & mObj.N3
     Debug.Print vbTab & "N4                  = " & mObj.N4
     Debug.Print vbTab & "N5                  = " & mObj.N5
     Debug.Print vbTab & "N6                  = " & mObj.N6
-    Debug.Print vbTab & "NumSorteo           = " & mObj.NumSorteo
-    Debug.Print vbTab & "OrdenAparicion      = " & mObj.OrdenAparicion
+    Debug.Print vbTab & "Estrellas           = " & mObj.Estrellas
+    Debug.Print vbTab & "E1                  = " & mObj.E1
+    Debug.Print vbTab & "E2                  = " & mObj.E2
+    Debug.Print vbTab & "FechaFin            = " & mObj.FechaFin
+    Debug.Print vbTab & "FechaInicio         = " & mObj.FechaInicio
+    Debug.Print vbTab & "LineasPorPagina     = " & mObj.LineasPorPagina
     Debug.Print vbTab & "PaginaActual        = " & mObj.PaginaActual
-    Debug.Print vbTab & "Reintegro           = " & mObj.Reintegro
-    Debug.Print vbTab & "Semana              = " & mObj.Semana
     Debug.Print vbTab & "TotalPaginas        = " & mObj.TotalPaginas
     Debug.Print vbTab & "TotalRegistros      = " & mObj.TotalRegistros
     Debug.Print vbTab & "MatrizPremios       = "

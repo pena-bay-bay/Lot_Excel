@@ -1,5 +1,5 @@
 # Lot_Excel
-Titulo Proyecto: Proyecto Loteria primitiva en Excel
+Titulo Proyecto: Proyecto Lotería primitiva en Excel
 Fecha Inicio   : sáb, 12 de octubre de 2019
 Fecha Fin      : En curso
 Objetivo       : Aplicativo de gestión de la peña Bay-Bay en Microsoft Excel
