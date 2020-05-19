@@ -150,6 +150,7 @@ Public Sub Pintar_Muestra(ByRef objMuestra As Muestra)
     ActiveCell.Offset(8, 16).Value = "Peso"
     ActiveCell.Offset(8, 17).Value = "Tendencia"
     ActiveCell.Offset(8, 18).Value = "C.Ausencias"
+    ActiveCell.Offset(8, 19).Value = "V.Homogeneo"
     
     '   Obtiene parametros de la muestra
     '
@@ -213,10 +214,10 @@ Public Sub Pintar_Muestra(ByRef objMuestra As Muestra)
         ActiveCell.Offset(i, 5).NumberFormat = "0.000%"
         
         ActiveCell.Offset(i, 6).Value = m_objBola.Tiempo_Medio
-        ActiveCell.Offset(i, 6).NumberFormat = "0"
+        ActiveCell.Offset(i, 6).NumberFormat = "0.00"
         
         ActiveCell.Offset(i, 7).Value = m_objBola.Desviacion_Tm
-        ActiveCell.Offset(i, 7).NumberFormat = "0"
+        ActiveCell.Offset(i, 7).NumberFormat = "0.00"
         
         ActiveCell.Offset(i, 8).Value = m_objBola.Moda
         ActiveCell.Offset(i, 8).NumberFormat = "0"
@@ -239,6 +240,8 @@ Public Sub Pintar_Muestra(ByRef objMuestra As Muestra)
         ActiveCell.Offset(i, 16).Value = m_objBola.Numero.Peso
         ActiveCell.Offset(i, 17).Value = m_objBola.Tendencia
         ActiveCell.Offset(i, 18).Value = m_objBola.Clase_Ausencias
+        ActiveCell.Offset(i, 19).Value = m_objBola.ValorHomogeneo
+        ActiveCell.Offset(i, 19).NumberFormat = "0.000"
     Next i
     
     'Colorea los rangos de probabilidades

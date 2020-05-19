@@ -121,8 +121,9 @@ Private Sub UserForm_Initialize()
     '
     '
     m_varFechasDefinidas = Array(ctHoy, ctAyer, ctUltimaSemana, _
-                           ctUltimaQuincena, ctUltimoMes, ctLoQueVadeSemana, _
-                           ctLoQueVadeMes, ctPersonalizadas)
+                           ctUltimaQuincena, ctUltimoMes, ctUltimoTrimestre, _
+                           ctLoQueVadeSemana, ctLoQueVadeMes, ctLoQueVadeTrimestre, _
+                           ctPersonalizadas)
     '
     '   Carga el combo de las fechas
     '

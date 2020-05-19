@@ -13,6 +13,8 @@ Attribute VB_Exposed = True
 ' Author    : Carlos Almela Baeza
 ' Purpose   : Objeto Documento que contiene la información del boleto jugado
 '---------------------------------------------------------------------------------------
+Option Explicit
+
 Private m_iId As Integer
 Private m_iSemana As Integer
 Private m_sJuego As String
@@ -200,7 +202,7 @@ End Property
 '---------------------------------------------------------------------------------------
 '
 Public Property Get Premio_Reintegros() As Currency
-    Reintegros = m_cReintegros
+    Premio_Reintegros = m_cReintegros
 End Property
 
 Public Property Let Premio_Reintegros(ByVal cReintegros As Currency)

@@ -3,7 +3,7 @@ Fecha   : 16/10/2016 16:24:00
 Objetivo: Reunir códigos de código Visual Basic del proyecto Lot_Excel
 
 Indice:
-    01.- Documentación
+    01.- Documentación del Código
          Comentarios del código para que sea más legible e interpretable
     02.- Control de Errores
          Rutinas de control y log de errores 
@@ -27,7 +27,7 @@ Indice:
 
     Obtener la hora actual: ? format(Now(),"ddd, dd/MMM/yyyy hh:mm:ss",vbMonday)
     
-01.- Documentación
+01.- Documentación del Código
     
     a) Cabecera de Modulo
         ' *============================================================================*
@@ -51,6 +51,7 @@ Indice:
         ' *
         ' *     Autor      : Carlos Almela Baeza
         ' *     Creación   : ddd, dd/MMM/yyyy hh:mm:ss
+		' *     Modificado : ddd, dd/MMM/yyyy hh:mm:ss
         ' *     Versión    : 1.0
         ' *     Propósito  : 
         ' *
@@ -99,7 +100,8 @@ Indice:
         ' *     Fichero    : <<nombre fichero>>.cls
         ' *
         ' *     Autor      : Carlos Almela Baeza
-        ' *     Creación   : ddd, dd/MMM/yyyy hh:mm:ss
+		' *     Creación   : ddd, dd/MMM/yyyy hh:mm:ss
+		' *     Modificado : ddd, dd/MMM/yyyy hh:mm:ss
         ' *     Versión    : 1.0
         ' *     Propósito  :
         ' *
@@ -127,7 +129,8 @@ Indice:
         ' Propósito      :
         ' Parámetros     :
         '------------------------------------------------------------------------------*
-        '' *===========(EOF): <<nombre fichero>>
+        '
+		' *===========(EOF): <<nombre fichero>>.cls
         
 02.- Control de Errores
     '
@@ -1007,7 +1010,6 @@ Indice:
     
 
 11.- Formatos 
-
 		Dim MyTime, MyDate, MyStr
 		MyTime = #17:04:23#
 		MyDate = #January 27, 1993#

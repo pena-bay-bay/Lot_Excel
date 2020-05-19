@@ -1,4 +1,5 @@
 Attribute VB_Name = "Lot_PqtNucleo"
+Option Explicit
 
 Public Function GetColParametros() As ParametrosProceso
     Dim mObj As ParametrosProceso

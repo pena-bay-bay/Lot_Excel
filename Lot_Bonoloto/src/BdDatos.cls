@@ -351,9 +351,11 @@ Public Function Resultados_Fechas(ByVal Fecha_Inicial As Date, ByVal Fecha_Final
 Resultados_Fechas_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, ErrSource, "BdDatos.Resultados_Fechas")
-   '   Lanza el error
+   If ErrNumber <> 100 Then
+    '   Audita el error
+    Call HandleException(ErrNumber, ErrDescription, ErrSource, "BdDatos.Resultados_Fechas")
+    '   Lanza el error
+   End If
    Err.Raise ErrNumber, "BdDatos.Resultados_Fechas", ErrDescription
 End Function
 '---------------------------------------------------------------------------------------

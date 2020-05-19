@@ -14,7 +14,7 @@ Attribute VB_Exposed = True
 ' Purpose   :
 ' Version   :
 '---------------------------------------------------------------------------------------
-
+Option Explicit
 
 '---------------------------------------------------------------------------------------
 ' Procedure : GetNewParametro
@@ -45,7 +45,7 @@ GetNewParametro_Error:
    'Err.Raise ErrNumber, ErrSource, ErrDescription
    '   Informa del error
    'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   'Call Trace("CERRAR")
+   '
 
 
 End Function

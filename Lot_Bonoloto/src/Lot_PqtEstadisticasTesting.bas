@@ -149,6 +149,7 @@ Private Sub Print_ParametrosMuestra(Obj As ParametrosMuestra)
     Debug.Print vbTab & "ResgistroFinal    =" & Obj.ResgistroFinal
     Debug.Print vbTab & "ResgistroInicial  =" & Obj.ResgistroInicial
     On Error Resume Next
+    Debug.Print vbTab & "ToString()         " & Obj.ToString()
     Debug.Print vbTab & "Validar()          " & Obj.Validar()
     Debug.Print vbTab & "GetMensaje()       " & Obj.GetMensaje()
     Err.Clear

@@ -154,9 +154,9 @@ End Sub
 '---------------------------------------------------------------------------------------
 '
 Private Sub ParametrosMetodoTest()
-    Dim m_objParMetodo As ParametrosMetodo
+    Dim m_objParMetodo As Metodo
     
-    Set m_objParMetodo = New ParametrosMetodo
+    Set m_objParMetodo = New Metodo
     
     
     With m_objParMetodo
@@ -166,7 +166,6 @@ Private Sub ParametrosMetodoTest()
         .Id = 1
         .ModalidadJuego = LP_LB_6_49
         .NumeroSorteos = 40
-        .Orden = 1
         .Pronosticos = 6
         .SentidoOrdenacion = True
     End With
@@ -178,7 +177,6 @@ Private Sub ParametrosMetodoTest()
     Debug.Print "Criterio Agrupación      = " & m_objParMetodo.CriteriosAgrupacion
     Debug.Print "Dias de Analisis         = " & m_objParMetodo.DiasAnalisis
     Debug.Print "Numero de Sorteos        = " & m_objParMetodo.NumeroSorteos
-    Debug.Print "Orden                    = " & m_objParMetodo.Orden
     Debug.Print "Pronosticos              = " & m_objParMetodo.Pronosticos
     Debug.Print "Sentido de la Ordenación = " & m_objParMetodo.SentidoOrdenacion
     Debug.Print "OrdenacionToString()     = " & m_objParMetodo.OrdenacionToString()
@@ -196,18 +194,18 @@ End Sub
 '---------------------------------------------------------------------------------------
 '
 Public Sub MetodoTest()
-    Dim m_objMetodo As metodo
+    Dim m_objMetodo As Metodo
     
-    Set m_objMetodo = New metodo
+    Set m_objMetodo = New Metodo
     
     With m_objMetodo
         .TipoProcedimiento = mtdEstadistico
         .EntidadNegocio.FechaModificacion = Date
-        .EsMultiple = False
-        .Parametros.CriteriosAgrupacion = grpParidad
-        .Parametros.CriteriosOrdenacion = ordDesviacion
-        .Parametros.DiasAnalisis = 42
-        .Parametros.SentidoOrdenacion = True
+'        .EsMultiple = False
+        .CriteriosAgrupacion = grpParidad
+        .CriteriosOrdenacion = ordDesviacion
+        .DiasAnalisis = 42
+        .SentidoOrdenacion = True
         .TipoMuestra = True
     End With
     
@@ -223,19 +221,18 @@ Public Sub MetodoTest()
     Debug.Print "MarkForDelete          =" & m_objMetodo.EntidadNegocio.MarkForDelete
     Debug.Print "Origen                 =" & m_objMetodo.EntidadNegocio.Origen
     Debug.Print "Situacion              =" & m_objMetodo.EntidadNegocio.Situacion
-    Debug.Print "EsMultiple             =" & m_objMetodo.EsMultiple
-    Debug.Print "AgrupacionToString     =" & m_objMetodo.Parametros.AgrupacionToString
-    Debug.Print "CriteriosAgrupacion    =" & m_objMetodo.Parametros.CriteriosAgrupacion
-    Debug.Print "CriteriosOrdenacion    =" & m_objMetodo.Parametros.CriteriosOrdenacion
-    Debug.Print "DiasAnalisis           =" & m_objMetodo.Parametros.DiasAnalisis
-    Debug.Print "Id                     =" & m_objMetodo.Parametros.Id
-    Debug.Print "ModalidadJuego         =" & m_objMetodo.Parametros.ModalidadJuego
-    Debug.Print "NumeroSorteos          =" & m_objMetodo.Parametros.NumeroSorteos
-    Debug.Print "Orden                  =" & m_objMetodo.Parametros.Orden
-    Debug.Print "OrdenacionToString     =" & m_objMetodo.Parametros.OrdenacionToString
-    Debug.Print "Pronosticos            =" & m_objMetodo.Parametros.Pronosticos
-    Debug.Print "SentidoOrdenacion      =" & m_objMetodo.Parametros.SentidoOrdenacion
-    Debug.Print "ToString               =" & m_objMetodo.Parametros.ToString
+'    Debug.Print "EsMultiple             =" & m_objMetodo.EsMultiple
+    Debug.Print "AgrupacionToString     =" & m_objMetodo.AgrupacionToString
+    Debug.Print "CriteriosAgrupacion    =" & m_objMetodo.CriteriosAgrupacion
+    Debug.Print "CriteriosOrdenacion    =" & m_objMetodo.CriteriosOrdenacion
+    Debug.Print "DiasAnalisis           =" & m_objMetodo.DiasAnalisis
+    Debug.Print "Id                     =" & m_objMetodo.Id
+    Debug.Print "ModalidadJuego         =" & m_objMetodo.ModalidadJuego
+    Debug.Print "NumeroSorteos          =" & m_objMetodo.NumeroSorteos
+    Debug.Print "OrdenacionToString     =" & m_objMetodo.OrdenacionToString
+    Debug.Print "Pronosticos            =" & m_objMetodo.Pronosticos
+    Debug.Print "SentidoOrdenacion      =" & m_objMetodo.SentidoOrdenacion
+    Debug.Print "ToString               =" & m_objMetodo.ToString
     Debug.Print "TipoMuestra            =" & m_objMetodo.TipoMuestra
     Debug.Print "TipoProcedimiento      =" & m_objMetodo.TipoProcedimiento
        

@@ -48,7 +48,7 @@ Public Sub Add(vNewValue As Sugerencia)
     '
     '   Obtenemos la clave del parametro
     '
-    mKey = CStr(vNewValue.Id)
+    mKey = CStr(vNewValue.Entidad.Id)
     '
     '   Agregamos a la colección con la clave y al final de la misma
     '
@@ -111,7 +111,7 @@ Public Sub MarkForDelete(datIndex As Integer)
         Err.Raise ERR_INDEXERROR, "Sorteos.MarkForDelete", strError
     Else
         Set mSuge = mCol.Item(datIndex)
-        mSuge.EntidadNegocio.MarkForDelete = True
+        mSuge.Entidad.MarkForDelete = True
     End If
     
    On Error GoTo 0
@@ -142,7 +142,7 @@ Public Sub Undelete(datIndex As Integer)
         Err.Raise ERR_INDEXERROR, "Sorteos.Undelete", strError
     Else
         Set mSuge = mCol.Item(datIndex)
-        mSuge.EntidadNegocio.MarkForDelete = False
+        mSuge.Entidad.MarkForDelete = False
     End If
    
    On Error GoTo 0

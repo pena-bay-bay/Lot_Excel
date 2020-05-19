@@ -603,7 +603,47 @@ Private Sub SugerenciaTest()
     '
     Set mObj = New Sugerencia
     PrintSugerencia mObj
+    '
+    '   UnitTest 2.- Objeto con datos
+    '
+    With mObj
+        .Combinacion.Texto = "15-48-07-13-22-31"
+        .Entidad.Id = 23
+        .Metodo.TipoProcedimiento = mtdAleatorio
+        .Metodo.Pronosticos = 6
+        .Metodo.CriteriosAgrupacion = grpDecenas
+        .Metodo.CriteriosOrdenacion = ordDesviacion
+        .Metodo.TipoMuestra = True
+        .Metodo.NumeroSorteos = 50
+        .Modalidad = LP_LB_6_49
+        .Parametros.FechaAnalisis = Date
+    End With
+    PrintSugerencia mObj
+    '
+    '   UnitTest 3.- Objeto No valido, metodo no valido
+    '
+    Set mObj = New Sugerencia
+    With mObj
+        .Combinacion.Texto = "05-14-18-22-47-31"
+        .Entidad.Id = 12
+        .Metodo.TipoProcedimiento = mtdSinDefinir
+        .Metodo.Pronosticos = 6
+        .Metodo.TipoMuestra = True
+        .Metodo.NumeroSorteos = 50
+        .Modalidad = LP_LB_6_49
+        .Parametros.FechaAnalisis = Date
+    End With
+    If Not mObj.IsValid Then
+        Debug.Print " La sugerencia no es valida "
+    End If
+    PrintSugerencia mObj
     
+    '
+    '   UnitTest 4.- Objeto No valido, falta fecha análisis
+    '
+    '
+    '   UnitTest 5.- Objeto Valido
+    '
     
     On Error GoTo 0
 SugerenciaTest__CleanExit:
@@ -628,6 +668,7 @@ Private Sub RealizarSugerenciaTest()
     Dim mObj As RealizarSugerencia
     Dim mSug As Sugerencia
     Dim mMtd As Metodo
+    
   On Error GoTo RealizarSugerenciaTest_Error
     '
     '   UnitTest 1.- Objeto Vacio
@@ -637,6 +678,45 @@ Private Sub RealizarSugerenciaTest()
     '
     '   UnitTest 2.- Sugerencia metodo aleatorio
     '
+    Set mMtd = New Metodo
+    With mMtd
+        .TipoProcedimiento = mtdAleatorio
+        .ModalidadJuego = LP_LB_6_49
+        .Pronosticos = 6
+    End With
+    Set mSug = mObj.GetSugerencia(mMtd, #5/4/2020#)
+    PrintSugerencia mSug
+    '
+    PrintRealizarSugerencia mObj
+    
+    '
+    '   UnitTest 3.- Sugerencia metodo Bombo
+    '
+    '
+    '   UnitTest 4.- Sugerencia metodo BomboCargado
+    '
+    '
+    '   UnitTest 5.- Sugerencia metodo Estadistica
+    '
+    '
+    '   UnitTest 6.- Sugerencia metodo Estadistica Combinación
+    '
+    '
+    '   UnitTest 7.- Sugerencia metodo Aleatorio con filtros
+    '
+    '
+    '   UnitTest 8.- Sugerencia metodo Estadistica con filtros
+    '
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    Err.Raise ERR_TODO, "Lot_PqtSugerenciasTesting.RealizarSugerenciaTest", MSG_TODO
     
   
   On Error GoTo 0
@@ -659,18 +739,17 @@ End Sub
 Private Sub PrintSugerencia(mObj As Sugerencia)
     Debug.Print "==> Pruebas Sugerencia"
     '-> Propiedades
-    Debug.Print vbTab & "Bolas             =" & mObj.Bolas.Count
-    Debug.Print vbTab & "Combinacion       =" & mObj.Combinacion.Texto
-    Debug.Print vbTab & "FechaAlta         =" & mObj.Entidad.FechaAlta
-    Debug.Print vbTab & "FechaModificacion =" & mObj.Entidad.FechaModificacion
-    Debug.Print vbTab & "Id                =" & mObj.Entidad.Id
-    Debug.Print vbTab & "Metodo            =" & mObj.Metodo.ToString()
-    Debug.Print vbTab & "Modalidad         =" & mObj.Modalidad
-    Debug.Print vbTab & "Parametros        =" & mObj.Parametros
+    Debug.Print vbTab & "Combinacion       = " & mObj.Combinacion.Texto
+    Debug.Print vbTab & "FechaAlta         = " & mObj.Entidad.FechaAlta
+    Debug.Print vbTab & "FechaModificacion = " & mObj.Entidad.FechaModificacion
+    Debug.Print vbTab & "Id                = " & mObj.Entidad.Id
+    Debug.Print vbTab & "Metodo            = " & mObj.Metodo.ToString()
+    Debug.Print vbTab & "Modalidad         = " & mObj.Modalidad
+    Debug.Print vbTab & "Parametros        = " & mObj.Parametros.ToString()
 '    '-> Metodos
-    Debug.Print vbTab & "MensajeError()    =" & mObj.MensajeError()
-    Debug.Print vbTab & "ToString()        =" & mObj.ToString()
-    Debug.Print vbTab & "Validar()         =" & mObj.Validar()
+    Debug.Print vbTab & "MensajeError()    = " & mObj.MensajeError()
+    Debug.Print vbTab & "ToString()        = " & mObj.ToString()
+    Debug.Print vbTab & "IsValid()         = " & mObj.IsValid()
 End Sub
 
 

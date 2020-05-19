@@ -14,16 +14,15 @@ Attribute VB_Exposed = True
 ' *     Autor      : Carlos Almela Baeza
 ' *     Creación   : vie, 13/abr/2012 hh:mm:ss
 ' *     Versión    : 1.0
-' *     Propósito  :
-' *
+' *     Propósito  : Contiene una sugerencia para un sorteo y sus parametros
+' *                  de generación
 ' *============================================================================*
 Option Explicit
 Option Base 0
 '
 '--- Variables Privadas -------------------------------------------------------*
-Private m_colBolas As Bolas
-Private m_eModalidad As ModalidadJuego
-Private m_objCombinacion As Combinacion
+Private mModalidad As ModalidadJuego
+Private mCombinacion As Combinacion
 '--- Constantes ---------------------------------------------------------------*
 '--- Mensajes -----------------------------------------------------------------*
 '--- Errores ------------------------------------------------------------------*
@@ -32,52 +31,57 @@ Public Entidad As EntidadNegocio
 Public Metodo As Metodo
 Public Parametros As ParametrosMuestra
 
-Public Property Get Bolas() As Bolas
-    Set Bolas = m_colBolas
-End Property
-
-Public Property Set Bolas(colBolas As Bolas)
-    Set m_colBolas = colBolas
-End Property
-
 Public Property Get Modalidad() As ModalidadJuego
-    Modalidad = m_eModalidad
+    Modalidad = mModalidad
 End Property
 
 Public Property Let Modalidad(ByVal eModalidad As ModalidadJuego)
-    m_eModalidad = eModalidad
+    mModalidad = eModalidad
 End Property
 
 Public Property Get Combinacion() As Combinacion
-    Set Combinacion = m_objCombinacion
+    Set Combinacion = mCombinacion
 End Property
 
 Public Property Set Combinacion(objCombinacion As Combinacion)
-    Set m_objCombinacion = objCombinacion
+    Set mCombinacion = objCombinacion
 End Property
 
 
 '--- Métodos Privados ---------------------------------------------------------*
 Private Sub Class_Initialize()
-    Set m_colBolas = New Bolas
-    Set m_objCombinacion = New Combinacion
-    m_eModalidad = LP_LB_6_49
+    Set mCombinacion = New Combinacion
+    Set Entidad = New EntidadNegocio
+    Set Metodo = New Metodo
+    Set Parametros = New ParametrosMuestra
+    mModalidad = LP_LB_6_49
 End Sub
 
 Private Sub Class_Terminate()
-    Set m_colBolas = Nothing
-    Set m_objCombinacion = Nothing
+    Set mCombinacion = Nothing
+    Set Entidad = Nothing
+    Set Metodo = Nothing
+    Set Parametros = Nothing
 End Sub
 '--- Métodos Públicos ---------------------------------------------------------*
 '------------------------------------------------------------------------------*
-' Procedimiento  : <<nombre propiedad>>
-' Fecha          : dd/MMM/yyyy
-' Propósito      :
-' Parámetros     :
+' Procedimiento  : IsValid
+' Fecha          :
+' Propósito      : validar los atributos de la clase
 '------------------------------------------------------------------------------*
-Public Function Validar() As Boolean
+Public Function IsValid() As Boolean
     Dim bResult As Boolean
-    Validar = bResult
+    If Not (Metodo.IsValid) Then
+        bResult = False
+    Else
+        bResult = True
+    End If
+    If Not (Parametros.Validar) Then
+        bResult = False
+    Else
+        bResult = True
+    End If
+    IsValid = bResult
 End Function
 
 Public Function MensajeError() As String
@@ -87,6 +91,20 @@ End Function
 
 Public Function ToString() As String
     Dim sResult As String
+    Dim mModJuego As String
+    Select Case mModalidad
+        Case LP_LB_6_49: mModJuego = "6/49"
+        Case GP_5_54: mModJuego = "5/54"
+        Case EU_5_50: mModJuego = "5/50"
+        Case EU_2_12: mModJuego = "2/12"
+    End Select
+        
+    ' Sugerencia (Modalidad-fecha): nn-nn-nn-nn-nn-nn-nn-nn, Metodo
+    sResult = "Sugerencia: ($1-$2) $3 , $4"
+    sResult = Replace(sResult, "$1", mModJuego)
+    sResult = Replace(sResult, "$2", Format(Parametros.FechaAnalisis, "dd/mm/yyyy"))
+    sResult = Replace(sResult, "$3", mCombinacion.TextoOrdenado)
+    sResult = Replace(sResult, "$4", Metodo.ToString)
     ToString = sResult
 End Function
 

@@ -5,7 +5,7 @@ Attribute VB_Name = "Lot_fnBarras"
 ' Author    : Carlos Almela Baeza
 ' Purpose   : Aglutina el control del las macros
 '---------------------------------------------------------------------------------------
-
+Option Explicit
 Public mobjEstadoAplicacion    As New EstadoAplicacion  'Objeto estado de la aplicación
 Private DB                     As New BdDatos           'Objeto Base de Datos
 '---------------------------------------------------------------------------------------

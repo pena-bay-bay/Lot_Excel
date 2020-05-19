@@ -32,6 +32,7 @@ Private mJuego As Juego
 Private Sub Class_Initialize()
     mFInicioBonoloto = #10/5/1999#
     mFecCambioBonoloto = #3/6/2015#
+    mFInicioEuroMillon = #2/13/2004#
     mJuego = JUEGO_DEFECTO
 End Sub
 '------------------------------------------------------------------------------*
@@ -99,16 +100,20 @@ Public Function GetProximoSorteo(vNewDate As Date) As Date
             Select Case mDiaSemana
                 Case 2, 5:  ' L J
                     GetProximoSorteo = GetProximoSorteo + 1
-                Case 7:     ' S
-                    GetProximoSorteo = GetProximoSorteo + 3
-                Case 1, 4:  ' D, X
+                Case 1, 4:  ' D X
                     GetProximoSorteo = GetProximoSorteo + 2
+                Case 7, 3:  ' S M
+                    GetProximoSorteo = GetProximoSorteo + 3
+                Case 6:     ' V
+                    GetProximoSorteo = GetProximoSorteo + 4
             End Select
             
         Case Juego.gordoPrimitiva
             mDias = 1       ' D
             If mDiaSemana > 1 Then
                 GetProximoSorteo = GetProximoSorteo + (7 - mDiaSemana)
+            Else
+                GetProximoSorteo = GetProximoSorteo + 7
             End If
             
         Case Juego.LoteriaPrimitiva
@@ -329,3 +334,43 @@ Public Function GetAnteriorSorteo(vNewDate As Date) As Date
                 End Select
     End Select
 End Function
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : AddDiasSorteo
+' Fecha          : 24/01/2020 09:59
+' Propósito      : Devuelve la fecha resultante de sumar ndias a un sorteo
+' Parámetros     : Fecha de análisis, Numero dias
+' Retorno        : Fecha correspondiente a la suma de sorteos a una fecha
+'------------------------------------------------------------------------------*
+'
+Public Function AddDiasSorteo(vNewDate As Date, nNewDias As Integer) As Date
+    Dim i     As Integer
+    Dim mDate As Date
+    
+    mDate = vNewDate
+    For i = 1 To nNewDias
+        mDate = Me.GetProximoSorteo(mDate)
+    Next i
+'
+'   TODO: Optimizar con un algoritmo de calculo segun el juego
+'
+'    '
+'    '  1 = Domingo
+'    '  D,L,M,X,J,V,S
+'    '  1,2,3,4,5,6,7
+'    '
+'    mDiaSemana = Weekday(vNewDate)
+'    '
+'    '   Cuantas semanas hay en los dias suministrados
+'    '   depende del juego, si es bonoloto hay 6 juegos por semana
+'
+'
+'    mDate = vNewDate
+'    For i = 0 To nNewDias
+'        mDate = mDate + i
+'
+'    Next i
+'
+    AddDiasSorteo = mDate
+End Function
+

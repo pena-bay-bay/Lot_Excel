@@ -14,7 +14,7 @@ Option Explicit
 Public Sub Colorea_Celda(celda As Range, _
                           Numero As Variant, _
                           ByRef objMuestra As Muestra, _
-                          objMetodo As metodo)
+                          objMetodo As Metodo)
     Dim i        As Integer                     'Número en formato Entero
     Dim m_iColor As Integer                     'Color de la celda
    On Error GoTo Colorea_Celda_Error
@@ -24,7 +24,7 @@ Public Sub Colorea_Celda(celda As Range, _
     'Selección de la matriz de números según el método
     
     
-    Select Case (objMetodo.Parametros.CriteriosOrdenacion)
+    Select Case (objMetodo.CriteriosOrdenacion)
 
 '        Case ordSinDefinir
 

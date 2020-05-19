@@ -23,7 +23,8 @@ Public EntidadNegocio   As EntidadNegocio
 Public EsMultiple       As Boolean
 Public NumeroApuestas   As Integer
 Public FechaAlta        As Date
-Public metodo           As String
+Public FechaFinVigencia As Date
+Public Metodo           As String
 Public Juego            As Juego
 '
 Private m_dCoste As Double

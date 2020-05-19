@@ -5,8 +5,10 @@ Attribute VB_Name = "Lot_10_ComprobarApuestas"
 ' Date      : 22/10/2013
 ' Purpose   : Verificar Pronósticos
 '---------------------------------------------------------------------------------------
-Private DB                     As New BdDatos           'Objeto Base de Datos
 Option Explicit
+
+Private DB                     As New BdDatos           'Objeto Base de Datos
+Private mInfo                  As InfoSorteo            ' Información de sorteos
 
 '---------------------------------------------------------------------------------------
 ' Procedure : btn_ComprobarApuestas
@@ -18,6 +20,7 @@ Option Explicit
 Public Sub btn_ComprobarApuestas()
     Dim ofrmPeriodo         As frmSelPeriodo
     Dim oParamCU            As ParametrosComprobarApuestas
+    
   On Error GoTo btn_ComprobarApuestas_Error
     '
     '  Focalizar la hoja de salida
@@ -53,6 +56,10 @@ Public Sub btn_ComprobarApuestas()
                 '  Definir Parametros del proceso
                 '
                 Set oParamCU = New ParametrosComprobarApuestas
+                '
+                '   Tipo de comparación: 0 Todo, 1 Vigencia  ##TODO: incluir selección en formulario
+                '
+                oParamCU.TipoComparacion = 1
                 '
                 '   Obtiene los datos del formulario
                 '
@@ -186,50 +193,28 @@ Private Sub PonCabecera(oParametros As ParametrosComprobarApuestas)
     Dim tmpFInicial     As Date
     Dim tmpFFinal       As Date
     Dim tmpFecha        As Date
-    Dim rgOrden         As String
-    Dim newrgOrden      As String
+   
    On Error GoTo PonCabecera_Error
     '
     ' Borramos el área de salida de la información
     '
-    Set m_rgCabecera = Range("O2").CurrentRegion
-    m_rgCabecera.Offset(0, 15).Delete
+    Set m_rgCabecera = Range("P2").CurrentRegion
+    m_rgCabecera.Offset(0, 16).Delete
+    Set mInfo = New InfoSorteo
+    mInfo.Constructor JUEGO_DEFECTO
     '
-    ' Ordenamos por Id las apuestas
+    ' Calculamos el número de elementos de la cabecera
     '
-'    Range("A3").Select
-'    newrgOrden = Range("A3").CurrentRegion.Address
-'    If Len(newrgOrden) > 9 Then
-'        rgOrden = "$A$3:" & Right(newrgOrden, 5)
-'    Else
-'        rgOrden = "$A$3:" & Right(newrgOrden, 4)
-'    End If
-'
-'    Selection.AutoFilter        'Crea un autofiltro
-'    ActiveSheet.Sort.SortFields.Clear
-'    ActiveSheet.Sort.SortFields.Add key:=Range("A3"), _
-'                                    SortOn:=xlSortOnValues, _
-'                                    Order:=xlAscending, _
-'                                    DataOption:=xlSortNormal
-'    With ActiveSheet.Sort
-'        .SetRange Range(rgOrden)
-'        .Header = xlNo
-'        .MatchCase = False
-'        .Orientation = xlTopToBottom
-'        .SortMethod = xlPinYin
-'        .Apply
-'    End With
-    '
-    ' ponemos la cabecera
-    '
-    i = oParametros.IntervaloFechas.Dias + 3
-    ReDim m_sCampos(i)
-   ' Componer la cabecera
-    i = 0
     tmpFInicial = oParametros.IntervaloFechas.FechaInicial
     tmpFFinal = oParametros.IntervaloFechas.FechaFinal
+    i = mInfo.GetSorteosEntreFechas(tmpFInicial, tmpFFinal) + 4
+    ReDim m_sCampos(i)
+    '
+    '   Componemos los literales de la cabecera
+    '
+    i = 0
     For tmpFecha = tmpFInicial To tmpFFinal
-        If (Weekday(tmpFecha) <> 1) Then          'No es Domingo
+        If mInfo.EsFechaSorteo(tmpFecha) Then
             m_sCampos(i) = Format(tmpFecha, "ddd, dd/MM/yyyy")
             i = i + 1
         End If
@@ -237,7 +222,7 @@ Private Sub PonCabecera(oParametros As ParametrosComprobarApuestas)
     m_sCampos(i) = "Costes": m_sCampos(i + 1) = "Premios":
     m_sCampos(i + 2) = "Dias": m_sCampos(i + 3) = "Puntuacion"
         
-    Set m_rgCabecera = ActiveSheet.Range("P2")
+    Set m_rgCabecera = ActiveSheet.Range("Q2")
     For i = 0 To UBound(m_sCampos)
         With m_rgCabecera.Offset(0, i)
                 .Value = m_sCampos(i)
@@ -255,9 +240,6 @@ Private Sub PonCabecera(oParametros As ParametrosComprobarApuestas)
                 .Interior.color = 12419407   'azul
         End With
     Next i
-
-    
-
    On Error GoTo 0
    Exit Sub
 
@@ -358,48 +340,54 @@ Private Sub VerApuestasSorteos(oApuesta As Apuesta, oParam As ParametrosComproba
     '
     For Each oSorteo In oParam.ColSorteos
         '
-        '  Creamos el premio
+        '   Si la apuesta está vigente
         '
-        Set oPremio = New Premio
-        '
-        '  Enfrentamos apuesta a sorteo
-        '
-        Set oCUComprobar.MyApuesta = oApuesta
-        Set oCUComprobar.Sorteo = oSorteo
-        '
-        ' Obtenemos el premio de la apuesta
-        '
-        Set oPremio = oCUComprobar.GetPremio
-        '
-        '
-        '
-        If oPremio.BolasAcertadas > 0 Then
+        If (oApuesta.FechaAlta <= oSorteo.Fecha And _
+            oSorteo.Fecha <= oApuesta.FechaFinVigencia) Or _
+            (oParam.TipoComparacion = 0) Then
             '
-            ' Construimos la clave de la coleccion con
-            ' el id de la apuesta y la fecha del sorteo
+            '  Creamos el premio
             '
-            sKey = Format(oSorteo.Fecha, "yyyy-MM-dd")
-            oPremio.key = sKey
+            Set oPremio = New Premio
             '
-            ' Se agrega a la colección
+            '  Enfrentamos apuesta a sorteo
             '
-            oParam.ColAciertos.Add oPremio, sKey
+            Set oCUComprobar.MyApuesta = oApuesta
+            Set oCUComprobar.Sorteo = oSorteo
             '
-            '  acumulamos a la estadistica de la apuesta
+            ' Obtenemos el premio de la apuesta
             '
-            With oEstdstk
-                .Costes = .Costes + oApuesta.Coste(oSorteo.Juego)
-                .DiasAciertos = .DiasAciertos + 1
-                .ImportePremios = .ImportePremios + oPremio.GetPremioEsperado
-                .Puntuacion = .Puntuacion + CalPuntuacion(oPremio.BolasAcertadas)
-            End With
-        Else
-            oEstdstk.Costes = oEstdstk.Costes + oApuesta.Coste(oSorteo.Juego)
+            Set oPremio = oCUComprobar.GetPremio
+            '
+            '
+            '
+            If oPremio.BolasAcertadas > 0 Then
+                '
+                ' Construimos la clave de la coleccion con
+                ' el id de la apuesta y la fecha del sorteo
+                '
+                sKey = Format(oSorteo.Fecha, "yyyy-MM-dd")
+                oPremio.key = sKey
+                '
+                ' Se agrega a la colección
+                '
+                oParam.ColAciertos.Add oPremio, sKey
+                '
+                '  acumulamos a la estadistica de la apuesta
+                '
+                With oEstdstk
+                    .Costes = .Costes + oApuesta.Coste(oSorteo.Juego)
+                    .DiasAciertos = .DiasAciertos + 1
+                    .ImportePremios = .ImportePremios + oPremio.GetPremioEsperado
+                    .Puntuacion = .Puntuacion + CalPuntuacion(oPremio.BolasAcertadas)
+                End With
+            Else
+                oEstdstk.Costes = oEstdstk.Costes + oApuesta.Coste(oSorteo.Juego)
+            End If
+            '
+            ' Se borra el premio
+            Set oPremio = Nothing
         End If
-        '
-        ' Se borra el premio
-        Set oPremio = Nothing
-    
     Next oSorteo
     '
     '  agregamos la estadistica de la apuesta a la colección
@@ -442,7 +430,7 @@ Private Sub VisualizaResultado(datRow As Long, oParam As ParametrosComprobarApue
     '
     '
     '
-    xCol = 16
+    xCol = 17
     '
     '
     '
@@ -535,7 +523,8 @@ Private Function GetApuesta(datFila As Range) As Apuesta
     Dim mValor As Variant
     Dim objResult As Apuesta
     Dim i As Integer
-    Dim n As Numero
+    Dim N As Numero
+    
   On Error GoTo GetApuesta_Error
     '
     '   Creamos el objetp
@@ -562,14 +551,15 @@ Private Function GetApuesta(datFila As Range) As Apuesta
         Select Case i
             Case 1: objResult.EntidadNegocio.Id = CInt(mValor)
             Case 2: objResult.FechaAlta = CDate(mValor)
-            Case 3: objResult.metodo = mValor
-            Case 4 To 15
+            Case 3: objResult.FechaFinVigencia = mInfo.AddDiasSorteo(objResult.FechaAlta, CInt(mValor))
+            Case 4: objResult.Metodo = mValor
+            Case 5 To 15
                 If IsNumeric(mValor) And _
                 Not IsEmpty(mValor) Then
-                    Set n = New Numero
-                    n.Valor = CInt(mValor)
-                    objResult.Combinacion.Add n
-                    Set n = Nothing
+                    Set N = New Numero
+                    N.Valor = CInt(mValor)
+                    objResult.Combinacion.Add N
+                    Set N = Nothing
                 End If
         End Select
     Next i

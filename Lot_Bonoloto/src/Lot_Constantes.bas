@@ -6,8 +6,9 @@ Attribute VB_Name = "Lot_Constantes"
 ' Purpose   : Módulo de definición de constantes lot
 ' Version   : 1.8.01
 '---------------------------------------------------------------------------------------
+Option Explicit
 '// Variables de versión de la librería
-Public Const lotVersion = "2020.02"
+Public Const lotVersion = "2020.03"
 Public Const lotFeVersion = "mie, 18/03/2020 20:16"
 Public Const NOMBRE_APLICACION = "Bonoloto"
 
@@ -35,6 +36,18 @@ Public Const MSG_FECHAANALISNOJUEGO = "* La Fecha de Analisis no pertenece al Ju
 Public Const MSG_FECHAFINALNOJUEGO = "* La Fecha Final no pertenece al Juego."
 Public Const MSG_FECHAINICIALNOJUEGO = "* La Fecha Inicial no pertenece al Juego."
 
+'--- Errores ------------------------------------------------------------------*
+Public Const ERR_REGISTRONOTFOUND As Integer = -100
+Public Const ERR_VARIABLENOTSERIAL As Integer = 1001
+Public Const ERR_DELETEINDEXERROR As Integer = 1002
+Public Const ERR_INDEXERROR As Integer = 1003
+
+'--- Mensajes -----------------------------------------------------------------*
+Public Const MSG_REGISTRONOTFOUND As String = "No se ha encontrado el registro #"
+Public Const MSG_VARIABLENOTSERIAL As String = "Variable no seralizable como parámetro."
+Public Const MSG_DELETEINDEXERROR As String = "No se puede eliminar el elemento # de la colección."
+Public Const MSG_INDEXERROR As String = "No se puede acceder el elemento # de la colección."
+
 Public Const LT_ERROR = "#Err"
 Public Const LT_PAR = "par"
 Public Const LT_IMPAR = "impar"
@@ -45,6 +58,7 @@ Public Const LT_BAJO = "bajo"
 Public Const ESTADO_INICIAL = 0
 Public Const BOTON_CERRAR = 1
 Public Const EJECUTAR = 5
+Public Const BORRAR = 7
 Public Const COLOREAR_NumeroS = 2
 Public Const COLOREAR_UNAFECHA = 3
 Public Const COLOREAR_CARACTERISTICAS = 4
@@ -85,6 +99,7 @@ Public Const COLOR_TERMINACION9 = 6
 
 '*----------------| Formatos
 Public Const FMT_IMPORTE = "_-* #,##0.0 _€_-;-* #,##0.0 _€_-;_-* ""-""?? _€_-;_-@_-"
+Public Const FMT_FECHA = "d/m/yyyy"
 
 '*-----------------| Barras de funciones |------------------------------+
 Public Const BARRA_ESTUDIOS = "bar_studio"
@@ -183,11 +198,13 @@ Public Enum TipoOrdenacion
     ordDesviacion = 6
     ordProximaFecha = 7
     ordModa = 8
+    ordHomogeneo = 9
 End Enum
 '
 '
 '
-Public Const NOMBRES_ORDENACION = "Sin Definir; Probabilidad; Prob.Tiempo Medio; Frecuencia; Ausencia; Tiempo Medio; Desviacion; Proxima fecha; Moda"
+Public Const NOMBRES_ORDENACION = "Sin Definir;Probabilidad;Prob.Tiempo Medio;Frecuencia" & _
+                       ";Ausencia;Tiempo Medio;Desviacion;Proxima fecha;Moda;V.Homogeneo"
 '
 '
 '
@@ -202,7 +219,7 @@ End Enum
 '
 '
 '
-Public Const NOMBRES_AGRUPACION = "Sin Definir; Decenas; Septenas; Paridad; Peso; Terminacion "
+Public Const NOMBRES_AGRUPACION = "Sin Definir;Decenas;Septenas;Paridad;Peso;Terminacion"
 '
 '
 '
@@ -210,16 +227,18 @@ Public Enum ProcedimientoMetodo
     mtdSinDefinir = 0
     mtdAleatorio = 1
     mtdBombo = 2
-    mtdEstadistico = 3
-    mtdEstaDosVariables = 4
-    mtdAlgoritmoAG = 5
-    mtdRedNeuronal = 6
-    mtdEstadCombinacion = 7
+    mtdBomboCargado = 3
+    mtdEstadistico = 4
+    mtdEstadCombinacion = 5
+'   mtdEstaDosVariables = 6
+'   mtdAlgoritmoAG = 7
+'   mtdRedNeuronal = 8
 End Enum
 '
 '
 '
-Public Const NOMBRES_PROCEDIMIENTOMETODO = "Sin Definir;Aleatorio;Bombo;Estadistico;Estadisticas Dos Variables;Algoritmo AG;Red Neuronal;Estadistica Combinaciones"
+Public Const NOMBRES_PROCEDIMIENTOMETODO = "Sin Definir;Aleatorio;Bombo;Bombo Cargado;Estadistico;Estadistica Combinaciones"
+'Public Const NOMBRES_PROCEDIMIENTOMETODO = "Sin Definir;Aleatorio;Bombo;Estadistico;Estadisticas Dos Variables;Algoritmo AG;Red Neuronal;Estadistica Combinaciones"
 '
 '
 '
@@ -244,6 +263,47 @@ Public Const MSG_TODO = "Rutina pendiente de codificar."
 Public Const ERR_IDXINDIVIDUO = 10201
 Public Const MSG_IDXINDIVIDUO = "Indice desbordado al obtener el individuo de una poblacion"
 
+Public Const NOMBRES_TIPOS_FILTRO As String = "Paridad;Peso;Consecutivos;Decenas;Septenas;Suma;Terminaciones"
+Public Enum TipoFiltro
+    tfParidad = 1
+    tfAltoBajo = 2
+    tfConsecutivos = 3
+    tfDecenas = 4
+    tfSeptenas = 5
+    tfSuma = 6
+    tfTerminaciones = 7
+End Enum
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : TiposPeriodos
+' Fecha          : 22/04/2007 21:36
+' Propósito      : Periodos de tiempo utilizados en el lenguaje natural
+'------------------------------------------------------------------------------*
+Public Enum TiposPeriodos
+    ctSinDefinir = -1
+    ctPersonalizadas = 0
+    ctSemanaPasada = 1
+    ctQuincenaPasada = 2
+    ctMesAnterior = 3
+    ctAñoAnterior = 4
+    ctSemanaActual = 5
+    ctQuincenaActual = 6
+    ctMesActual = 7
+    ctAñoActual = 8
+    ctLoQueVadeSemana = 9
+    ctLoQueVadeMes = 10
+    ctLoQueVadeAño = 11
+    ctLoQueVadeTrimestre = 12
+    ctUltimaSemana = 13
+    ctUltimaQuincena = 14
+    ctUltimoMes = 15
+    ctUltimoTrimestre = 16
+    ctUltimoAño = 17
+    ctHastaHoy = 18
+    ctHoy = 19
+    ctAyer = 20
+    ctMañana = 21
+End Enum
 
 
 

@@ -68,7 +68,7 @@ Public Function GetPremio(datSugerencia As Sugerencia, datSorteo As Sorteo) As S
     If m_bComple Then
         m_iAciertos = m_iAciertos - 1
     End If
-    m_iPronosticos = datSugerencia.metodo.Parametros.Pronosticos
+    m_iPronosticos = datSugerencia.Metodo.Pronosticos
     '
     '   COmprobar el juego del sorteo
     '

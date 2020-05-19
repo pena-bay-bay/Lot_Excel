@@ -79,6 +79,25 @@ End Property
 Public Property Get AllMetodosSelected() As Boolean
     AllMetodosSelected = mAllMetodos
 End Property
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : FechaAnalisis
+' Fecha          : ma., 12/may/2020 19:21:47
+' Propósito      : Fecha de Sugerencia
+'------------------------------------------------------------------------------*
+Public Property Get FechaAnalisis() As Date
+    FechaAnalisis = mFechaAnalisis
+End Property
+
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : Pronosticos
+' Fecha          : ma., 12/may/2020 19:21:47
+' Propósito      : Pronosticos
+'------------------------------------------------------------------------------*
+Public Property Get Pronosticos() As Integer
+    Pronosticos = mPronosticos
+End Property
 '------------------------------------------------------------------------------*
 ' Procedimiento  : lstMetodos_Change
 ' Fecha          : ma., 31/mar/2020 19:13:03
@@ -630,6 +649,8 @@ Public Function IsValid() As Boolean
     ElseIf Not (mInfo.EsFechaSorteo(txtFechaAnalisis.Text)) Then
         m_sMensaje = m_sMensaje & MSG_NODATESORTEO
         m_bError = False
+    Else
+        mFechaAnalisis = CDate(txtFechaAnalisis.Text)
     End If
     '
     '       Validar pronosticos
@@ -644,6 +665,8 @@ Public Function IsValid() As Boolean
     Or (CInt(txtPronosticos.Text) > 11) Then
         m_sMensaje = m_sMensaje & MSG_NUMOUTRANGE
         m_bError = False
+    Else
+        mPronosticos = CInt(txtPronosticos.Text)
     End If
     '
     '       Validar que se ha seleccionado algún método

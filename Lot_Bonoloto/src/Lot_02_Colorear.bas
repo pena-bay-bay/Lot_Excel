@@ -6,9 +6,11 @@ Attribute VB_Name = "Lot_02_Colorear"
 ' Version   : 1.0.1 20/03/2007 9:50
 ' Objeto    : Funciones que colorean los resultados
 '---------------------------------------------------------------------------------------
+Option Explicit
+Option Base 0
+
 '*-----------------| OBJETOS |-----------------------------+
 Private DB                      As New BdDatos          'Objeto Base de Datos
-Option Base 0                                           'Las matrices comienzan por 1
 
 '---------------------------------------------------------------------------------------
 ' Procedure : cmd_Colorear
@@ -165,6 +167,8 @@ End Sub
 Private Sub cmd_color_combinacion(vNewData As Apuesta)
     Dim m_rgFila, m_rgDatos As Range
     Dim i As Integer
+    Dim j As Integer
+    Dim h As Integer
     Dim m_num As New Numero
     Dim color As Integer
     
@@ -580,9 +584,12 @@ End Sub
 Private Function Asignar_colores(vMatrizDatos As Variant, OrderBy As Boolean) As Variant
     Dim m_max           As Double       ' Elemento Maximo de la matriz
     Dim m_min           As Double       ' Elemento Minimo
+    Dim m_dif           As Double
     Dim m_color         As Integer      '
     Dim m_vDatosColores() As Variant
     Dim m_valores       As Integer
+    Dim i As Integer
+    Dim j As Integer
     '
     '
     '   Redimensiona la matriz de colores con el número total de valores
@@ -670,11 +677,13 @@ End Sub
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Public Function get_color_array(vDatos As Variant, n As Integer) As Integer
+Public Function get_color_array(vDatos As Variant, N As Integer) As Integer
     Dim m_datos  As Variant             'Ordenación por número
     Dim m_result As Variant             'Vector de resultados
+    Dim j As Integer
+    Dim i As Integer
    On Error GoTo get_color_array_Error
-    If n = 0 Or n > 49 Then
+    If N = 0 Or N > 49 Then
         get_color_array = xlNone
         Exit Function
     End If
@@ -682,7 +691,7 @@ Public Function get_color_array(vDatos As Variant, n As Integer) As Integer
     m_result = Asignar_colores(m_datos, True)
     j = LBound(vDatos)
     For i = LBound(vDatos) To UBound(vDatos)
-        If (vDatos(i, 0) = n) Then
+        If (vDatos(i, 0) = N) Then
             Exit For
         End If
         j = j + 1

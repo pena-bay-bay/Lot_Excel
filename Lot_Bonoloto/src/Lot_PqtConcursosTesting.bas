@@ -339,7 +339,7 @@ Private Sub InfoSorteoTest()
     Dim i As Integer
     Dim mFechaI As Date
     Dim mFechaF As Date
-
+    Dim mDias   As Integer
     
     Set mInfo = New InfoSorteo
     '
@@ -376,7 +376,33 @@ Private Sub InfoSorteoTest()
         Debug.Print "   ==>" & mInfo.GetSorteosEntreFechas(mFechaI, mFechaF)
         mFechaF = mFechaF + 1
     Next i
+    '
+    '   Add dias a un sorteo
+    '
+    mFechaI = #4/26/2015#   'Domingo
+    mDias = 20
+    mFechaF = mFechaI
+    mInfo.Constructor Bonoloto
+    For i = 1 To 7
+        Debug.Print "Calculo de sumar " & CStr(mDias) & " sorteos a la fecha " & mFechaF
+        Debug.Print "   ==>" & mInfo.AddDiasSorteo(mFechaF, mDias)
+        mFechaF = mFechaF + 1
+    Next i
+    mDias = 7
+    mFechaF = mFechaI
+    For i = 1 To 7
+        Debug.Print "Calculo de sumar " & CStr(mDias) & " sorteos a la fecha " & mFechaF
+        Debug.Print "   ==>" & mInfo.AddDiasSorteo(mFechaF, mDias)
+        mFechaF = mFechaF + 1
+    Next i
     
+    mDias = 3
+    mFechaF = mFechaI
+    For i = 1 To 7
+        Debug.Print "Calculo de sumar " & CStr(mDias) & " sorteos a la fecha " & mFechaF
+        Debug.Print "   ==>" & mInfo.AddDiasSorteo(mFechaF, mDias)
+        mFechaF = mFechaF + 1
+    Next i
 
 End Sub
 

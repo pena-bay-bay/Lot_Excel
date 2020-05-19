@@ -405,13 +405,9 @@ Public Function Add() As Boolean
         .Cells(mFila, 13).Value = DateValue(Me.Metodo.EntidadNegocio.FechaModificacion)
     End With
     '
-    '   Última fila
+    '   Restablecemos el rango de la base de datos
     '
-    mLastRow = mFila
-    '
-    '   Total de filas
-    '
-    mTotalRecord = mFila - 1
+    SetRngId
     '
     '   Calculamos el total de páginas
     '
@@ -575,6 +571,14 @@ Public Function GetRecord(datId As Integer) As Boolean
     '   Inicializamos función
     '
     GetRecord = False
+    '
+    '   Establece el rango de la base de datos
+    '
+    If mrngIds Is Nothing Then
+        '   Establecemos Rango de Clave
+        '
+        SetRngId
+    End If
     '
     '   Buscamos el registro
     '

@@ -21,6 +21,9 @@ Public colApuestas As New Collection
 Public ColAciertos As New Collection
 Public ColSorteos As New Collection
 Public ColEstaditicas As New Collection
+Public TipoComparacion As Integer           ' Tipo de comparación:
+                                            '   0 Todos los dias,
+                                            '   1 Solo vigencia apuesta
 Private m_dTotalCostes As Double
 Private m_dTotalPremios As Double
 

@@ -170,10 +170,9 @@ Public Property Get TextoOrdenado()
     
     TextoOrdenado = ""
     For i = 0 To UBound(m_Numeros)
-        TextoOrdenado = TextoOrdenado & "-" & Format(m_Numeros(i), "00")
+        TextoOrdenado = TextoOrdenado & Format(m_Numeros(i), "00") & "-"
     Next i
-    m_chars = Len(TextoOrdenado) - 3
-    TextoOrdenado = Right(TextoOrdenado, m_chars)
+    TextoOrdenado = Left(TextoOrdenado, Len(TextoOrdenado) - 1)
 
    On Error GoTo 0
    Exit Property

@@ -39,7 +39,9 @@ End Sub
 
 '--- Métodos Públicos ---------------------------------------------------------*
 
-
+Public Sub SetLinePerPage(datLineas As Integer)
+    mModel.LinePerPage = datLineas
+End Sub
 
 '------------------------------------------------------------------------------*
 ' Procedimiento  : InitSelectView

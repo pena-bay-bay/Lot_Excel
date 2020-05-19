@@ -12,31 +12,31 @@ Attribute VB_Name = "Lot_PqtApuestasTesting"
 Option Explicit
 Option Base 0
 
-'------------------------------------------------------------------------------*
-' Procedimiento  : MetodoTest
-' Fecha          : 29/mar/2018
-' Propósito      : Pruebas unitarias de la clase metodo
-'------------------------------------------------------------------------------*
+''------------------------------------------------------------------------------*
+'' Procedimiento  : MetodoTest
+'' Fecha          : 29/mar/2018
+'' Propósito      : Pruebas unitarias de la clase metodo
+''------------------------------------------------------------------------------*
+''
+'Private Sub MetodoTest()
+'    Dim oMtdo  As metodo
 '
-Private Sub MetodoTest()
-    Dim oMtdo  As metodo
-    
-    Set oMtdo = New metodo
-        
-    oMtdo.TipoProcedimiento = mtdAlgoritmoAG
-    Print_Metodo oMtdo
-
-End Sub
-
-Private Sub Print_Metodo(Obj As metodo)
-    Debug.Print "==> Pruebas metodo"
-    Debug.Print vbTab & "EntidadNegocio.FechaAlta   =" & Obj.EntidadNegocio.FechaAlta
-    Debug.Print vbTab & "EsMultiple                 =" & Obj.EsMultiple
-    Debug.Print vbTab & "Parametros                 =" & Obj.Parametros.ToString
-    Debug.Print vbTab & "TipoMuestra                =" & Obj.TipoMuestra
-    Debug.Print vbTab & "TipoProcedimiento          =" & Obj.TipoProcedimiento
-    Debug.Print vbTab & "TipoProcedimientoTostring  =" & Obj.TipoProcedimientoTostring
-End Sub
+'    Set oMtdo = New metodo
+'
+''    oMtdo.TipoProcedimiento = mtdAlgoritmoAG
+'    Print_Metodo oMtdo
+'
+'End Sub
+'
+'Private Sub Print_Metodo(Obj As metodo)
+'    Debug.Print "==> Pruebas metodo"
+'    Debug.Print vbTab & "EntidadNegocio.FechaAlta   =" & Obj.EntidadNegocio.FechaAlta
+''    Debug.Print vbTab & "EsMultiple                 =" & Obj.EsMultiple
+'    Debug.Print vbTab & "Parametros                 =" & Obj.ToString
+'    Debug.Print vbTab & "TipoMuestra                =" & Obj.TipoMuestra
+'    Debug.Print vbTab & "TipoProcedimiento          =" & Obj.TipoProcedimiento
+'    Debug.Print vbTab & "TipoProcedimientoTostring  =" & Obj.TipoProcedimientoTostring
+'End Sub
 '---------------------------------------------------------------------------------------
 ' Procedure : AciertoTest
 ' Author    : CHARLY
@@ -144,7 +144,7 @@ Private Sub PrintApuesta(datApuesta As Apuesta)
     Debug.Print "  EsMultiple     = " & datApuesta.EsMultiple
     Debug.Print "  FechaAlta      = " & datApuesta.FechaAlta
     Debug.Print "  IdBoleto       = " & datApuesta.IdBoleto
-    Debug.Print "  Metodo         = " & datApuesta.metodo
+    Debug.Print "  Metodo         = " & datApuesta.Metodo
     Debug.Print "  NumeroApuestas = " & datApuesta.NumeroApuestas
     Debug.Print "  Pronosticos    = " & datApuesta.Pronosticos
     Debug.Print "  SeHaJugado     = " & datApuesta.SeHaJugado

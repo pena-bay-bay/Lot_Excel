@@ -23,7 +23,7 @@ Dim oCombinacion        As Combinacion          ' Conjunto de números
 Dim oSorteoEngine       As SorteoEngine         ' Motor de sorteos
 Dim iCol                As Integer              ' Coordenada de columnas
 Dim iRow                As Integer              ' Coordenada de Filas
-Dim n                   As Integer              ' Entero
+Dim N                   As Integer              ' Entero
 Dim rgCelda             As Range                ' Celda activa
 
 '---------------------------------------------------------------------------------------
@@ -41,38 +41,38 @@ Public Sub btn_Prob_TiemposMedios()
     '
     Borra_Salida
     
-    frmCalTiempoMedio.Tag = ESTADO_INICIAL  ' Se asigna el estado inicial a la etiqueta
+    frmEstadisticaNumero.Tag = ESTADO_INICIAL  ' Se asigna el estado inicial a la etiqueta
                                             ' del formulario
                                             ' Mientras la etiqueta del formulario no tenga
                                             ' el indicador de BOTON_CERRAR se ejecutara
                                             ' el bucle de proceso
-    Do While frmCalTiempoMedio.Tag <> BOTON_CERRAR
+    Do While frmEstadisticaNumero.Tag <> BOTON_CERRAR
         
         ' Se inicializa el boton cerrar para salir del bucle
-        frmCalTiempoMedio.Tag = BOTON_CERRAR
+        frmEstadisticaNumero.Tag = BOTON_CERRAR
         
         ' Se muestra el formulario y queda a la espera de funciones
         ' pulsando el botón ejecutar
-        frmCalTiempoMedio.Show vbModal
+        frmEstadisticaNumero.Show vbModal
         
         'Se bifurca la función
-        Select Case frmCalTiempoMedio.Tag
+        Select Case frmEstadisticaNumero.Tag
                                     ' El usuario ha cerrado el
             Case ""                 ' cuadro de dialogo con la [X]
-                frmCalTiempoMedio.Tag = BOTON_CERRAR
+                frmEstadisticaNumero.Tag = BOTON_CERRAR
             
             Case EJECUTAR
                 Application.ScreenUpdating = False
                 '
                 '   Obtiene los datos del formulario
                 '
-                Set oMuestra = frmCalTiempoMedio.MuestraCalculo
-                dFechaSorteo = frmCalTiempoMedio.FechaSorteo
-                Set oCombinacion = frmCalTiempoMedio.Combinacion
+                Set oMuestra = frmEstadisticaNumero.MuestraCalculo
+                dFechaSorteo = frmEstadisticaNumero.FechaSorteo
+                Set oCombinacion = frmEstadisticaNumero.Combinacion
                 '
                 '   En función del tipo de proceso realiza una función u otra
                 '
-                Select Case frmCalTiempoMedio.TipoProceso
+                Select Case frmEstadisticaNumero.TipoProceso
                     Case 1: ' Todos los Numeros
                         cmd_CalculaTodosProb oMuestra
                           
@@ -91,7 +91,7 @@ Public Sub btn_Prob_TiemposMedios()
 
 
 btn_Prob_TiemposMedios_CleanExit:
-    Set frmCalTiempoMedio = Nothing
+    Set frmEstadisticaNumero = Nothing
    On Error GoTo 0
     Exit Sub
 
@@ -146,7 +146,7 @@ Private Sub cmd_CalculaTodosProb(obj_muestra As Muestra)
     '
     '   Para los 49 Numeros
     '
-    For n = 1 To 49
+    For N = 1 To 49
         '
         '   Posiciona el cursor en la celda correspondiente
         '
@@ -154,20 +154,20 @@ Private Sub cmd_CalculaTodosProb(obj_muestra As Muestra)
         '
         '   Dibuja la información del Numero N
         '
-        cmd_CalculaUnNumero obj_muestra, n, rgCelda
+        cmd_CalculaUnNumero obj_muestra, N, rgCelda
         '
         '   Recalcula coordenadas para el siguiente número
         '         x = x + 15
         '         y = y + 100
         '   cada 10 Numeros x = 1
         '
-        If (n Mod 10) = 0 Then
+        If (N Mod 10) = 0 Then
             iCol = 1
             iRow = iRow + 100
         Else
             iCol = iCol + 15
         End If
-    Next n
+    Next N
     
     Cells.Select                                ' Selecciona todas las celdas de la hoja
     Cells.EntireColumn.AutoFit                  ' Autoajusta el tamaño de las columnas
@@ -281,11 +281,11 @@ On Error GoTo cmd_NumerosSorteo_Error
     '
     '   Bucle de selección de cada Numero del sorteo
     '
-    For n = 1 To oSorteo.Combinacion.Count
+    For N = 1 To oSorteo.Combinacion.Count
         '
         '   Obtenemos el Numero iesimo
         '
-        Set oNumero = oSorteo.Combinacion.Numeros(n)
+        Set oNumero = oSorteo.Combinacion.Numeros(N)
         '
         '   Para el valor del Numero
         '
@@ -301,13 +301,13 @@ On Error GoTo cmd_NumerosSorteo_Error
         '
         '   Calculamos coordenada siguiente Numero
         '
-        If (n Mod 2) = 0 Then
+        If (N Mod 2) = 0 Then
             iCol = 1
-            iRow = iRow + 60
+            iRow = iRow + 120
         Else
             iCol = iCol + 15
         End If
-    Next n
+    Next N
 
 cmd_NumerosSorteo_CleanExit:
    On Error GoTo 0
@@ -339,7 +339,7 @@ Private Sub cmd_CalculaCombinacion(obj_muestra As Muestra, obj_Combinacion As Co
     '
     '   inicializa coordenadas x=1, y=1
     '
-    iCol = 1:    iRow = 1:  n = 0
+    iCol = 1:    iRow = 1:  N = 0
     '
     '   Borra la hoja de salida
     '
@@ -367,7 +367,7 @@ Private Sub cmd_CalculaCombinacion(obj_muestra As Muestra, obj_Combinacion As Co
         '
         '   nesima bola
         '
-        n = n + 1
+        N = N + 1
         '
         '   posicion
         '
@@ -379,9 +379,9 @@ Private Sub cmd_CalculaCombinacion(obj_muestra As Muestra, obj_Combinacion As Co
         '
         '   Calculamos coordenada siguiente Numero
         '
-        If (n Mod 2) = 0 Then
+        If (N Mod 2) = 0 Then
             iCol = 1
-            iRow = iRow + 60
+            iRow = iRow + 120
         Else
             iCol = iCol + 15
         End If

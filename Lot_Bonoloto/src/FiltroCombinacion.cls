@@ -178,6 +178,7 @@ End Property
 Public Property Get FilterValue() As String
     Dim mValues As String
     Dim i       As Integer
+On Error GoTo gFilterValue_Error
     '
     '   Si hay múltiples valores en un tipo de filtro
     '
@@ -198,16 +199,36 @@ Public Property Get FilterValue() As String
         End If
     End If
     FilterValue = mValues
+  On Error GoTo 0
+gFilterValue__CleanExit:
+    Exit Function
+gFilterValue_Error:
+       Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "FiltroCombinacion.FilterValue", ErrSource)
+    Err.Raise ErrNumber, "FiltroCombinacion.FilterValue", ErrDescription
 End Property
+
 Public Property Let FilterValue(vNewValue As String)
     Dim mVar As Variant
     Dim mStr As String
     Dim i As Integer
+
+On Error GoTo lFilterValue_Error
     mVar = Split(vNewValue, ",")
     For i = 0 To UBound(mVar)
         mStr = CStr(mVar(i))
         Me.AddFilterValue mStr
     Next i
+    
+  On Error GoTo 0
+lFilterValue__CleanExit:
+    Exit Property
+lFilterValue_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "FiltroCombinacion.FilterValue", ErrSource)
+    Err.Raise ErrNumber, "FiltroCombinacion.FilterValue", ErrDescription
 End Property
 
 
@@ -231,12 +252,22 @@ End Sub
 '------------------------------------------------------------------------------*
 Private Function SetTipoFiltro(ByVal vNewValue As String) As TipoFiltro
     Dim i As Integer
+  On Error GoTo SetTipoFiltro_Error
     For i = 0 To UBound(mTextoTipoFiltro)
         If vNewValue = mTextoTipoFiltro(i) Then
             SetTipoFiltro = i + 1
             Exit For
         End If
     Next i
+    
+  On Error GoTo 0
+SetTipoFiltro__CleanExit:
+    Exit Function
+SetTipoFiltro_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "FiltroCombinacion.SetTipoFiltro", ErrSource)
+    Err.Raise ErrNumber, "FiltroCombinacion.SetTipoFiltro", ErrDescription
 End Function
 
 

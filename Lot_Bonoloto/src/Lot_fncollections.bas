@@ -1,4 +1,5 @@
 Attribute VB_Name = "Lot_fncollections"
+Option Explicit
 
 '---------------------------------------------------------------------------------------
 ' Modulo    : fn_collections
@@ -84,7 +85,7 @@ Public Sub ShellSortAny(arr As Variant, numEls As Long, descendente As Boolean)
             Do While (arr(indice2 - distancia) > Valor) Xor descendente
                 arr(indice2) = arr(indice2 - distancia)
                 indice2 = indice2 - distancia
-                If indice2 - distacia < primerElem Then Exit Do
+                If indice2 - distancia < primerElem Then Exit Do
             Loop
             arr(indice2) = Valor
         Next
@@ -161,7 +162,7 @@ Public Sub Ordenar2(ByRef matriz As Variant, Optional columna As Integer = 2, Op
     Dim TmpDato() As Variant
     Dim i As Integer
     Dim j As Integer
-    
+    Dim k As Integer
    On Error GoTo Ordenar2_Error
 
     limiteY = UBound(matriz, 1)
@@ -176,20 +177,20 @@ Public Sub Ordenar2(ByRef matriz As Variant, Optional columna As Integer = 2, Op
             If Ascendente Then
                 If (matriz(i, j) < matriz(i + 1, j)) Then
                     tsOrdenado = False
-                    For K = 0 To limiteX
-                      TmpDato(K) = matriz(i, K)
-                      matriz(i, K) = matriz(i + 1, K)
-                      matriz(i + 1, K) = TmpDato(K)
-                    Next K
+                    For k = 0 To limiteX
+                      TmpDato(k) = matriz(i, k)
+                      matriz(i, k) = matriz(i + 1, k)
+                      matriz(i + 1, k) = TmpDato(k)
+                    Next k
                 End If
             Else
                 If (matriz(i, j) > matriz(i + 1, j)) Then
                     tsOrdenado = False
-                    For K = 0 To limiteX
-                      TmpDato(K) = matriz(i, K)
-                      matriz(i, K) = matriz(i + 1, K)
-                      matriz(i + 1, K) = TmpDato(K)
-                    Next K
+                    For k = 0 To limiteX
+                      TmpDato(k) = matriz(i, k)
+                      matriz(i, k) = matriz(i + 1, k)
+                      matriz(i + 1, k) = TmpDato(k)
+                    Next k
                 End If
             End If
         Next i

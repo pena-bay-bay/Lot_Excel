@@ -14,6 +14,7 @@ Attribute VB_Exposed = True
 ' Purpose   :
 ' Version   :
 '---------------------------------------------------------------------------------------
+Option Explicit
 Private m_iCount As Integer
 
 

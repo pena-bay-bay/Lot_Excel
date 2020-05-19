@@ -15,6 +15,7 @@ Attribute VB_Description = "Clase que representa un Sorteo del Juego"
 ' Version   : 1.0.0 22-ago-2007 08:23
 ' Objeto    : Clase que representa un sorteo de cada uno de los juegos
 '---------------------------------------------------------------------------------------
+Option Explicit
 '
 '
 '  Variables Publicas
@@ -26,6 +27,7 @@ Public Premios                      As Collection
 '  Variables privadas
 '
 Private m_eTipoJuego                As ModalidadJuego
+Private m_sNumeroSorteo             As String
 Private m_dtFecha                   As Date         ' Fecha del sorteo
 Private m_sDia                      As String       ' Dia de la semana
 Private m_iComplementario           As Integer      ' Complementario
@@ -37,6 +39,7 @@ Private m_objEstrellaUno            As Numero
 Private m_objEstrellaDos            As Numero
 Private m_cImporteVenta             As Currency
 Private m_cImporteBote              As Currency
+Private m_bOrdenado                 As Boolean
 
 '---------------------------------------------------------------------------------------
 ' Procedure : Class_Initialize
@@ -47,7 +50,7 @@ Private m_cImporteBote              As Currency
 '
 Private Sub Class_Initialize()
     Set m_objCombinacion = New Combinacion
-    Set m_col = New Collection
+'    Set m_col = New Collection
     Set EntidadNegocio = New EntidadNegocio
 '
 ' TODO: crear la colección de premios por defecto
@@ -56,7 +59,7 @@ End Sub
 
 Private Sub Class_Terminate()
     Set m_objCombinacion = Nothing
-    Set m_objEstrellas = Nothing
+'    Set m_objEstrellas = Nothing
     Set m_objEstrellaUno = Nothing
     Set m_objEstrellaDos = Nothing
 End Sub
@@ -70,11 +73,15 @@ End Sub
 '
 Public Sub Constructor(Fila As Range)
     Dim mCol As Collection
+    Dim i As Integer
+    Dim m_num As Numero
+    Dim mStrKey As String
    On Error GoTo Constructor_Error
 
     Set mCol = New Collection
     With Fila
         Me.Registro = .Cells(1, 1).Value
+        Me.NumeroSorteo = .Cells(1, 2).Value
         Me.Fecha = CDate(.Cells(1, 3).Value)
         For i = 0 To 6
             If IsNumeric(.Cells(1, 6 + i).Value) _
@@ -93,6 +100,7 @@ Public Sub Constructor(Fila As Range)
         Next i
         m_iComplementario = .Cells(1, 12).Value
         m_iReintegro = .Cells(1, 13).Value
+        m_bOrdenado = IIf(.Cells(1, 14).Value = "Si", True, False)
         Set m_objCombinacion.Numeros = mCol
         m_eTipoJuego = LP_LB_6_49
         m_eJuego = JUEGO_DEFECTO
@@ -109,6 +117,19 @@ Constructor_Error:
    '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
+
+'---------------------------------------------------------------------------------------
+' Procedure : Numero de Sorteo
+' Author    : CHARLY
+' Date      : 12/05/2020
+' Purpose   :
+'---------------------------------------------------------------------------------------
+Public Property Get NumeroSorteo() As String
+    NumeroSorteo = m_sNumeroSorteo
+End Property
+Public Property Let NumeroSorteo(NewValue As String)
+    m_sNumeroSorteo = NewValue
+End Property
 
 '---------------------------------------------------------------------------------------
 ' Procedure : Registro
@@ -338,7 +359,7 @@ Public Property Get Semana() As Integer
 
    On Error GoTo Semana_Error
 
-    m_iSemana = DatePart("ww", dtFecha, vbMonday, vbFirstFourDays)
+    m_iSemana = DatePart("ww", m_dtFecha, vbMonday, vbFirstFourDays)
     Semana = m_iSemana
 
    On Error GoTo 0
@@ -379,18 +400,18 @@ End Property
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Public Property Get Estrellas() As Combinacion
-
-    Set Estrellas = m_objEstrellas
-
-End Property
-
-Public Property Set Estrellas(objEstrellas As Combinacion)
-
-    Set m_objEstrellas = objEstrellas
-
-End Property
-
+'Public Property Get Estrellas() As Combinacion
+'
+'    Set Estrellas = m_objEstrellas
+'
+'End Property
+'
+'Public Property Set Estrellas(objEstrellas As Combinacion)
+'
+'    Set m_objEstrellas = objEstrellas
+'
+'End Property
+'
 '---------------------------------------------------------------------------------------
 ' Procedure : ImporteVenta
 ' Author    : CHARLY
