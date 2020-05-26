@@ -97,22 +97,22 @@ Public Function Get_Aciertos(Optional Mas_Complementario As Boolean = True) As I
     Dim m_aciertos As Integer
     Dim m_array As Variant
     Dim k As Integer
-    Dim N As Variant
+    Dim n As Variant
     
     If m_apta Is Nothing Then Err.Raise "falta la apuesta"
     If m_rslt Is Nothing Then Err.Raise "falta el resultado"
     m_array = m_apta.Pronosticos
     m_aciertos = 0
     m_Complementario = False
-    For Each N In m_array
-        k = N
+    For Each n In m_array
+        k = n
         If (m_rslt.Existe(k, Mas_Complementario)) Then
             m_aciertos = m_aciertos + 1
         End If
         If k = m_rslt.Complementario Then
             m_Complementario = True
         End If
-    Next N
+    Next n
     Get_Aciertos = m_aciertos
 End Function
 
@@ -285,7 +285,7 @@ End Function
 '
 Public Function GetPremio() As Premio
     Dim objResult   As Premio
-    Dim N           As Numero
+    Dim n           As Numero
     Dim col         As Collection
     
   On Error GoTo GetPremio_Error
@@ -296,16 +296,16 @@ Public Function GetPremio() As Premio
     objResult.Pronosticos = MyApuesta.Pronosticos
     Set col = MyApuesta.Combinacion.Numeros
     
-    For Each N In col
+    For Each n In col
     
-        If Sorteo.Existe(N.Valor) Then
+        If Sorteo.Existe(n.Valor) Then
             objResult.BolasAcertadas = objResult.BolasAcertadas + 1
-            If Sorteo.Complementario = N.Valor Then
+            If Sorteo.Complementario = n.Valor Then
                 objResult.ComplementarioAcertado = True
             End If
         End If
         
-    Next N
+    Next n
         
     Set GetPremio = objResult
     Set objResult = Nothing

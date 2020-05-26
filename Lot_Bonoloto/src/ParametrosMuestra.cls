@@ -25,10 +25,10 @@ Private mFechaAnalisis          As Date         ' Fecha de analisis de la muestr
 Private mDiasAnalisis           As Integer      ' Rango de dias para la muestra
 Private mPeriodo                As Periodo      ' Periodo de fechas para el Rango
 Private mInfoSorteo             As InfoSorteo   ' Objeto para comprobar las fechas del juego
-Private m_iResgistroInicial     As Integer      ' Numero de registro inicial de la muestra
-Private m_iResgistroFinal       As Integer      ' Numero de registro final de la muestra
-Private m_iResgistroAnalisis    As Integer      ' Numero de registro de la fecha de analisis
-Private m_datos                 As New BdDatos  ' Base de datos
+Private mResgistroInicial       As Integer      ' Numero de registro inicial de la muestra
+Private mResgistroFinal         As Integer      ' Numero de registro final de la muestra
+Private mResgistroAnalisis      As Integer      ' Numero de registro de la fecha de analisis
+Private mDatos                  As New BdDatos  ' Base de datos
 Private mJuego                  As Juego        ' Juego de la muestra
 Private mNumeroSorteos          As Integer      ' Numero de sorteos a analizar
 Private mError                  As Integer      ' Código de Error
@@ -49,10 +49,13 @@ Private Sub Class_Initialize()
     Set mPeriodo = New Periodo
     Set mInfoSorteo = New InfoSorteo
     mInfoSorteo.Constructor JUEGO_DEFECTO
-    m_iResgistroAnalisis = 0
-    m_iResgistroFinal = 0
-    m_iResgistroInicial = 0
+    mResgistroAnalisis = 0
+    mResgistroFinal = 0
+    mResgistroInicial = 0
     mFechaAnalisis = 0
+    mDiasAnalisis = 0
+    mNumeroSorteos = 0
+    mTipoMuestra = False    'Dias de análisis
 End Sub
 
 
@@ -69,21 +72,8 @@ Public Property Get FechaAnalisis() As Date
 End Property
 
 Public Property Let FechaAnalisis(ByVal dtFechaAnalisis As Date)
-    '
-    '   Comprueba que la fecha sea de sorteo
-    '
-    If mInfoSorteo.EsFechaSorteo(dtFechaAnalisis) Then
-        mFechaAnalisis = dtFechaAnalisis
-    Else
-        mFechaAnalisis = mInfoSorteo.GetProximoSorteo(dtFechaAnalisis)
-    End If
-    '
-    ' Si no hay registro para la fecha de análisis ¿cuantos sorteos deberían haber?
-    '
-    m_iResgistroAnalisis = m_datos.GetRegistroFecha(mFechaAnalisis)
-    If m_iResgistroAnalisis = 0 And FechaFinal <> 0 Then
-        m_iResgistroAnalisis = m_iResgistroFinal + mInfoSorteo.GetSorteosEntreFechas(FechaFinal, mFechaAnalisis)
-    End If
+    mFechaAnalisis = dtFechaAnalisis
+    SetDatos
 End Property
 
 ' *============================================================================*
@@ -98,10 +88,10 @@ Public Property Get FechaInicial() As Date
     FechaInicial = mPeriodo.FechaInicial
 End Property
 
-Public Property Let FechaInicial(ByVal dtFechaInicial As Date)
-    mPeriodo.FechaInicial = dtFechaInicial
-    m_iResgistroInicial = m_datos.GetRegistroFecha(dtFechaInicial)
-End Property
+'Public Property Let FechaInicial(ByVal dtFechaInicial As Date)
+'    mPeriodo.FechaInicial = dtFechaInicial
+'    SetDatos
+'End Property
 
 ' *============================================================================*
 ' *     Procedure  : FechaFinal
@@ -117,14 +107,8 @@ End Property
 
 Public Property Let FechaFinal(ByVal dtFechaFinal As Date)
     mPeriodo.FechaFinal = dtFechaFinal
-    m_iResgistroFinal = m_datos.GetRegistroFecha(dtFechaFinal)
-    '
-    ' Si no hay registro para la fecha de análisis ¿cuantos sorteos deberían haber?
-    '
-    m_iResgistroAnalisis = m_datos.GetRegistroFecha(mFechaAnalisis)
-    If m_iResgistroAnalisis = 0 Then
-        m_iResgistroAnalisis = m_iResgistroFinal + mInfoSorteo.GetSorteosEntreFechas(dtFechaFinal, mFechaAnalisis)
-    End If
+    mPeriodo.FechaInicial = MinDate
+    SetDatos
 End Property
 
 ' *============================================================================*
@@ -140,9 +124,7 @@ Public Property Get DiasAnalisis() As Integer
 End Property
 Public Property Let DiasAnalisis(NewValue As Integer)
     mDiasAnalisis = NewValue
-    '
-    '   Si tenemos fecha de analisis se calcula la fecha final como fecha anterior sorteo
-    '
+    SetDatos
 End Property
 
 
@@ -155,7 +137,7 @@ End Property
 ' *============================================================================*
 '
 Public Property Get ResgistroInicial() As Integer
-    ResgistroInicial = m_iResgistroInicial
+    ResgistroInicial = mResgistroInicial
 End Property
 
 
@@ -168,7 +150,7 @@ End Property
 ' *============================================================================*
 '
 Public Property Get ResgistroFinal() As Integer
-    ResgistroFinal = m_iResgistroFinal
+    ResgistroFinal = mResgistroFinal
 End Property
 
 
@@ -181,7 +163,7 @@ End Property
 ' *============================================================================*
 '
 Public Property Get ResgistroAnalisis() As Integer
-    ResgistroAnalisis = m_iResgistroAnalisis
+    ResgistroAnalisis = mResgistroAnalisis
 End Property
 
 
@@ -195,22 +177,12 @@ End Property
 ' *============================================================================*
 '
 Public Property Get NumeroSorteos() As Integer
-
-    If mNumeroSorteos = 0 Then
-        mNumeroSorteos = m_iResgistroFinal - m_iResgistroInicial + 1
-    End If
     NumeroSorteos = mNumeroSorteos
-
 End Property
 
 Public Property Let NumeroSorteos(vNewValue As Integer)
     mNumeroSorteos = vNewValue
-    '
-    '   Se obtiene la fecha inicial del sorteo si tenemos una fecha inicial
-    '
-    If mPeriodo.FechaFinal <> 0 Then
-        FechaInicial = m_datos.GetFecha(mPeriodo.FechaFinal, mNumeroSorteos)
-    End If
+    SetDatos
 End Property
 
 
@@ -227,6 +199,7 @@ End Property
 Public Property Let Juego(ByVal vNewValue As Juego)
     mJuego = vNewValue
     mInfoSorteo.Constructor mJuego
+    SetDatos
 End Property
 
 
@@ -241,6 +214,7 @@ End Property
 
 Public Property Let TipoMuestra(NewValue As Boolean)
     mTipoMuestra = NewValue
+    SetDatos
 End Property
 
 
@@ -258,36 +232,41 @@ Public Function Validar() As Boolean
    On Error GoTo Validar_Error
   
         mError = 0
-        If FechaAnalisis = 0 Then            ' Fecha de analisis distinta de 0
+        
+        If mFechaAnalisis = 0 Then            ' Fecha de analisis distinta de 0
             mError = 1
         End If
-        If FechaFinal = 0 Then               ' Fecha final distinta de 0
-            mError = mError + 2
+        If mPeriodo.FechaFinal = MaxDate Then
+            mError = mError + 2               ' Fecha final no establecida
         End If
-        If FechaInicial = 0 And _
-        NumeroSorteos = 0 Then               ' O fecha inicial <> 0 o Sorteos <> 0
-            mError = mError + 4
+        
+        If mTipoMuestra Then
+            If FechaInicial = 0 And _
+            NumeroSorteos = 0 Then           ' O fecha inicial <> 0 o Sorteos <> 0
+                mError = mError + 4
+            End If
         End If
-        If FechaAnalisis <= FechaFinal Then  ' Validar Fecha Analisis menor fecha final
+        
+        If mFechaAnalisis <= mPeriodo.FechaFinal Then  ' Validar Fecha Analisis menor fecha final
             mError = mError + 8
         End If
-        If FechaFinal <= FechaInicial Then   ' Validar Fecha final menor fecha inicial
+        If mPeriodo.FechaFinal <= mPeriodo.FechaInicial Then   ' Validar Fecha final menor fecha inicial
             mError = mError + 16
         End If
                                              '
                                              ' Validar que la fecha de análisis
                                              ' pertenece al sorteo
-        If Not mInfoSorteo.EsFechaSorteo(FechaAnalisis) Then
+        If Not mInfoSorteo.EsFechaSorteo(mFechaAnalisis) Then
             mError = mError + 32
         End If
                                              ' Validar que la fecha final
                                              ' pertenece al sorteo
-        If Not mInfoSorteo.EsFechaSorteo(FechaFinal) Then
+        If Not mInfoSorteo.EsFechaSorteo(mPeriodo.FechaFinal) Then
             mError = mError + 64
         End If
                                              ' Validar que la fecha inicial
                                              ' pertenece al sorteo
-        If Not mInfoSorteo.EsFechaSorteo(FechaInicial) Then
+        If Not mInfoSorteo.EsFechaSorteo(mPeriodo.FechaInicial) Then
             mError = mError + 128
         End If
                 
@@ -306,6 +285,9 @@ Validar_Error:
        Call HandleException(ErrNumber, ErrDescription, "ParametrosMuestra.Validar", ErrSource)
        Err.Raise ErrNumber, "ParametrosMuestra.Validar", ErrDescription
 End Function
+
+
+
 
 ' *============================================================================*
 ' *     Function   : GetMensaje
@@ -369,6 +351,9 @@ GetMensaje_Error:
 End Function
 
 
+
+
+
 '------------------------------------------------------------------------------*
 ' Procedimiento  : ToString
 ' Fecha          :
@@ -377,7 +362,9 @@ End Function
 Public Function ToString() As String
     Dim mStr As String
   On Error GoTo ToString_Error
-    
+    '   TODO: Expresar el objeto en función del Tipo de muestra
+    '   'Muestra por dias: (fechaAnalisis) (periodo) (d dias)
+    '   'Muestra por sorteos: (fechaAnalisis) (periodo) (n Sorteo)
     ' Muestra: (FechaAnalisis) [FechaDesde..FechaHasta] (n Sorteos)
     mStr = "Parametros Muestra: ($1) $2 $3 Sorteos"
     mStr = Replace(mStr, "$1", Format(mFechaAnalisis, "dd/mm/yyyy"))
@@ -395,9 +382,68 @@ ToString_Error:
     Err.Raise ErrNumber, "ParametrosMuestra.ToString", ErrDescription
 End Function
 
-'   TODO: hacer una rutina SetDatos que analice la información suministrada al objeto y deduzca el resto de parametros
-'   con fechaAnalisis y dias se puede calcular periodo y tipo de muestra
-'   con fechaAnalisis y numero de registros se puede calcular registros y tipo de muestra
-'   Con FechaAnalisis y fecha inicial y final se pueden calcular dias y tipo de muestra
-'   Si tipo de muestra esta establecido podemos calcular el
+
+
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : SetDatos
+' Fecha          : ma., 19/may/2020 12:37:19
+' Propósito      : Deducir atributos segun se cumplimentan algunas propiedades
+'------------------------------------------------------------------------------*
+Private Sub SetDatos()
+  On Error GoTo SetDatos_Error
+    '
+    '   Si hay datos suficientes se calculan los
+    '
+    If mTipoMuestra Then
+        If mFechaAnalisis <> 0 And mNumeroSorteos <> 0 Then
+            If mPeriodo.FechaFinal = MaxDate Then
+                mPeriodo.FechaFinal = mInfoSorteo.GetAnteriorSorteo(mFechaAnalisis)
+            End If
+            mPeriodo.FechaInicial = mDatos.GetFecha(mPeriodo.FechaFinal, mNumeroSorteos)
+        End If
+    ElseIf mFechaAnalisis <> 0 And mDiasAnalisis <> 0 Then
+        If mPeriodo.FechaFinal = MaxDate Then
+            mPeriodo.FechaFinal = mInfoSorteo.GetAnteriorSorteo(mFechaAnalisis)
+        End If
+        mPeriodo.FechaInicial = mInfoSorteo.GetAnteriorSorteo(mPeriodo.FechaFinal - mDiasAnalisis)
+    End If
+    '
+    '   Si es muestra por registros y hay periodo calculamos los dias entre fechas
+    '
+    If mTipoMuestra _
+       And mPeriodo.FechaFinal < MaxDate _
+       And mPeriodo.FechaInicial > MinDate Then
+            mDiasAnalisis = mPeriodo.Dias
+    End If
+    
+    If mPeriodo.FechaFinal < MaxDate Then
+         mResgistroFinal = mDatos.GetRegistroFecha(mPeriodo.FechaFinal)
+    End If
+    If mPeriodo.FechaInicial > MinDate Then
+         mResgistroInicial = mDatos.GetRegistroFecha(mPeriodo.FechaInicial)
+    End If
+    If mFechaAnalisis <> 0 Then
+        mResgistroAnalisis = mDatos.GetRegistroFecha(mFechaAnalisis)
+        If mResgistroAnalisis = 0 Then
+            mResgistroAnalisis = mResgistroFinal + mInfoSorteo.GetSorteosEntreFechas(mPeriodo.FechaFinal, mFechaAnalisis)
+        End If
+    End If
+
+    If mTipoMuestra _
+    And mNumeroSorteos = 0 _
+    And mResgistroFinal > 0 _
+    And mResgistroInicial > 0 Then
+            mNumeroSorteos = mResgistroFinal - mResgistroInicial
+    End If
+
+  On Error GoTo 0
+SetDatos_CleanExit:
+    Exit Sub
+SetDatos_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "ParametrosMuestra.SetDatos", ErrSource)
+    Err.Raise ErrNumber, "ParametrosMuestra.SetDatos", ErrDescription
+End Sub
 '' *===========(EOF): ParametrosMuestra.cls

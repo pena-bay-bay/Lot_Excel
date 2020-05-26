@@ -7,18 +7,21 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-'/**
-' *     File        bombo.cls
-' *     Created     25/05/2004 21:52
-' *     Version     1.1.02
-' *     Modified    04/06/2006 11:08
-' *     Author      Carlos Almela Baeza
-' *     Subject     Clase bombo, simula un bombo de la lotería
-' *                 primitiva
-' **/
-'-----------------------------------------------------------*
-'
-'//Variables privadas
+' *============================================================================*
+' *
+' *     Fichero    : Bombo.cls
+' *
+' *     Autor      : Carlos Almela Baeza
+' *     Creación   : ddd, 25/05/2004 21:52
+' *     Versión    : 1.2
+' *     Propósito  : Simula un bombo de bolas para varios juegos:
+' *                  Bonoloto,
+' *
+' *============================================================================*
+Option Explicit
+Option Base 0
+
+'--- Variables Privadas -------------------------------------------------------*
 Private m_iextracciones As Integer          'Numero de extracciones realizadas
 Private m_objbola_extraida As bola          'Bola extraida
 Private m_itipo_giro As Integer             'tipo de giro, por tiempo o vueltas
@@ -26,10 +29,21 @@ Private m_dtiempo_giro As Double            'tiempo de giro
 Private m_lNumero_giros As Long             '
 Private m_num_bolas As Integer
 Private m_bolas As bolas
+Private mEstrellas As bolas                 ' Colección de bolas para las estrellas
 Private m_modo As Integer
+Private mTipoBombo As Integer               ' 1: 49 bolas(1/49), 2:50 bolas(1/50), 3:54 bolas(1/54), 4:12 bolas(1/12), 5:10 bolas(0/9)
+Private mTipoJuego As Juego                 ' Juego al que pertenece el Bombo
 Private Const m_cargado = True
-Private Const m_version = "1.1.01"
-'------------------------------------------------------*
+Private Const m_version = "1.2"
+Private i As Integer
+Private j As Integer
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : Class_Initialize
+' Fecha          : 25/05/2004
+' Propósito      : Inicializar variables internas de la clase
+'------------------------------------------------------------------------------*
+'
 Private Sub Class_Initialize()
     m_iextracciones = 0
     m_num_bolas = 0
@@ -37,11 +51,14 @@ Private Sub Class_Initialize()
     tiempo_giro = 0
     m_lNumero_giros = 1
     Set m_bolas = New bolas
-    Debug.Print "Inicio de clase Bombo (" & m_version & ")"
+    Set mEstrellas = New bolas
+    mTipoBombo = 1
+    mTipoJuego = JUEGO_DEFECTO
 End Sub
 Private Sub Class_Terminate()
-'    Debug.Print "Finalización de la clase" & "bombo"
     Set m_objbola_extraida = Nothing
+    Set m_bolas = Nothing
+    
 End Sub
 '------------------------------------------------------*
 '---------------------------------------------------------------------------------------
@@ -51,12 +68,12 @@ End Sub
 ' Objeto        :
 '---------------------------------------------------------------------------------------
 '
-Public Sub cargar(Optional a_Prob_Datos As Variant)
+Public Sub Cargar(Optional a_Prob_Datos As Variant)
     Dim i As Integer
     Dim b As bola
     'si me vienen datos trato los datos y asigno a bolas y
     'pongo el modo en bombo_cargado
-   On Error GoTo cargar_Error
+   On Error GoTo Cargar_Error
 
     If (IsMissing(a_Prob_Datos)) Then
         m_modo = Not m_cargado
@@ -81,7 +98,7 @@ Public Sub cargar(Optional a_Prob_Datos As Variant)
    On Error GoTo 0
    Exit Sub
 
-cargar_Error:
+Cargar_Error:
 
     MsgBox "Error " & Err.Number & " (" & Err.Description & ") in procedure cargar of Módulo de clase bombo"
 End Sub
@@ -93,22 +110,24 @@ End Sub
 ' Objeto        :
 '---------------------------------------------------------------------------------------
 '
-Public Sub girar()
+Public Sub Girar()
     Dim m_Ti As Double
     Dim m_Ni As Long
-   On Error GoTo girar_Error
+    Dim i As Integer
+    Dim m_time As Date
+   On Error GoTo Girar_Error
 
-    If Situacion = lotVACIO Then Exit Sub
+    If Situacion = lotVacio Then Exit Sub
     m_Ni = 0
     Select Case Me.tipo_giro
-        Case lotGIROS:
+        Case lotGiros:
             m_Ti = Time
             For i = 1 To Me.Numero_giros
                 realizar_giro
                 m_Ni = m_Ni + 1
             Next i
             Me.tiempo_giro = Time() - m_Ti
-        Case lotTIEMPO:
+        Case lotTiempo:
             m_time = Time() + Me.tiempo_giro
             m_Ni = 0
             While Time() < m_time
@@ -121,7 +140,7 @@ Public Sub girar()
    On Error GoTo 0
    Exit Sub
 
-girar_Error:
+Girar_Error:
 
     MsgBox "Error " & Err.Number & " (" & Err.Description & ") in procedure girar of Módulo de clase bombo"
 End Sub
@@ -220,9 +239,9 @@ End Sub
 Public Property Get Situacion() As Integer
 
     If (m_bolas.Count = 0) Then
-        Situacion = lotVACIO
+        Situacion = lotVacio
     Else
-        Situacion = lotCARGADO
+        Situacion = lotCargado
     End If
 End Property
 
@@ -326,6 +345,7 @@ Private Function Rueda() As Integer
     Dim i As Integer
     Dim m_dProb() As Double
     Dim m_tot As Double
+    Dim Suma As Integer
 
     Set m_col = m_bolas.Coleccion
     ReDim m_dProb(m_col.Count - 1)
@@ -358,3 +378,4 @@ Private Function Rueda() As Integer
 End Function
 
 
+' *===========(EOF): Bombo.cls

@@ -44,7 +44,7 @@ Public Sub CalcularStdAcum()
     mFecDesde = mFecHasta - mSorteos
     Set oInfo = New InfoSorteo
     Set oEngSort = New SorteoEngine
-    oInfo.Constructor Bonoloto
+    oInfo.Constructor JUEGO_DEFECTO
     '
     '   Borra la hoja de salida
     '

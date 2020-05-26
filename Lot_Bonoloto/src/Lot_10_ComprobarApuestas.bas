@@ -8,7 +8,7 @@ Attribute VB_Name = "Lot_10_ComprobarApuestas"
 Option Explicit
 
 Private DB                     As New BdDatos           'Objeto Base de Datos
-Private mInfo                  As InfoSorteo            ' Información de sorteos
+Private mInfo                  As InfoSorteo            'Información de sorteos
 
 '---------------------------------------------------------------------------------------
 ' Procedure : btn_ComprobarApuestas
@@ -90,12 +90,13 @@ Public Sub btn_ComprobarApuestas()
 btn_ComprobarApuestas_Error:
      Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Lot_ComprobarApuestas.btn_ComprobarApuestas")
-   '   Informa del error
    Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
    Call Trace("CERRAR")
 End Sub
+
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : ProcesoComprobarApuestas
@@ -176,9 +177,10 @@ ProcesoComprobarApuestas_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
     Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.ProcesoComprobarApuestas", ErrSource)
-    '   Lanza el error
     Err.Raise ErrNumber, "Lot_01_ComprobarApuestas.ProcesoComprobarApuestas", ErrDescription
 End Sub
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : PonCabecera
@@ -246,11 +248,11 @@ Private Sub PonCabecera(oParametros As ParametrosComprobarApuestas)
 PonCabecera_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.PonCabecera")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : GetSorteos
@@ -270,13 +272,19 @@ Private Sub GetSorteos(oParametros As ParametrosComprobarApuestas)
     '  Inicializamos la clave de la colección apuestas
     sKey = 0
     
+    On Error Resume Next
     Set rgSorteos = DB.Resultados_Fechas(oParametros.IntervaloFechas.FechaInicial, _
                                          oParametros.IntervaloFechas.FechaFinal)
     
-    If rgSorteos Is Nothing Then
+    If rgSorteos Is Nothing _
+    Or Err.Number = 100 Then
         Exit Sub
     End If
     
+    On Error GoTo GetSorteos_Error
+    '
+    '   Recorremos los sorteos
+    '
     For Each oFila In rgSorteos.Rows
         
         Set oSorteo = New Sorteo
@@ -294,16 +302,14 @@ Private Sub GetSorteos(oParametros As ParametrosComprobarApuestas)
         End If
     
     Next oFila
-   On Error GoTo 0
-   Exit Sub
-
+  
+  On Error GoTo 0
+    Exit Sub
 GetSorteos_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.GetSorteos")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.GetSorteos")
+    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -523,7 +529,7 @@ Private Function GetApuesta(datFila As Range) As Apuesta
     Dim mValor As Variant
     Dim objResult As Apuesta
     Dim i As Integer
-    Dim N As Numero
+    Dim n As Numero
     
   On Error GoTo GetApuesta_Error
     '
@@ -556,10 +562,10 @@ Private Function GetApuesta(datFila As Range) As Apuesta
             Case 5 To 15
                 If IsNumeric(mValor) And _
                 Not IsEmpty(mValor) Then
-                    Set N = New Numero
-                    N.Valor = CInt(mValor)
-                    objResult.Combinacion.Add N
-                    Set N = Nothing
+                    Set n = New Numero
+                    n.Valor = CInt(mValor)
+                    objResult.Combinacion.Add n
+                    Set n = Nothing
                 End If
         End Select
     Next i

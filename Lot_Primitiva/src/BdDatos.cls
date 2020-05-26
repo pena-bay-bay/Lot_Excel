@@ -21,9 +21,9 @@ Const hjBoletos = "Boletos"         'Hoja de Boletos
 Const hjApuesta = "Apuestas"        'Hoja de Apuestas
 
 
-Private mstrRangoResultados As String
-Private mstrRangoApuestas As String
-Private mstrRangoBoletos As String
+Private mstrRangoResultados As String       ' Address tabla de Resultados
+Private mstrRangoApuestas As String         ' Address tabla de Apuestas
+Private mstrRangoBoletos As String          ' Address Tabla de Boletos
 Private m_iUltimoRegistro As Integer
 Private m_dtPrimerResultado As Date
 Private m_dtUltimoResultado As Date
@@ -168,7 +168,7 @@ End Property
 Private Sub set_mstrRangoResultados()
     Dim rg As Range
     Set rg = Worksheets(hjDatos).Range("A:A")
-    mstrRangoResultados = "A2:M" & Application.WorksheetFunction.Subtotal(2, rg) + 1
+    mstrRangoResultados = "A2:N" & Application.WorksheetFunction.Subtotal(2, rg) + 1
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -351,9 +351,11 @@ Public Function Resultados_Fechas(ByVal Fecha_Inicial As Date, ByVal Fecha_Final
 Resultados_Fechas_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, ErrSource, "BdDatos.Resultados_Fechas")
-   '   Lanza el error
+   If ErrNumber <> 100 Then
+    '   Audita el error
+    Call HandleException(ErrNumber, ErrDescription, ErrSource, "BdDatos.Resultados_Fechas")
+    '   Lanza el error
+   End If
    Err.Raise ErrNumber, "BdDatos.Resultados_Fechas", ErrDescription
 End Function
 '---------------------------------------------------------------------------------------
@@ -550,3 +552,4 @@ Public Function GetSimulacionFecha(datRegistro As Integer) As Date
     Wend
     GetSimulacionFecha = m_dtFecha
 End Function
+

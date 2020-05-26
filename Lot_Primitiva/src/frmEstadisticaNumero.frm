@@ -1,18 +1,19 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmCalTiempoMedio 
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmEstadisticaNumero 
    Caption         =   "Estadisticas de un Número"
    ClientHeight    =   5040
    ClientLeft      =   45
    ClientTop       =   435
    ClientWidth     =   4980
-   OleObjectBlob   =   "frmCalTiempoMedio.frx":0000
+   OleObjectBlob   =   "frmEstadisticaNumero.frx":0000
    StartUpPosition =   1  'Centrar en propietario
 End
-Attribute VB_Name = "frmCalTiempoMedio"
+Attribute VB_Name = "frmEstadisticaNumero"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 
 
 '--------------------------------------------------------------------------------------*
@@ -144,8 +145,8 @@ Private Sub UserForm_Initialize()
     '
     '   Seleccionamos un trimestre de datos
     '
-    cboPeriodo.ListIndex = ctUltimoTrimestre
-    mPeriodo.Tipo_Fecha = ctUltimoTrimestre
+    cboPeriodo.ListIndex = ctUltimoAño
+    mPeriodo.Tipo_Fecha = ctUltimoAño
     '
     '   Visualizamos la información en los controles
     '
@@ -413,19 +414,11 @@ Private Function IsValid() As Boolean
     '   previos
     '
     If mErrorValidacion = 0 Then
-         Set bInfo = New InfoSorteo
-         bInfo.Constructor (JUEGO_DEFECTO)
-         If Not bInfo.EsFechaSorteo(mPeriodo.FechaFinal) Then
-            mPeriodo.FechaFinal = bInfo.GetAnteriorSorteo(mPeriodo.FechaFinal)
-         End If
-         If Not bInfo.EsFechaSorteo(mPeriodo.FechaInicial) Then
-            mPeriodo.FechaInicial = bInfo.GetAnteriorSorteo(mPeriodo.FechaInicial)
-         End If
          With mParMuestra
             .Juego = JUEGO_DEFECTO
             .FechaAnalisis = mFechaSorteo
             .FechaFinal = mPeriodo.FechaFinal
-            .FechaInicial = mPeriodo.FechaInicial
+            .DiasAnalisis = mPeriodo.Dias
         End With
         '
         '   Comprobamos si es válido
@@ -535,7 +528,7 @@ End Function
 '
 Private Sub VisualizaControles()
     Dim mInfo As New InfoSorteo         ' Información del sorteo
-    
+    Dim mDias As Integer
   On Error GoTo VisualizaControles_Error
     '
     '   Evaluar coherencia de datos
@@ -545,7 +538,7 @@ Private Sub VisualizaControles()
         mFechaSorteo = mInfo.GetProximoSorteo(mFechaSorteo)
     End If
     '   Si la fecha de análisis no es de un sorteo
-    '   vamos al siguiente
+    '   vamos al anterior
     '
     If mTipoProceso = 2 Then
         If mInfo.EsFechaSorteo(mFechaSorteo) Then
@@ -553,17 +546,27 @@ Private Sub VisualizaControles()
         End If
     End If
     '
+    '   Si la fecha del sorteo es igual a la fecha final del proceso
+    '   asignamos una fecha anterior a la fecha final y recalculamos el
+    '   periodo
+    '
+    If mFechaSorteo <= mPeriodo.FechaFinal Then
+        mDias = mPeriodo.Dias
+        mPeriodo.FechaFinal = mInfo.GetAnteriorSorteo(mFechaSorteo)
+        mPeriodo.FechaInicial = mPeriodo.FechaFinal - mDias
+    End If
+    '
     '   Si la fecha final del periodo no es de un sorteo
     '   salta a la fecha del sorteo anterior
     '
-    If mInfo.EsFechaSorteo(mPeriodo.FechaFinal) Then
+    If Not mInfo.EsFechaSorteo(mPeriodo.FechaFinal) Then
         mPeriodo.FechaFinal = mInfo.GetAnteriorSorteo(mPeriodo.FechaFinal)
     End If
     '
     '   Si la fecha inicial del periodo no es de un sorteo
     '   salta a la fecha del sorteo anterior
     '
-    If mInfo.EsFechaSorteo(mPeriodo.FechaInicial) Then
+    If Not mInfo.EsFechaSorteo(mPeriodo.FechaInicial) Then
         mPeriodo.FechaInicial = mInfo.GetAnteriorSorteo(mPeriodo.FechaInicial)
     End If
     
@@ -664,7 +667,7 @@ Private Sub CalMuestra()
         .Juego = JUEGO_DEFECTO
         .FechaAnalisis = mFechaSorteo
         .FechaFinal = mPeriodo.FechaFinal
-        .FechaInicial = mPeriodo.FechaInicial
+        .DiasAnalisis = mPeriodo.Dias
     End With
     '
     '   Si los parametros de la muestra están mal mensaje de error

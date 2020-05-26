@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
+Option Explicit
 '---------------------------------------------------------------------------------------
 ' Modulo    : Resultado
 ' Creado    : 01-nov-2006 20:29
@@ -191,6 +192,8 @@ End Property
 '---------------------------------------------------------------------------------------
 '
 Public Function Existe(Numero As Integer, Optional Mas_Complementario As Boolean = True) As Boolean
+    Dim i As Integer
+    
     Existe = False
     For i = 0 To 5
         If m_vNumeros(i) = Numero Then

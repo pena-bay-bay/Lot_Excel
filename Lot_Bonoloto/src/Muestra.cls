@@ -881,13 +881,25 @@ Private Sub CalcularValorHomogeneo()
     For i = 1 To m_col.Count
         mTemp = 0
         mTemp = m_col.Item(i).Probabilidad - mMuProb
-        mTemp = mTemp / mDesvProb
+        If mDesvProb <> 0 Then
+            mTemp = mTemp / mDesvProb
+        Else
+            mTemp = 0
+        End If
         mValorH = mTemp
         mTemp = m_col.Item(i).Prob_TiempoMedio - mMuTm
-        mTemp = mTemp / mDesvTm
+        If mDesvTm <> 0 Then
+            mTemp = mTemp / mDesvTm
+        Else
+            mTemp = 0
+        End If
         mValorH = mValorH + mTemp
         mTemp = m_col.Item(i).Prob_Frecuencia - mMuFrec
-        mTemp = mTemp / mDesvFrec
+        If mDesvFrec <> 0 Then
+            mTemp = mTemp / mDesvFrec
+        Else
+            mTemp = 0
+        End If
         mValorH = mValorH + mTemp
         mValorH = mValorH / 3
         m_col.Item(i).ValorHomogeneo = mValorH

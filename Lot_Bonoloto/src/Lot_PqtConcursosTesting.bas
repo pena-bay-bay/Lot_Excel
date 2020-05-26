@@ -37,13 +37,13 @@ Private Sub NumeroTest()
     '   Numero Válido
     '
     Obj.Valor = 5
-    Print_Numero Obj
+    PrintNumero Obj
     '
     '   Numero no Valido
     '
     Set Obj = New Numero
     Obj.Valor = 80
-    Print_Numero Obj
+    PrintNumero Obj
       
   On Error GoTo 0
 NumeroTest__CleanExit:
@@ -72,7 +72,7 @@ Private Sub CombinacionTest()
     '   Combinacion Vacia
     '
     Set Obj = New Combinacion
-    Print_Combinacion Obj
+    PrintCombinacion Obj
     '
     '   Combinacion Valida  28-1-31-25-33-8-7
     '
@@ -99,7 +99,7 @@ Private Sub CombinacionTest()
     Obj.Add oNum
     '
     '
-    Print_Combinacion Obj
+    PrintCombinacion Obj
     '
     '   Combinación no Valida
     '
@@ -127,7 +127,7 @@ End Sub
 ' Parámetros     : Numero
 '------------------------------------------------------------------------------*
 '
-Private Sub Print_Numero(Obj As Numero)
+Private Sub PrintNumero(Obj As Numero)
     Debug.Print "==> Pruebas Numero"
     Debug.Print vbTab & "Decena       =" & Obj.Decena
     Debug.Print vbTab & "Error        =" & Obj.Error
@@ -149,7 +149,7 @@ End Sub
 ' Parámetros     : Combinacion
 '------------------------------------------------------------------------------*
 '
-Private Sub Print_Combinacion(Obj As Combinacion)
+Private Sub PrintCombinacion(Obj As Combinacion)
     Debug.Print "==> Pruebas Combinacion"
     Debug.Print vbTab & "Add                 =" & "#Metodo" 'obj.Add
     Debug.Print vbTab & "Clear               =" & "#Metodo" 'obj.Clear
@@ -269,21 +269,21 @@ End Sub
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Private Sub PrintCombinacion(Obj As Combinacion)
-    Debug.Print "==> Combinacion"
-    Debug.Print " .Count               = " & Obj.Count
-    Debug.Print " .FormulaAltoBajo     = " & Obj.FormulaAltoBajo
-    Debug.Print " .FormulaConsecutivos = " & Obj.FormulaConsecutivos
-    Debug.Print " .FormulaDecenas      = " & Obj.FormulaDecenas
-    Debug.Print " .FormulaParidad      = " & Obj.FormulaParidad
-    Debug.Print " .FormulaSeptenas     = " & Obj.FormulaSeptenas
-    Debug.Print " .FormulaTerminacion  = " & Obj.FormulaTerminaciones
-    Debug.Print " .Producto            = " & Obj.Producto
-    Debug.Print " .Suma                = " & Obj.Suma
-    Debug.Print " .Texto               = " & Obj.Texto
-    Debug.Print " .TextoOrdenado       = " & Obj.TextoOrdenado
-    Debug.Print " .EstaOrdenado()      = " & Obj.EstaOrdenado
-End Sub
+'Private Sub PrintCombinacion(Obj As Combinacion)
+'    Debug.Print "==> Combinacion"
+'    Debug.Print " .Count               = " & Obj.Count
+'    Debug.Print " .FormulaAltoBajo     = " & Obj.FormulaAltoBajo
+'    Debug.Print " .FormulaConsecutivos = " & Obj.FormulaConsecutivos
+'    Debug.Print " .FormulaDecenas      = " & Obj.FormulaDecenas
+'    Debug.Print " .FormulaParidad      = " & Obj.FormulaParidad
+'    Debug.Print " .FormulaSeptenas     = " & Obj.FormulaSeptenas
+'    Debug.Print " .FormulaTerminacion  = " & Obj.FormulaTerminaciones
+'    Debug.Print " .Producto            = " & Obj.Producto
+'    Debug.Print " .Suma                = " & Obj.Suma
+'    Debug.Print " .Texto               = " & Obj.Texto
+'    Debug.Print " .TextoOrdenado       = " & Obj.TextoOrdenado
+'    Debug.Print " .EstaOrdenado()      = " & Obj.EstaOrdenado
+'End Sub
 
 '---------------------------------------------------------------------------------------
 ' Procedure : PrintPremio

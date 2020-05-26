@@ -7,17 +7,23 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-'---------------------------------------------------------------------------------------
-' Modulo    : Combinación
-' Creado    : 20-abr-2008 11:14
-' Autor     : Carlos Almela Baeza
-' Version   : 1.0.0 20-abr-2008 11:14
-' Objeto    : Determina propiedades de una combinación de números
-'             de manera que establece criterios de análisis
-'             en conjunto
-'---------------------------------------------------------------------------------------
+' *============================================================================*
+' *
+' *     Fichero    : Combinacion.cls
+' *
+' *     Autor      : Carlos Almela Baeza
+' *     Creación   : 20-abr-2008 11:14
+' *     Versión    : 1.1
+' *     Propósito  : Determina propiedades de una combinación de números
+' *                  de manera que establece criterios de análisis en conjunto
+' *
+' *============================================================================*
+Option Explicit
+Option Base 0
+'
+'--- Variables Internas -------------------------------------------------------*
 Private m_col                       As Collection   ' Colección de Numeros de la apuesta
-Private m_sTexto                    As String
+Private m_sTexto                    As String       ' Cadena de texto
 
 '---------------------------------------------------------------------------------------
 ' Procedure : Texto
@@ -31,7 +37,6 @@ Public Property Get Texto() As String
     Dim m_num As Numero
    On Error GoTo Texto_Error
     Texto = ""
-    i = 0
     '
     '   Si no existen datos en la colección
     '
@@ -39,10 +44,9 @@ Public Property Get Texto() As String
         Texto = "Combinación vacia"
     Else
         For Each m_num In m_col
-            Texto = Texto & "-" & Format(m_num.Valor, "00")
+            Texto = Texto & Format(m_num.Valor, "00") & "-"
         Next m_num
-        m_chars = Len(Texto) - 3
-        Texto = Right(Texto, m_chars)
+        Texto = Left(Texto, Len(Texto) - 1)
     End If
 
    On Error GoTo 0
@@ -136,16 +140,25 @@ End Property
 ' Procedure : TextoOrdenado
 ' Author    : Charly
 ' Date      : 23/03/2012
-' Purpose   :
+' Purpose   : Devuelve una cadena de texto con los numeros ordenados ascendentemente
 '---------------------------------------------------------------------------------------
 '
 Public Property Get TextoOrdenado()
-    Dim m_num As Numero
-    Dim m_chars As Integer
-    Dim m_Numeros() As Integer
-    Dim i As Integer
+    Dim m_num           As Numero
+    Dim m_chars         As Integer
+    Dim m_Numeros()     As Integer
+    Dim i               As Integer
    On Error GoTo TextoOrdenado_Error
-
+    '
+    '   Comprobamos que existan numeros
+    '
+    If m_col.Count = 0 Then
+        TextoOrdenado = "Combinación vacia"
+        Exit Property
+    End If
+    '
+    '   Creamos una matriz para ordenarlos
+    '
     ReDim m_Numeros(m_col.Count - 1)
     i = 0
     For Each m_num In m_col
@@ -157,10 +170,9 @@ Public Property Get TextoOrdenado()
     
     TextoOrdenado = ""
     For i = 0 To UBound(m_Numeros)
-        TextoOrdenado = TextoOrdenado & "-" & Format(m_Numeros(i), "00")
+        TextoOrdenado = TextoOrdenado & Format(m_Numeros(i), "00") & "-"
     Next i
-    m_chars = Len(TextoOrdenado) - 3
-    TextoOrdenado = Right(TextoOrdenado, m_chars)
+    TextoOrdenado = Left(TextoOrdenado, Len(TextoOrdenado) - 1)
 
    On Error GoTo 0
    Exit Property
@@ -266,7 +278,7 @@ Public Property Get FormulaDecenas() As String
     Dim m_decena As Integer
     Dim m_sum As Integer
     Dim m_num As Numero
-    
+    Dim x As Integer
   On Error GoTo FormulaDecenas_Error
 
     For Each m_num In m_col
@@ -310,7 +322,7 @@ Public Property Get FormulaTerminaciones() As String
     Dim m_terminacion As Integer
     Dim m_sum As Integer
     Dim m_num As Numero
-    
+    Dim x As Integer
     For Each m_num In m_col
         m_terminacion = m_num.Terminacion
         m_sum = m_contadores(m_terminacion, 1)
@@ -379,6 +391,7 @@ Public Property Get FormulaConsecutivos() As String
     Dim m_i As Integer
     Dim m_dif As Integer
     Dim m_num As Numero
+    Dim i As Integer
   On Error GoTo FormulaConsecutivos_Error
 
     ReDim m_Numeros(m_col.Count - 1)
@@ -413,7 +426,7 @@ Public Property Get FormulaConsecutivos() As String
     If Len(FormulaConsecutivos) = 0 Then
         FormulaConsecutivos = "No Consecutivos"
     Else
-        FormulaConsecutivos = Mid(FormulaConsecutivos, 2, Len(FormulaConsecutivos) - 1)
+        FormulaConsecutivos = mId(FormulaConsecutivos, 2, Len(FormulaConsecutivos) - 1)
     End If
 
    On Error GoTo 0
@@ -440,7 +453,7 @@ Public Property Get FormulaSeptenas() As String
     Dim m_septena As Integer
     Dim m_sum As Integer
     Dim m_num As Numero
-    
+    Dim x As Integer
   On Error GoTo FormulaSeptenas_Error
 
     For Each m_num In m_col
@@ -528,7 +541,7 @@ End Sub
 Public Sub Delete(key As Integer)
     Dim m_index As Integer
     Dim m_num As Numero
-    Index = 0
+    m_index = 0
     For Each m_num In m_col
         If (m_num.Valor = key) Then
             Exit For

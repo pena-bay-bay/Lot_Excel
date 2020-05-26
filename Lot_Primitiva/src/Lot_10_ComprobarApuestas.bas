@@ -5,8 +5,10 @@ Attribute VB_Name = "Lot_10_ComprobarApuestas"
 ' Date      : 22/10/2013
 ' Purpose   : Verificar Pronósticos
 '---------------------------------------------------------------------------------------
-Private DB                     As New BdDatos           'Objeto Base de Datos
 Option Explicit
+
+Private DB                     As New BdDatos           'Objeto Base de Datos
+Private mInfo                  As InfoSorteo            'Información de sorteos
 
 '---------------------------------------------------------------------------------------
 ' Procedure : btn_ComprobarApuestas
@@ -18,7 +20,7 @@ Option Explicit
 Public Sub btn_ComprobarApuestas()
     Dim ofrmPeriodo         As frmSelPeriodo
     Dim oParamCU            As ParametrosComprobarApuestas
-    Dim oInfo               As New InfoSorteo
+    
   On Error GoTo btn_ComprobarApuestas_Error
     '
     '  Focalizar la hoja de salida
@@ -55,23 +57,13 @@ Public Sub btn_ComprobarApuestas()
                 '
                 Set oParamCU = New ParametrosComprobarApuestas
                 '
+                '   Tipo de comparación: 0 Todo, 1 Vigencia  ##TODO: incluir selección en formulario
+                '
+                oParamCU.TipoComparacion = 1
+                '
                 '   Obtiene los datos del formulario
                 '
                 Set oParamCU.IntervaloFechas = ofrmPeriodo.RangoFechas
-                '
-                '   Comprueba que las fechas son del Sorteo
-                '
-                '   Final
-                If Not oInfo.EsFechaSorteo(oParamCU.IntervaloFechas.FechaFinal) Then
-                    oParamCU.IntervaloFechas.FechaFinal = oInfo.GetProximoSorteo(oParamCU.IntervaloFechas.FechaFinal)
-                End If
-                '
-                ' Inicial
-                '
-                If Not oInfo.EsFechaSorteo(oParamCU.IntervaloFechas.FechaInicial) Then
-                    oParamCU.IntervaloFechas.FechaInicial = oInfo.GetProximoSorteo(oParamCU.IntervaloFechas.FechaInicial)
-                End If
-                
                 '
                 '  Obtener los sorteos del periodo
                 '
@@ -98,12 +90,13 @@ Public Sub btn_ComprobarApuestas()
 btn_ComprobarApuestas_Error:
      Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Lot_ComprobarApuestas.btn_ComprobarApuestas")
-   '   Informa del error
    Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
    Call Trace("CERRAR")
 End Sub
+
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : ProcesoComprobarApuestas
@@ -174,7 +167,7 @@ Public Sub ProcesoComprobarApuestas(oParam As ParametrosComprobarApuestas)
     '
     ' Creamos un autofiltro
     '
-    Range("A3").CurrentRegion.Select          'Se posiciona en la celda del primer número
+    Range("A3").Select          'Se posiciona en la celda del primer número
     Selection.AutoFilter        'Crea un autofiltro
             
    On Error GoTo 0
@@ -184,9 +177,10 @@ ProcesoComprobarApuestas_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
     Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.ProcesoComprobarApuestas", ErrSource)
-    '   Lanza el error
     Err.Raise ErrNumber, "Lot_01_ComprobarApuestas.ProcesoComprobarApuestas", ErrDescription
 End Sub
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : PonCabecera
@@ -201,31 +195,25 @@ Private Sub PonCabecera(oParametros As ParametrosComprobarApuestas)
     Dim tmpFInicial     As Date
     Dim tmpFFinal       As Date
     Dim tmpFecha        As Date
-    Dim rgOrden         As String
-    Dim newrgOrden      As String
-    Dim mInfo           As InfoSorteo
+   
    On Error GoTo PonCabecera_Error
-    '
-    ' Inicializamos variables
-    '
-    Set mInfo = New InfoSorteo
-    mInfo.Constructor (JUEGO_DEFECTO)
-    '
-    '
-    tmpFInicial = oParametros.IntervaloFechas.FechaInicial
-    tmpFFinal = oParametros.IntervaloFechas.FechaFinal
     '
     ' Borramos el área de salida de la información
     '
-    Set m_rgCabecera = Range("O2").CurrentRegion
-    m_rgCabecera.Offset(0, 15).Delete
+    Set m_rgCabecera = Range("P2").CurrentRegion
+    m_rgCabecera.Offset(0, 16).Delete
+    Set mInfo = New InfoSorteo
+    mInfo.Constructor JUEGO_DEFECTO
     '
-    ' ponemos la cabecera
+    ' Calculamos el número de elementos de la cabecera
     '
+    tmpFInicial = oParametros.IntervaloFechas.FechaInicial
+    tmpFFinal = oParametros.IntervaloFechas.FechaFinal
     i = mInfo.GetSorteosEntreFechas(tmpFInicial, tmpFFinal) + 4
-    
     ReDim m_sCampos(i)
-   ' Componer la cabecera
+    '
+    '   Componemos los literales de la cabecera
+    '
     i = 0
     For tmpFecha = tmpFInicial To tmpFFinal
         If mInfo.EsFechaSorteo(tmpFecha) Then
@@ -233,12 +221,10 @@ Private Sub PonCabecera(oParametros As ParametrosComprobarApuestas)
             i = i + 1
         End If
     Next tmpFecha
-    '
-    '
     m_sCampos(i) = "Costes": m_sCampos(i + 1) = "Premios":
     m_sCampos(i + 2) = "Dias": m_sCampos(i + 3) = "Puntuacion"
         
-    Set m_rgCabecera = ActiveSheet.Range("P2")
+    Set m_rgCabecera = ActiveSheet.Range("Q2")
     For i = 0 To UBound(m_sCampos)
         With m_rgCabecera.Offset(0, i)
                 .Value = m_sCampos(i)
@@ -256,20 +242,17 @@ Private Sub PonCabecera(oParametros As ParametrosComprobarApuestas)
                 .Interior.color = 12419407   'azul
         End With
     Next i
-
-    
-
    On Error GoTo 0
    Exit Sub
 
 PonCabecera_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.PonCabecera")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : GetSorteos
@@ -289,13 +272,19 @@ Private Sub GetSorteos(oParametros As ParametrosComprobarApuestas)
     '  Inicializamos la clave de la colección apuestas
     sKey = 0
     
+    On Error Resume Next
     Set rgSorteos = DB.Resultados_Fechas(oParametros.IntervaloFechas.FechaInicial, _
                                          oParametros.IntervaloFechas.FechaFinal)
     
-    If rgSorteos Is Nothing Then
+    If rgSorteos Is Nothing _
+    Or Err.Number = 100 Then
         Exit Sub
     End If
     
+    On Error GoTo GetSorteos_Error
+    '
+    '   Recorremos los sorteos
+    '
     For Each oFila In rgSorteos.Rows
         
         Set oSorteo = New Sorteo
@@ -313,16 +302,14 @@ Private Sub GetSorteos(oParametros As ParametrosComprobarApuestas)
         End If
     
     Next oFila
-   On Error GoTo 0
-   Exit Sub
-
+  
+  On Error GoTo 0
+    Exit Sub
 GetSorteos_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.GetSorteos")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.GetSorteos")
+    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -359,48 +346,54 @@ Private Sub VerApuestasSorteos(oApuesta As Apuesta, oParam As ParametrosComproba
     '
     For Each oSorteo In oParam.ColSorteos
         '
-        '  Creamos el premio
+        '   Si la apuesta está vigente
         '
-        Set oPremio = New Premio
-        '
-        '  Enfrentamos apuesta a sorteo
-        '
-        Set oCUComprobar.MyApuesta = oApuesta
-        Set oCUComprobar.Sorteo = oSorteo
-        '
-        ' Obtenemos el premio de la apuesta
-        '
-        Set oPremio = oCUComprobar.GetPremio
-        '
-        '
-        '
-        If oPremio.BolasAcertadas > 0 Then
+        If (oApuesta.FechaAlta <= oSorteo.Fecha And _
+            oSorteo.Fecha <= oApuesta.FechaFinVigencia) Or _
+            (oParam.TipoComparacion = 0) Then
             '
-            ' Construimos la clave de la coleccion con
-            ' el id de la apuesta y la fecha del sorteo
+            '  Creamos el premio
             '
-            sKey = Format(oSorteo.Fecha, "yyyy-MM-dd")
-            oPremio.key = sKey
+            Set oPremio = New Premio
             '
-            ' Se agrega a la colección
+            '  Enfrentamos apuesta a sorteo
             '
-            oParam.ColAciertos.Add oPremio, sKey
+            Set oCUComprobar.MyApuesta = oApuesta
+            Set oCUComprobar.Sorteo = oSorteo
             '
-            '  acumulamos a la estadistica de la apuesta
+            ' Obtenemos el premio de la apuesta
             '
-            With oEstdstk
-                .Costes = .Costes + oApuesta.Coste(oSorteo.Juego)
-                .DiasAciertos = .DiasAciertos + 1
-                .ImportePremios = .ImportePremios + oPremio.GetPremioEsperado
-                .Puntuacion = .Puntuacion + CalPuntuacion(oPremio.BolasAcertadas)
-            End With
-        Else
-            oEstdstk.Costes = oEstdstk.Costes + oApuesta.Coste(oSorteo.Juego)
+            Set oPremio = oCUComprobar.GetPremio
+            '
+            '
+            '
+            If oPremio.BolasAcertadas > 0 Then
+                '
+                ' Construimos la clave de la coleccion con
+                ' el id de la apuesta y la fecha del sorteo
+                '
+                sKey = Format(oSorteo.Fecha, "yyyy-MM-dd")
+                oPremio.key = sKey
+                '
+                ' Se agrega a la colección
+                '
+                oParam.ColAciertos.Add oPremio, sKey
+                '
+                '  acumulamos a la estadistica de la apuesta
+                '
+                With oEstdstk
+                    .Costes = .Costes + oApuesta.Coste(oSorteo.Juego)
+                    .DiasAciertos = .DiasAciertos + 1
+                    .ImportePremios = .ImportePremios + oPremio.GetPremioEsperado
+                    .Puntuacion = .Puntuacion + CalPuntuacion(oPremio.BolasAcertadas)
+                End With
+            Else
+                oEstdstk.Costes = oEstdstk.Costes + oApuesta.Coste(oSorteo.Juego)
+            End If
+            '
+            ' Se borra el premio
+            Set oPremio = Nothing
         End If
-        '
-        ' Se borra el premio
-        Set oPremio = Nothing
-    
     Next oSorteo
     '
     '  agregamos la estadistica de la apuesta a la colección
@@ -434,13 +427,8 @@ Private Sub VisualizaResultado(datRow As Long, oParam As ParametrosComprobarApue
     Dim mFecha          As Date
     Dim xCol            As Long
     Dim sKey            As String
-    Dim mInfo           As InfoSorteo
     
    On Error GoTo VisualizaResultado_Error
-    '
-    '
-    '
-    Set mInfo = New InfoSorteo
     '
     '
     '
@@ -448,13 +436,13 @@ Private Sub VisualizaResultado(datRow As Long, oParam As ParametrosComprobarApue
     '
     '
     '
-    xCol = 16
+    xCol = 17
     '
     '
     '
     For mFecha = oParam.IntervaloFechas.FechaInicial _
     To oParam.IntervaloFechas.FechaFinal
-        If mInfo.EsFechaSorteo(mFecha) Then
+        If (Weekday(mFecha) <> 1) Then      ' Si no es Domingo
             '
             '
             '
@@ -542,6 +530,7 @@ Private Function GetApuesta(datFila As Range) As Apuesta
     Dim objResult As Apuesta
     Dim i As Integer
     Dim n As Numero
+    
   On Error GoTo GetApuesta_Error
     '
     '   Creamos el objetp
@@ -568,8 +557,9 @@ Private Function GetApuesta(datFila As Range) As Apuesta
         Select Case i
             Case 1: objResult.EntidadNegocio.Id = CInt(mValor)
             Case 2: objResult.FechaAlta = CDate(mValor)
-            Case 3: objResult.metodo = mValor
-            Case 4 To 15
+            Case 3: objResult.FechaFinVigencia = mInfo.AddDiasSorteo(objResult.FechaAlta, CInt(mValor))
+            Case 4: objResult.Metodo = mValor
+            Case 5 To 15
                 If IsNumeric(mValor) And _
                 Not IsEmpty(mValor) Then
                     Set n = New Numero

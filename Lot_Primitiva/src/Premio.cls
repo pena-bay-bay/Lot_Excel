@@ -449,6 +449,7 @@ Public Property Get NumerosAcertados() As TiposAciertos
                 Case 7:
                     m_eNumerosAcertados = SeisAciertosMasC
                     m_eNumerosAcertados = SeisAciertos
+                    
                 Case 6:
                     If ComplementarioAcertado Then
                         m_eNumerosAcertados = CincoAciertosMasC
@@ -460,7 +461,7 @@ Public Property Get NumerosAcertados() As TiposAciertos
                 Case 5:
                     If ComplementarioAcertado Then
                         m_eNumerosAcertados = CuatroAciertosMasC
-                        m_eNumerosAcertados = CincoAciertos
+                        m_eNumerosAcertados = CuatroAciertos
                     Else
                         m_eNumerosAcertados = CincoAciertos
                     End If

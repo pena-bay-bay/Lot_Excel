@@ -16,15 +16,16 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Public Combinacion As Combinacion
-Public IdBoleto As Integer
-Public SeHaJugado As Boolean
-Public EntidadNegocio As EntidadNegocio
-Public EsMultiple As Boolean
-Public NumeroApuestas As Integer
-Public FechaAlta As Date
-Public metodo As String
-Public Juego As Juego
+Public Combinacion      As Combinacion
+Public IdBoleto         As Integer
+Public SeHaJugado       As Boolean
+Public EntidadNegocio   As EntidadNegocio
+Public EsMultiple       As Boolean
+Public NumeroApuestas   As Integer
+Public FechaAlta        As Date
+Public FechaFinVigencia As Date
+Public Metodo           As String
+Public Juego            As Juego
 '
 Private m_dCoste As Double
 

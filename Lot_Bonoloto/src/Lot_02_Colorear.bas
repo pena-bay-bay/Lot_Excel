@@ -677,13 +677,13 @@ End Sub
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Public Function get_color_array(vDatos As Variant, N As Integer) As Integer
+Public Function get_color_array(vDatos As Variant, n As Integer) As Integer
     Dim m_datos  As Variant             'Ordenación por número
     Dim m_result As Variant             'Vector de resultados
     Dim j As Integer
     Dim i As Integer
    On Error GoTo get_color_array_Error
-    If N = 0 Or N > 49 Then
+    If n = 0 Or n > 49 Then
         get_color_array = xlNone
         Exit Function
     End If
@@ -691,7 +691,7 @@ Public Function get_color_array(vDatos As Variant, N As Integer) As Integer
     m_result = Asignar_colores(m_datos, True)
     j = LBound(vDatos)
     For i = LBound(vDatos) To UBound(vDatos)
-        If (vDatos(i, 0) = N) Then
+        If (vDatos(i, 0) = n) Then
             Exit For
         End If
         j = j + 1

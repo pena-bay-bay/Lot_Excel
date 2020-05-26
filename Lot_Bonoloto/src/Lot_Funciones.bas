@@ -196,6 +196,44 @@ Public Sub Version_Libreria()
     MsgBox Version, vbApplicationModal + vbInformation + vbOKOnly, "Librería de Funciones de la Loteria"
 End Sub
 
-
-
-
+'---------------------------------------------------------------------------------------
+' Procedure : CALCULOON
+' Author    : CAB3780Y
+' Date      : 04/08/2009
+' Purpose   :
+'---------------------------------------------------------------------------------------
+Public Sub CALCULOON()
+    With Application
+        .Calculation = xlAutomatic                          'cálculo automático
+        .MaxChange = 0.001
+        .CalculateBeforeSave = False
+        .ScreenUpdating = True                              'actualizar pantalla
+        .ErrorCheckingOptions.BackgroundChecking = False    'no verificar errores formulas
+    End With
+    With ActiveWorkbook
+        .UpdateRemoteReferences = False                     'no actualizar ref. remotas
+        .PrecisionAsDisplayed = False
+        .SaveLinkValues = False
+    End With
+End Sub
+'---------------------------------------------------------------------------------------
+' Procedure : CALCULOOFF
+' Author    : CAB3780Y
+' Date      : 04/08/2009
+' Purpose   :
+'---------------------------------------------------------------------------------------
+'
+Public Sub CALCULOOFF()
+    With Application
+        .ScreenUpdating = False
+        .Calculation = xlManual
+        .MaxChange = 0.001
+        .CalculateBeforeSave = False
+    End With
+    
+    With ActiveWorkbook
+        .UpdateRemoteReferences = False
+        .PrecisionAsDisplayed = False
+        .SaveLinkValues = False
+    End With
+End Sub

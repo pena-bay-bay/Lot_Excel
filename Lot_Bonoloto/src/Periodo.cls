@@ -31,8 +31,6 @@ Private mvarTexto                   As String
 Private m_sTipoFecha                As String
 
 '--- Constantes ---------------------------------------------------------------*
-Private Const MinDate = #1/1/1900#
-Private Const MaxDate = #12/31/2999#
 Private Const lt0 = "Personalizadas"
 Private Const lt1 = "Semana Anterior"
 Private Const lt2 = "Quincena Anterior"
@@ -72,6 +70,8 @@ Private Sub Class_Initialize()
                                 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21)
     Tipo_Fecha = ctSinDefinir
 End Sub
+
+
 '------------------------------------------------------------------------------*
 ' Procedimiento  : fnUltimoDia
 ' Fecha          : 22/04/2007 21:36
@@ -104,6 +104,8 @@ Private Function fnUltimoDia(tmpFecha As Date) As Integer
     End Select
 End Function
 
+
+
 '
 '----| fnRestaMes (  fecha ) : fecha  Restar un mes a la fecha
 '
@@ -128,6 +130,8 @@ Private Function fnRestaMes(vNewValue As Date) As Date
     End If
 End Function
 
+
+
 '--- Metodos Publicos ---------------------------------------------------------*
 '------------------------------------------------------------------------------*
 ' Procedimiento  : Init
@@ -142,6 +146,8 @@ Public Sub Init(vNewFechaInicial As Date, vNewFechaFinal As Date)
     ' Comprobar si las fechas encajan en los periodos definidos
     
 End Sub
+
+
 '------------------------------------------------------------------------------*
 ' Procedimiento  : Contiene
 ' Fecha          : 22/04/2007 21:36
@@ -158,6 +164,8 @@ Public Function Contiene(vNewValue As Date) As Boolean
     End If
 End Function
 
+
+
 '------------------------------------------------------------------------------*
 ' Procedimiento  : CargaTabla
 ' Fecha          : 22/04/2007 21:36
@@ -167,6 +175,8 @@ End Function
 Public Sub CargaTabla(cmbLista As Object)
     CargaCombo cmbLista, m_VId_FechasPersonalizadas
 End Sub
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : CargaCombo
@@ -218,13 +228,27 @@ CargaCombo_Error:
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
 
+
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : ToString
+' Fecha          : 26/05/2020 17:05
+' Propósito      : Expresa el periodo en formato texto
+'------------------------------------------------------------------------------*
 Public Function ToString() As String
     Dim mStr As String
-    mStr = "[$1..$2]"
-    mStr = Replace(mStr, "$1", Format(m_dtFecha_Final, "dd/mm/yyyy"))
-    mStr = Replace(mStr, "$2", Format(m_dtFecha_Inicial, "dd/mm/yyyy"))
+    If (m_dtFecha_Final <> MaxDate) And _
+       (m_dtFecha_Inicial <> MinDate) Then
+        mStr = "[$1..$2]"
+        mStr = Replace(mStr, "$1", Format(m_dtFecha_Final, "dd/mm/yyyy"))
+        mStr = Replace(mStr, "$2", Format(m_dtFecha_Inicial, "dd/mm/yyyy"))
+    Else
+        mStr = "[Periodo no definido]"
+    End If
     ToString = mStr
 End Function
+
+
 
 '--- Propiedades --------------------------------------------------------------*
 '------------------------------------------------------------------------------*
@@ -240,6 +264,9 @@ Public Property Let FechaInicial(ByVal dtFecha_Inicial As Date)
     m_dtFecha_Inicial = dtFecha_Inicial
 End Property
 
+
+
+
 '------------------------------------------------------------------------------*
 ' Procedimiento  : FechaFinal
 ' Fecha          : 22/04/2007 21:36
@@ -252,6 +279,9 @@ End Property
 Public Property Let FechaFinal(ByVal dtFecha_Final As Date)
     m_dtFecha_Final = dtFecha_Final
 End Property
+
+
+
 
 '------------------------------------------------------------------------------*
 ' Procedimiento  : Dias
@@ -266,6 +296,8 @@ Public Property Get Dias() As Integer
         Dias = m_dtFecha_Final - m_dtFecha_Inicial + 1
     End If
 End Property
+
+
 
 '------------------------------------------------------------------------------*
 ' Procedimiento  : Tipo_Fecha
@@ -432,6 +464,8 @@ Tipo_Fecha_Error:
     Err.Raise ErrNumber, "Periodo.Tipo_Fecha", ErrDescription
 End Property
 
+
+
 '------------------------------------------------------------------------------*
 ' Procedimiento  : Texto
 ' Fecha          : 22/04/2007 21:49
@@ -492,7 +526,4 @@ Public Property Get Texto() As String
     End Select
 End Property
 
-
 ' *===========(EOF): Periodo.cls
-
-

@@ -417,7 +417,7 @@ Private Function IsValid() As Boolean
             .Juego = JUEGO_DEFECTO
             .FechaAnalisis = mFechaSorteo
             .FechaFinal = mPeriodo.FechaFinal
-            .FechaInicial = mPeriodo.FechaInicial
+            .DiasAnalisis = mPeriodo.Dias
         End With
         '
         '   Comprobamos si es válido
@@ -527,7 +527,7 @@ End Function
 '
 Private Sub VisualizaControles()
     Dim mInfo As New InfoSorteo         ' Información del sorteo
-    
+    Dim mDias As Integer
   On Error GoTo VisualizaControles_Error
     '
     '   Evaluar coherencia de datos
@@ -549,8 +549,10 @@ Private Sub VisualizaControles()
     '   asignamos una fecha anterior a la fecha final y recalculamos el
     '   periodo
     '
-    If mFechaSorteo = mPeriodo.FechaFinal Then
+    If mFechaSorteo <= mPeriodo.FechaFinal Then
+        mDias = mPeriodo.Dias
         mPeriodo.FechaFinal = mInfo.GetAnteriorSorteo(mFechaSorteo)
+        mPeriodo.FechaInicial = mPeriodo.FechaFinal - mDias
     End If
     '
     '   Si la fecha final del periodo no es de un sorteo
@@ -664,7 +666,7 @@ Private Sub CalMuestra()
         .Juego = JUEGO_DEFECTO
         .FechaAnalisis = mFechaSorteo
         .FechaFinal = mPeriodo.FechaFinal
-        .FechaInicial = mPeriodo.FechaInicial
+        .DiasAnalisis = mPeriodo.Dias
     End With
     '
     '   Si los parametros de la muestra están mal mensaje de error

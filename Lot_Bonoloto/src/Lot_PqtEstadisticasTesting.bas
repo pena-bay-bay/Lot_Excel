@@ -37,10 +37,11 @@ Private Sub ParametrosMuestraTest()
     '
     Set m_objParMuestra = New ParametrosMuestra
     With m_objParMuestra
+        .TipoMuestra = False
         .Juego = Bonoloto
         .FechaAnalisis = #4/3/2017#          ' Lunes
         .FechaFinal = #4/1/2017#             ' Sabado
-        .FechaInicial = #3/25/2017#          ' Sabado
+        .DiasAnalisis = 30
     End With
     Print_ParametrosMuestra m_objParMuestra
     '
@@ -48,10 +49,11 @@ Private Sub ParametrosMuestraTest()
     '
     Set m_objParMuestra = New ParametrosMuestra
     With m_objParMuestra
+        .TipoMuestra = False
         .Juego = Bonoloto
         .FechaAnalisis = #8/21/2017#          ' Lunes
         .FechaFinal = #8/19/2017#             ' Sabado
-        .FechaInicial = #7/22/2017#           ' Sabado
+        .DiasAnalisis = 15
     End With
     Print_ParametrosMuestra m_objParMuestra
     '
@@ -59,6 +61,7 @@ Private Sub ParametrosMuestraTest()
     '
     Set m_objParMuestra = New ParametrosMuestra
     With m_objParMuestra
+        .TipoMuestra = True
         .Juego = LoteriaPrimitiva
         .FechaAnalisis = #4/8/2017#          'Sabado
         .FechaFinal = #4/6/2017#             'Jueves
@@ -70,6 +73,7 @@ Private Sub ParametrosMuestraTest()
     '
     Set m_objParMuestra = New ParametrosMuestra
     With m_objParMuestra
+        .TipoMuestra = True
         .Juego = Euromillones
         .FechaAnalisis = #3/31/2017#         'Viernes
         .FechaFinal = #3/28/2017#            'Martes
@@ -81,6 +85,7 @@ Private Sub ParametrosMuestraTest()
     '
     Set m_objParMuestra = New ParametrosMuestra
     With m_objParMuestra
+        .TipoMuestra = True
         .Juego = gordoPrimitiva
         .FechaAnalisis = #4/16/2017#         'Domingo
         .FechaFinal = #4/9/2017#             'Domingo
@@ -109,7 +114,7 @@ Private Sub MuestraTest()
     With m_objParMuestra
         .FechaAnalisis = #2/6/2012#
         .FechaFinal = #2/4/2012#
-        .FechaInicial = #1/25/2012#
+        .DiasAnalisis = 9
     End With
     '
     '       Calcula la Muestra
@@ -384,9 +389,9 @@ Public Sub BomboTest()
         .TipoBombo = 2
         .NumGiros = 50
         .TipoGiros = lotGiros
+        .Cargar
         .ProbabilidadesBolas = mProb
     End With
-    Obj.Cargar
     Print_Bombo Obj
     Obj.Girar
     Debug.Print "Extraemos bolas de bombo :" & Obj.ExtraerBolas(2)

@@ -725,6 +725,24 @@ Indice:
                             ' through the loop until there are 
                             ' no objects left in the collection.
                 Next Num
+		
+		Claves y valores
+			Private Sub prueba()
+				Dim col1 As New Collection
+				Dim i As Variant
+				
+				col1.Add Array("first key", "first string"), "first key"
+				col1.Add Array("second key", "second string"), "second key"
+				col1.Add Array("third key", "third string"), "third key"
+				
+				For Each i In col1
+				  Debug.Print i(1)
+				Next
+				
+				For Each i In col1
+				  Debug.Print i(0)
+				Next
+			End Sub
 
 
 

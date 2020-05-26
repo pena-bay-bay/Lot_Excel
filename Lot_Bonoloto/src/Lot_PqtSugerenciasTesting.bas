@@ -592,7 +592,7 @@ End Sub
 
 '------------------------------------------------------------------------------*
 ' Procedimiento  : RealizarSugerenciaTest
-' Fecha          :
+' Fecha          : mi., 20/may/2020 18:06:15
 ' Propósito      : Pruebas del Caso de Uso Realizar Sugerencia
 '------------------------------------------------------------------------------*
 Private Sub SugerenciaTest()
@@ -641,9 +641,46 @@ Private Sub SugerenciaTest()
     '
     '   UnitTest 4.- Objeto No valido, falta fecha análisis
     '
+    Set mObj = New Sugerencia
+    With mObj
+        .Combinacion.Texto = "05-14-18-22-47-31"
+        .Entidad.Id = 12
+        .Metodo.TipoProcedimiento = mtdEstadistico
+        .Metodo.Pronosticos = 6
+        .Metodo.TipoMuestra = True
+        .Metodo.NumeroSorteos = 50
+        .Modalidad = LP_LB_6_49
+    End With
+    If Not mObj.IsValid Then
+        Debug.Print " La sugerencia no es valida "
+    End If
+    PrintSugerencia mObj
+    
     '
     '   UnitTest 5.- Objeto Valido
     '
+    Set mObj = New Sugerencia
+    With mObj
+        .Combinacion.Texto = "15-25-34-36-38-41-45-49"
+        .Entidad.Id = 189
+        .Metodo.TipoProcedimiento = mtdEstadistico
+        .Metodo.Pronosticos = 8
+        .Metodo.CriteriosAgrupacion = grpDecenas
+        .Metodo.CriteriosOrdenacion = ordProbabilidad
+        .Metodo.SentidoOrdenacion = True
+        .Metodo.TipoMuestra = True
+        .Metodo.NumeroSorteos = 50
+        .Parametros.FechaAnalisis = #1/3/2020#
+        .Parametros.FechaFinal = #1/2/2020#
+        .Parametros.TipoMuestra = True
+        .Parametros.NumeroSorteos = 50
+        .Parametros.Juego = Bonoloto
+        .Modalidad = LP_LB_6_49
+    End With
+    If Not mObj.IsValid Then
+        Debug.Print " La sugerencia no es valida "
+    End If
+    PrintSugerencia mObj
     
     On Error GoTo 0
 SugerenciaTest__CleanExit:
@@ -675,35 +712,107 @@ Private Sub RealizarSugerenciaTest()
     '
     Set mObj = New RealizarSugerencia
     PrintRealizarSugerencia mObj
+'    '
+'    '   UnitTest 2.- Sugerencia metodo aleatorio
+'    '
+'    Set mMtd = New Metodo
+'    With mMtd
+'        .TipoProcedimiento = mtdAleatorio
+'        .ModalidadJuego = LP_LB_6_49
+'        .Pronosticos = 6
+'    End With
+'    Set mSug = mObj.GetSugerencia(mMtd, #5/4/2020#)
+'    PrintSugerencia mSug
     '
-    '   UnitTest 2.- Sugerencia metodo aleatorio
+    '   UnitTest 3.- Sugerencia metodo Bombo
+    '
+'    Set mMtd = New Metodo
+'    With mMtd
+'        .TipoProcedimiento = mtdBombo
+'        .ModalidadJuego = LP_LB_6_49
+'        .Pronosticos = 6
+'    End With
+'    Set mSug = mObj.GetSugerencia(mMtd, #3/1/2020#)
+'    PrintSugerencia mSug
+    '
+    '   UnitTest 4.- Sugerencia metodo BomboCargado
+    '
+'    Set mMtd = New Metodo
+'    With mMtd
+'        .TipoProcedimiento = mtdBomboCargado
+'        .CriteriosOrdenacion = ordProbTiempoMedio
+'        .SentidoOrdenacion = True
+'        .CriteriosAgrupacion = grpParidad
+'        .TipoMuestra = False
+'        .DiasAnalisis = 90
+'        .ModalidadJuego = LP_LB_6_49
+'        .Pronosticos = 8
+'    End With
+'    Set mSug = mObj.GetSugerencia(mMtd, #3/14/2020#)
+'    PrintSugerencia mSug
+    
+    '
+    '   UnitTest 5.- Sugerencia metodo Estadistica
+    '
+'    Set mMtd = New Metodo
+'    With mMtd
+'        .TipoProcedimiento = mtdEstadistico
+'        .CriteriosOrdenacion = ordProbabilidad
+'        .SentidoOrdenacion = True
+'        .CriteriosAgrupacion = grpSinDefinir
+'        .TipoMuestra = True
+'        .NumeroSorteos = 40
+'        .ModalidadJuego = LP_LB_6_49
+'        .Pronosticos = 8
+'    End With
+'    Set mSug = mObj.GetSugerencia(mMtd, #3/14/2020#)
+'    If mSug.Combinacion.TextoOrdenado = "01-02-09-16-19-22-23-40" Then
+'        Debug.Print " Prueba OK"
+'    Else
+'        Debug.Print " Prueba #NOK"
+'    End If
+'    PrintSugerencia mSug
+    
+    '
+    '   UnitTest 6.- Sugerencia metodo Estadistico descendente agrupacion decenas
+    '
+'    Set mMtd = New Metodo
+'    With mMtd
+'        .TipoProcedimiento = mtdEstadistico
+'        .CriteriosOrdenacion = ordProbabilidad
+'        .SentidoOrdenacion = False
+'        .CriteriosAgrupacion = grpDecenas
+'        .TipoMuestra = True
+'        .NumeroSorteos = 40
+'        .ModalidadJuego = LP_LB_6_49
+'        .Pronosticos = 8
+'    End With
+'    Set mSug = mObj.GetSugerencia(mMtd, #3/14/2020#)
+'    If mSug.Combinacion.TextoOrdenado = "05-07-14-18-20-24-34-36-42" Then
+'        Debug.Print " Prueba OK"
+'    Else
+'        Debug.Print " Prueba #NOK"
+'    End If
+'    PrintSugerencia mSug
+    '
+    '   UnitTest 7.- Sugerencia metodo Aleatorio con filtros
     '
     Set mMtd = New Metodo
     With mMtd
         .TipoProcedimiento = mtdAleatorio
         .ModalidadJuego = LP_LB_6_49
-        .Pronosticos = 6
+        .Pronosticos = 7
+        .Filtros.Parse "(1)Paridad:[4/3]"
     End With
-    Set mSug = mObj.GetSugerencia(mMtd, #5/4/2020#)
+    Set mSug = mObj.GetSugerencia(mMtd, Now())
+    If mSug.Combinacion.FormulaParidad = "4/3" Then
+        Debug.Print " Prueba OK"
+    Else
+        Debug.Print " Prueba #NOK"
+    End If
     PrintSugerencia mSug
-    '
-    PrintRealizarSugerencia mObj
     
-    '
-    '   UnitTest 3.- Sugerencia metodo Bombo
-    '
-    '
-    '   UnitTest 4.- Sugerencia metodo BomboCargado
-    '
-    '
-    '   UnitTest 5.- Sugerencia metodo Estadistica
-    '
-    '
-    '   UnitTest 6.- Sugerencia metodo Estadistica Combinación
-    '
-    '
-    '   UnitTest 7.- Sugerencia metodo Aleatorio con filtros
-    '
+    
     '
     '   UnitTest 8.- Sugerencia metodo Estadistica con filtros
     '
@@ -711,12 +820,13 @@ Private Sub RealizarSugerenciaTest()
     
     
     
+
+
     
     
     
     
-    
-    Err.Raise ERR_TODO, "Lot_PqtSugerenciasTesting.RealizarSugerenciaTest", MSG_TODO
+    'Err.Raise ERR_TODO, "Lot_PqtSugerenciasTesting.RealizarSugerenciaTest", MSG_TODO
     
   
   On Error GoTo 0
@@ -739,7 +849,7 @@ End Sub
 Private Sub PrintSugerencia(mObj As Sugerencia)
     Debug.Print "==> Pruebas Sugerencia"
     '-> Propiedades
-    Debug.Print vbTab & "Combinacion       = " & mObj.Combinacion.Texto
+    Debug.Print vbTab & "Combinacion       = " & mObj.Combinacion.TextoOrdenado
     Debug.Print vbTab & "FechaAlta         = " & mObj.Entidad.FechaAlta
     Debug.Print vbTab & "FechaModificacion = " & mObj.Entidad.FechaModificacion
     Debug.Print vbTab & "Id                = " & mObj.Entidad.Id
@@ -747,9 +857,9 @@ Private Sub PrintSugerencia(mObj As Sugerencia)
     Debug.Print vbTab & "Modalidad         = " & mObj.Modalidad
     Debug.Print vbTab & "Parametros        = " & mObj.Parametros.ToString()
 '    '-> Metodos
-    Debug.Print vbTab & "MensajeError()    = " & mObj.MensajeError()
-    Debug.Print vbTab & "ToString()        = " & mObj.ToString()
     Debug.Print vbTab & "IsValid()         = " & mObj.IsValid()
+    Debug.Print vbTab & "MensajeError()    = " & mObj.GetMensaje()
+    Debug.Print vbTab & "ToString()        = " & mObj.ToString()
 End Sub
 
 

@@ -15,8 +15,9 @@ Attribute VB_Exposed = True
 ' Objeto    :
 '---------------------------------------------------------------------------------------
 Option Explicit
+Option Base 0
 
-Private m_objParametrosMuestra  As ParametrosMuestra        ' Parametros de la muestra
+Private mParametrosMuestra  As ParametrosMuestra        ' Parametros de la muestra
 Private m_col                   As Collection               ' Colección de bolas
 Private m_bol                   As bola                     ' Bola de trabajo
 Private mRegTotal               As Integer                  ' Total de registros
@@ -34,7 +35,7 @@ Private m_Reintegros            As Collection               ' Colección de Reint
 Private Sub Class_Initialize()
     Set m_col = New Collection                              ' Se crea una nueva colección
     Set m_Estrellas = New Collection                        ' Se crea una colección de Estrellas
-    Set m_objParametrosMuestra = New ParametrosMuestra      ' Se inicia la clase de parametros
+    Set mParametrosMuestra = New ParametrosMuestra      ' Se inicia la clase de parametros
     Set m_bol = New bola                                    ' Se inicializa la Bola
                                                             ' Se define la matriz de frecuencias
 '    Rango_Frecuencias = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100)
@@ -42,7 +43,7 @@ End Sub
 
 Private Sub Class_Terminate()
     Set m_col = Nothing                         'Se elimina la colección de números
-    Set m_objParametrosMuestra = Nothing        'Se elimina los parametros de la muestra
+    Set mParametrosMuestra = Nothing        'Se elimina los parametros de la muestra
     Set m_bol = Nothing                         'Se elimina
 End Sub
 
@@ -125,7 +126,7 @@ Public Sub Constructor(rg_muestra As Range, vNewJuego As Juego)
         '
         '
         'nRegAnalisis = oInfoJuego.
-        nRegAnalisis = m_objParametrosMuestra.ResgistroAnalisis
+        nRegAnalisis = mParametrosMuestra.ResgistroAnalisis
         '
         '  actualiza las estadisticas de todas las bolas
         '
@@ -139,8 +140,11 @@ Public Sub Constructor(rg_muestra As Range, vNewJuego As Juego)
         '   Calcula los colores de cada bola
         '
         CalcularColores
-    
-
+        '
+        '   Calcula valor Homogeneo
+        '
+        CalcularValorHomogeneo
+        
 Constructor_CleanExit:
    On Error GoTo 0
     Exit Sub
@@ -291,7 +295,7 @@ End Property
 '---------------------------------------------------------------------------------------
 '
 Public Property Get Total_Dias() As Integer
-    Total_Dias = m_objParametrosMuestra.DiasAnalisis
+    Total_Dias = mParametrosMuestra.DiasAnalisis
 End Property
 
 '---------------------------------------------------------------------------------------
@@ -302,7 +306,7 @@ End Property
 '---------------------------------------------------------------------------------------
 '
 Public Property Get Total_Semanas() As Integer
-    Total_Semanas = Fix(m_objParametrosMuestra.DiasAnalisis / 7)
+    Total_Semanas = Fix(mParametrosMuestra.DiasAnalisis / 7)
 End Property
 
 '---------------------------------------------------------------------------------------
@@ -631,7 +635,7 @@ Public Property Get ParametrosMuestra() As ParametrosMuestra
 
   On Error GoTo ParametrosMuestra_Error
 
-    Set ParametrosMuestra = m_objParametrosMuestra
+    Set ParametrosMuestra = mParametrosMuestra
 
 ParametrosMuestra_CleanExit:
    On Error GoTo 0
@@ -660,7 +664,7 @@ Public Property Set ParametrosMuestra(objParametrosMuestra As ParametrosMuestra)
 
   On Error GoTo ParametrosMuestra_Error
 
-    Set m_objParametrosMuestra = objParametrosMuestra
+    Set mParametrosMuestra = objParametrosMuestra
 
 ParametrosMuestra_CleanExit:
    On Error GoTo 0
@@ -822,6 +826,94 @@ End Function
 
 
 Public Property Get Juego() As Juego
-    Juego = m_objParametrosMuestra.Juego
+    Juego = mParametrosMuestra.Juego
 End Property
+'------------------------------------------------------------------------------*
+' Procedimiento  : CalcularValorHomogeneo
+' Fecha          : 07/mar/2020
+' Propósito      : Calcular el dato homogeneizado de probabilidades
+'------------------------------------------------------------------------------*
+Private Sub CalcularValorHomogeneo()
+    Dim mProbArray      As Variant
+    Dim mTMArray        As Variant
+    Dim mFrecArray      As Variant
+    Dim i               As Integer
+    Dim mBola           As bola
+    Dim mMuProb         As Double
+    Dim mMuTm           As Double
+    Dim mMuFrec         As Double
+    Dim mDesvProb       As Double
+    Dim mDesvTm         As Double
+    Dim mDesvFrec       As Double
+    Dim mValorH         As Double
+    Dim mTemp           As Double
+  On Error GoTo CalcularValorHomogeneo_Error
+    '
+    '   Redimensionamos variables
+    '
+    ReDim mProbArray(m_col.Count - 1)
+    ReDim mTMArray(m_col.Count - 1)
+    ReDim mFrecArray(m_col.Count - 1)
+    '
+    '   Obtenemos matriz de valores de las bolas
+    '
+    i = 0
+    For Each mBola In m_col
+        mProbArray(i) = mBola.Probabilidad
+        mTMArray(i) = mBola.Prob_TiempoMedio
+        mFrecArray(i) = mBola.Prob_Frecuencia
+        i = i + 1
+    Next mBola
+    '
+    '   Calculamos media y desviación tipica
+    '
+    With Application.WorksheetFunction
+        mMuProb = .Average(mProbArray)
+        mMuTm = .Average(mTMArray)
+        mMuFrec = .Average(mFrecArray)
+        mDesvProb = .AveDev(mProbArray)
+        mDesvTm = .AveDev(mTMArray)
+        mDesvFrec = .AveDev(mFrecArray)
+    End With
+    '
+    '   Calculamos el valor homogeneo
+    '
+    For i = 1 To m_col.Count
+        mTemp = 0
+        mTemp = m_col.Item(i).Probabilidad - mMuProb
+        If mDesvProb <> 0 Then
+            mTemp = mTemp / mDesvProb
+        Else
+            mTemp = 0
+        End If
+        mValorH = mTemp
+        mTemp = m_col.Item(i).Prob_TiempoMedio - mMuTm
+        If mDesvTm <> 0 Then
+            mTemp = mTemp / mDesvTm
+        Else
+            mTemp = 0
+        End If
+        mValorH = mValorH + mTemp
+        mTemp = m_col.Item(i).Prob_Frecuencia - mMuFrec
+        If mDesvFrec <> 0 Then
+            mTemp = mTemp / mDesvFrec
+        Else
+            mTemp = 0
+        End If
+        mValorH = mValorH + mTemp
+        mValorH = mValorH / 3
+        m_col.Item(i).ValorHomogeneo = mValorH
+    Next i
 
+  On Error GoTo 0
+CalcularValorHomogeneo__CleanExit:
+    Exit Sub
+            
+CalcularValorHomogeneo_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    '   Audita el error
+    Call HandleException(ErrNumber, ErrDescription, "Muestra.CalcularValorHomogeneo", ErrSource)
+    '   Lanza el Error
+    Err.Raise ErrNumber, "FilMuestrae.CalcularValorHomogeneo", ErrDescription
+End Sub

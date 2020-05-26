@@ -15,7 +15,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
-
 '---------------------------------------------------------------------------------------
 ' Module    : frmSelPeriodo
 ' Author    : Charly
@@ -123,9 +122,9 @@ Private Sub UserForm_Initialize()
     '
     '
     m_varFechasDefinidas = Array(ctHoy, ctAyer, ctUltimaSemana, _
-                           ctUltimaQuincena, ctUltimoMes, ctLoQueVadeSemana, _
-                           ctLoQueVadeMes, ctLoQueVadeTrimestre, _
-                           ctUltimoTrimestre, ctPersonalizadas)
+                           ctUltimaQuincena, ctUltimoMes, ctUltimoTrimestre, _
+                           ctLoQueVadeSemana, ctLoQueVadeMes, ctLoQueVadeTrimestre, _
+                           ctPersonalizadas)
     '
     '   Carga el combo de las fechas
     '

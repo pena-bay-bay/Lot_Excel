@@ -3,7 +3,7 @@ Attribute VB_Name = "Lot_01_ComprobarBoletos"
 ' Module    : Lot_06_ComprobarBoletos
 ' DateTime  : 06/09/2014 19:05
 ' Author    : Carlos Almela Baeza
-' Purpose   : Caso de Uso Comprobar Boletos Apostados
+' Purpose   : Caso de Uso Comprobar Boletos Apostados. Comprueba los pronosticos acertados
 '---------------------------------------------------------------------------------------
 Option Explicit
 Option Base 0
@@ -88,7 +88,7 @@ Private Sub ComprobarApuestas(vNewValue As Periodo)
     Dim iNumero             As Integer
     
 On Error GoTo ComprobarApuestas_Error
-    ThisWorkbook.Sheets("Apuestas").Activate
+        ThisWorkbook.Sheets("Apuestas").Activate
     Set oRangoDatos = ThisWorkbook.Sheets("Apuestas").Range("A1").CurrentRegion
     '
     ' Creamos el objeto sorteo
@@ -331,7 +331,7 @@ Private Function GetApuesta(vNewValue As Range) As Apuesta
     Dim mValor      As Variant
     Dim objResult   As Apuesta
     Dim i           As Integer
-    Dim n           As Numero
+    Dim N           As Numero
     
    On Error GoTo GetApuesta_Error
     '
@@ -375,12 +375,12 @@ Private Function GetApuesta(vNewValue As Range) As Apuesta
             Case 6 To 14
                     If IsNumeric(mValor) And _
                     Not IsEmpty(mValor) Then
-                        Set n = New Numero
-                        n.Valor = CInt(mValor)
-                        objResult.Combinacion.Add n
-                        Set n = Nothing
+                        Set N = New Numero
+                        N.Valor = CInt(mValor)
+                        objResult.Combinacion.Add N
+                        Set N = Nothing
                     End If
-            Case 16: objResult.metodo = mValor                   'MEtodo
+            Case 16: objResult.Metodo = mValor                   'MEtodo
         End Select
     Next i
     Set GetApuesta = objResult

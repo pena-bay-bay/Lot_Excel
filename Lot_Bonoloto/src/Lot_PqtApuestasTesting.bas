@@ -44,21 +44,21 @@ Option Base 0
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Private Sub AciertoTest()
-    Dim Obj As Acierto
-    Set Obj = New Acierto
-    With Obj
-        .ApuestasAcertadas = 1
-        .BolasAcertadas = 2
-        .Categoria = Duodecima
-        .EstrellasAcertadas = 2
-        .IdApuesta = 15
-        .ImportePremio = 12
-        .Juego = Bonoloto
-        .ReintegroAcertado = True
-    End With
-    PrintAcierto Obj
-End Sub
+'Private Sub AciertoTest()
+'    Dim Obj As Acierto
+'    Set Obj = New Acierto
+'    With Obj
+'        .ApuestasAcertadas = 1
+'        .BolasAcertadas = 2
+'        .Categoria = Duodecima
+'        .EstrellasAcertadas = 2
+'        .IdApuesta = 15
+'        .ImportePremio = 12
+'        .Juego = Bonoloto
+'        .ReintegroAcertado = True
+'    End With
+'    PrintAcierto Obj
+'End Sub
 
 '---------------------------------------------------------------------------------------
 ' Procedure : ApuestaTest
@@ -157,16 +157,16 @@ End Sub
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Private Sub PrintAcierto(oDat As Acierto)
-    Debug.Print "==> Pruebas Acierto"
-    Debug.Print " .ApuestasAcertadas  = " & oDat.ApuestasAcertadas
-    Debug.Print " .BolasAcertadas     = " & oDat.BolasAcertadas
-    Debug.Print " .Categoria          = " & oDat.Categoria
-    Debug.Print " .EstrellasAcertadas = " & oDat.EstrellasAcertadas
-    Debug.Print " .IdApuesta          = " & oDat.IdApuesta
-    Debug.Print " .ImportePremio      = " & oDat.ImportePremio
-    Debug.Print " .Juego              = " & oDat.Juego
-    Debug.Print " .ReintegroAcertado  = " & oDat.ReintegroAcertado
-End Sub
+'Private Sub PrintAcierto(oDat As Acierto)
+'    Debug.Print "==> Pruebas Acierto"
+'    Debug.Print " .ApuestasAcertadas  = " & oDat.ApuestasAcertadas
+'    Debug.Print " .BolasAcertadas     = " & oDat.BolasAcertadas
+'    Debug.Print " .Categoria          = " & oDat.Categoria
+'    Debug.Print " .EstrellasAcertadas = " & oDat.EstrellasAcertadas
+'    Debug.Print " .IdApuesta          = " & oDat.IdApuesta
+'    Debug.Print " .ImportePremio      = " & oDat.ImportePremio
+'    Debug.Print " .Juego              = " & oDat.Juego
+'    Debug.Print " .ReintegroAcertado  = " & oDat.ReintegroAcertado
+'End Sub
 
 ' *===========(EOF): Lot_PqtApuestasTesting.bas

@@ -32,6 +32,7 @@ Private mJuego As Juego
 Private Sub Class_Initialize()
     mFInicioBonoloto = #10/5/1999#
     mFecCambioBonoloto = #3/6/2015#
+    mFInicioEuroMillon = #2/13/2004#
     mJuego = JUEGO_DEFECTO
 End Sub
 '------------------------------------------------------------------------------*
@@ -85,11 +86,11 @@ Public Function GetProximoSorteo(vNewDate As Date) As Date
             Else
                 mDias = 4   ' L,M,X,V
                 Select Case mDiaSemana
-                    Case 5:  ' J
-                        GetProximoSorteo = GetProximoSorteo + 1
-                    Case 7:  ' S
+                    Case 6: 'V
+                        GetProximoSorteo = GetProximoSorteo + 3
+                    Case 4, 7:  '  X y S
                         GetProximoSorteo = GetProximoSorteo + 2
-                    Case 1:  ' D
+                    Case Else:
                         GetProximoSorteo = GetProximoSorteo + 1
                 End Select
             End If
@@ -99,30 +100,36 @@ Public Function GetProximoSorteo(vNewDate As Date) As Date
             Select Case mDiaSemana
                 Case 2, 5:  ' L J
                     GetProximoSorteo = GetProximoSorteo + 1
-                Case 7:     ' S
-                    GetProximoSorteo = GetProximoSorteo + 3
-                Case 1, 4:  ' D, X
+                Case 1, 4:  ' D X
                     GetProximoSorteo = GetProximoSorteo + 2
+                Case 7, 3:  ' S M
+                    GetProximoSorteo = GetProximoSorteo + 3
+                Case 6:     ' V
+                    GetProximoSorteo = GetProximoSorteo + 4
             End Select
             
         Case Juego.gordoPrimitiva
             mDias = 1       ' D
             If mDiaSemana > 1 Then
                 GetProximoSorteo = GetProximoSorteo + (7 - mDiaSemana)
+            Else
+                GetProximoSorteo = GetProximoSorteo + 7
             End If
             
         Case Juego.LoteriaPrimitiva
             mDias = 2
-             Select Case mDiaSemana
-                    Case 4, 6:  '  X y V
-                        GetProximoSorteo = GetProximoSorteo + 1
-                    Case 2:     ' L
-                        GetProximoSorteo = GetProximoSorteo + 3
-                    Case 1:     ' D
-                        GetProximoSorteo = GetProximoSorteo + 4
-                    Case 3:     ' M
-                        GetProximoSorteo = GetProximoSorteo + 2
-                End Select
+            Select Case mDiaSemana
+                Case 1:     ' D
+                    GetProximoSorteo = GetProximoSorteo + 4
+                Case 2:     ' L
+                    GetProximoSorteo = GetProximoSorteo + 3
+                Case 3, 5:  ' M y J
+                    GetProximoSorteo = GetProximoSorteo + 2
+                Case 4, 6:  ' X y V
+                    GetProximoSorteo = GetProximoSorteo + 1
+                Case 7:     ' S
+                    GetProximoSorteo = GetProximoSorteo + 5
+            End Select
     End Select
 
 End Function
@@ -250,9 +257,9 @@ Public Function EsFechaSorteo(vNewDate As Date) As Boolean
 End Function
 '------------------------------------------------------------------------------*
 ' Procedimiento  : GetAnteriorSorteo
-' Fecha          : 13/oct/2017
+' Fecha          : 11/02/2018 19:44
 ' Propósito      : Devuelve la fecha del anterior Sorteo
-' Parámetros     : Fecha de análisis y juego
+' Parámetros     : Fecha de análisis
 ' Retorno        : Fecha del anterior sorteo a la fecha analizada
 '------------------------------------------------------------------------------*
 '
@@ -289,47 +296,89 @@ Public Function GetAnteriorSorteo(vNewDate As Date) As Date
             Else
                 mDias = 4   ' L,M,X,V
                 Select Case mDiaSemana
-                    Case 5:  ' J
-                        GetAnteriorSorteo = GetAnteriorSorteo - 1
-                    Case 7:  ' S
-                        GetAnteriorSorteo = GetAnteriorSorteo - 1
-                    Case 1:  ' D
+                    Case 6, 1:  ' D y V
                         GetAnteriorSorteo = GetAnteriorSorteo - 2
+                    Case 2:  ' L
+                        GetAnteriorSorteo = GetAnteriorSorteo - 3
+                    Case Else
+                        GetAnteriorSorteo = GetAnteriorSorteo - 1
                 End Select
             End If
             
         Case Juego.Euromillones
             mDias = 2       ' M, V
             Select Case mDiaSemana
-                Case 2, 5:  ' L J
-                    GetAnteriorSorteo = GetAnteriorSorteo - 2
-                Case 7:     ' S
-                    GetAnteriorSorteo = GetAnteriorSorteo - 3
-                Case 1, 4:  ' D, X
+                Case 4, 7:     ' X y S
                     GetAnteriorSorteo = GetAnteriorSorteo - 1
+                Case 1, 5:     ' D y J
+                    GetAnteriorSorteo = GetAnteriorSorteo - 2
+                Case 2, 6:     ' L y V
+                    GetAnteriorSorteo = GetAnteriorSorteo - 3
+                Case 3:     ' M
+                    GetAnteriorSorteo = GetAnteriorSorteo - 4
             End Select
             
         Case Juego.gordoPrimitiva
             mDias = 1       ' D
             If mDiaSemana > 1 Then
                 GetAnteriorSorteo = GetAnteriorSorteo - (7 - mDiaSemana)
+            Else
+                GetAnteriorSorteo = GetAnteriorSorteo - 7
             End If
             
         Case Juego.LoteriaPrimitiva
             mDias = 2
              Select Case mDiaSemana
-                    Case 1, 6:  '  D y V
+                    Case 1, 6: ' D y V
                         GetAnteriorSorteo = GetAnteriorSorteo - 1
-                    Case 2, 7:  '  L y S
+                    Case 2, 7: ' L y S
                         GetAnteriorSorteo = GetAnteriorSorteo - 2
-                    Case 1:     ' D
-                        GetAnteriorSorteo = GetAnteriorSorteo - 1
-                    Case 3:     ' M
+                    Case 3: ' M
                         GetAnteriorSorteo = GetAnteriorSorteo - 3
-                    Case 4:     ' X
+                    Case 4: ' X
                         GetAnteriorSorteo = GetAnteriorSorteo - 4
+                    Case 5: ' J
+                        GetAnteriorSorteo = GetAnteriorSorteo - 5
                 End Select
     End Select
-
-
 End Function
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : AddDiasSorteo
+' Fecha          : 24/01/2020 09:59
+' Propósito      : Devuelve la fecha resultante de sumar ndias a un sorteo
+' Parámetros     : Fecha de análisis, Numero dias
+' Retorno        : Fecha correspondiente a la suma de sorteos a una fecha
+'------------------------------------------------------------------------------*
+'
+Public Function AddDiasSorteo(vNewDate As Date, nNewDias As Integer) As Date
+    Dim i     As Integer
+    Dim mDate As Date
+    
+    mDate = vNewDate
+    For i = 1 To nNewDias
+        mDate = Me.GetProximoSorteo(mDate)
+    Next i
+'
+'   TODO: Optimizar con un algoritmo de calculo segun el juego
+'
+'    '
+'    '  1 = Domingo
+'    '  D,L,M,X,J,V,S
+'    '  1,2,3,4,5,6,7
+'    '
+'    mDiaSemana = Weekday(vNewDate)
+'    '
+'    '   Cuantas semanas hay en los dias suministrados
+'    '   depende del juego, si es bonoloto hay 6 juegos por semana
+'
+'
+'    mDate = vNewDate
+'    For i = 0 To nNewDias
+'        mDate = mDate + i
+'
+'    Next i
+'
+    AddDiasSorteo = mDate
+End Function
+

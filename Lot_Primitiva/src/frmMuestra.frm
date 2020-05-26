@@ -26,6 +26,7 @@ Attribute VB_Exposed = False
 ' *============================================================================*
 Option Explicit
 Option Base 0
+    
 Private m_objParMuestra             As ParametrosMuestra  ' Parametros de la Muestra
 Private DB                          As New BdDatos        ' Base de datos
 Dim m_ini_DataBase                  As Date               ' Fecha inicial de la base de datos
@@ -69,14 +70,6 @@ Private Sub UserForm_Initialize()
     If Not m_oInfo.EsFechaSorteo(m_dtFecha) Then
         m_dtFecha = m_oInfo.GetProximoSorteo(m_dtFecha)
     End If
-    '
-    ' Si la fecha del proximo sorteo es la del último resultado
-    ' pasar a la siguiente fecha
-    '
-    If m_dtFecha = m_fin_DataBase Then
-        m_dtFecha = m_oInfo.GetProximoSorteo(m_dtFecha)
-    End If
-    
     '
     ' inicializamos el contenido de la caja de texto con la fecha fomrateada
     '
@@ -236,6 +229,7 @@ Private Sub optTipo_Click()
         txtNumReg.Enabled = False
         txtNumRang.Enabled = True
         cboRango.Enabled = True
+        m_objParMuestra.TipoMuestra = False
     End If
 End Sub
 
@@ -251,6 +245,7 @@ Private Sub optTipo2_Click()
         txtNumReg.Enabled = True
         txtNumRang.Enabled = False
         cboRango.Enabled = False
+        m_objParMuestra.TipoMuestra = True
     End If
 End Sub
 
@@ -292,16 +287,17 @@ End Sub
 ' Procedure : EstablecerPeriodo
 ' Author    : CAB3780Y
 ' Date      : 29/03/2011
-' Purpose   :
+' Purpose   : Define el periodo inicial para la muestra
 '---------------------------------------------------------------------------------------
 '
 Private Sub EstablecerPeriodo()
     Dim m_dias As Integer                   'Número de días a calcular
     Dim m_reg As Integer                    'Número de días a calcular
     Dim m_factorMultiplicador As Integer    'Factor multiplicador de dias
-    Dim oInfo As New InfoSorteo             ' Información del tipo de juego
+    Dim m_info As InfoSorteo                'Info Sorteo
     
    On Error GoTo EstablecerPeriodo_Error
+    Set m_info = New InfoSorteo
     '
     '   Asigna fecha de analisis
     '
@@ -309,7 +305,7 @@ Private Sub EstablecerPeriodo()
     '
     '  Se obtiene el día anterior a la fecha de analisis
     '
-    m_objParMuestra.FechaFinal = oInfo.GetAnteriorSorteo(m_objParMuestra.FechaAnalisis)
+    m_objParMuestra.FechaFinal = m_info.GetAnteriorSorteo(m_objParMuestra.FechaAnalisis)
     '
     '  Si la fecha supera las fechas de la base de datos
     '  Se asigna la última
@@ -317,14 +313,6 @@ Private Sub EstablecerPeriodo()
     If m_objParMuestra.FechaFinal > m_fin_DataBase Then
         m_objParMuestra.FechaFinal = m_fin_DataBase
     End If
-'    m_reg = 0
-'    Do Until m_reg <> 0
-'        m_reg = DB.GetRegistroFecha(m_objParMuestra.FechaFinal)
-'        If m_reg = 0 Then
-'            m_objParMuestra.FechaFinal = m_objParMuestra.FechaFinal - 1
-'        End If
-'    Loop
-        
     '
     '   Tratamiento por dias
     '
@@ -341,14 +329,13 @@ Private Sub EstablecerPeriodo()
         End Select
         m_dias = CInt(txtNumRang.Text)
         m_dias = m_dias * m_factorMultiplicador
-        m_objParMuestra.FechaInicial = m_objParMuestra.FechaFinal - m_dias
-    
+        m_objParMuestra.DiasAnalisis = m_dias
     '
     '   Tratamiento por registros
     '
     ElseIf (optTipo2.Value) Then
         m_reg = CInt(txtNumReg.Text)
-        m_objParMuestra.FechaInicial = DB.GetFecha(m_objParMuestra.FechaFinal, m_reg)
+        m_objParMuestra.NumeroSorteos = m_reg
     End If
 
     

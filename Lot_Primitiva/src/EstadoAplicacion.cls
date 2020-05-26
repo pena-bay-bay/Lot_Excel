@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-
+Option Explicit
 '---------------------------------------------------------------------------------------
 ' Modulo    : EstadoAplicacion
 ' Creado    : 01-nov-2006 17:13
@@ -122,7 +122,7 @@ End Sub
 '---------------------------------------------------------------------------------------
 '
 Public Function Existe_Barra(Nombre_Barra As String) As Boolean
-   
+    Dim cmdBar As CommandBar
    On Error GoTo Existe_Barra_Error
 
     Existe_Barra = False

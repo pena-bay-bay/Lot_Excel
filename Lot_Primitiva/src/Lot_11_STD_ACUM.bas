@@ -38,20 +38,17 @@ Public Sub CalcularStdAcum()
     '
     '   Definir parametros de la rutina
     '
-    'mFecDesde = #11/23/2019#
-    mFecHasta = #3/7/2020#
+    'mFecDesde = #11/28/2019#
+    mFecHasta = #1/18/2020#
     mSorteos = 90
-    mFecDesde = mFecHasta - ((90 / 2) * 7)
-    
+    mFecDesde = mFecHasta - mSorteos
     Set oInfo = New InfoSorteo
     Set oEngSort = New SorteoEngine
-    oInfo.Constructor LoteriaPrimitiva
-    mFecDesde = oInfo.GetAnteriorSorteo(mFecDesde)
     '
     '   Borra la hoja de salida
     '
     Borra_Salida
-    Application.ScreenUpdating = False                          'Desactiva el reflejo de pantalla
+    Application.ScreenUpdating = False                          'Desactiva el refresco de pantalla
     '
     '   escribir cabeceras
     '
@@ -61,7 +58,7 @@ Public Sub CalcularStdAcum()
     '
     Set oParMuestra = New ParametrosMuestra
     With oParMuestra
-        .Juego = LoteriaPrimitiva
+        .Juego = Bonoloto
         .FechaAnalisis = mFecDesde
         .FechaFinal = oInfo.GetAnteriorSorteo(mFecDesde)
         .NumeroSorteos = mSorteos
@@ -93,7 +90,7 @@ Public Sub CalcularStdAcum()
             '
             Set oMuestra = New Muestra
             Set oMuestra.ParametrosMuestra = oParMuestra
-            oMuestra.Constructor rgDatos, LoteriaPrimitiva
+            oMuestra.Constructor rgDatos, JUEGO_DEFECTO
             '
             '   Obtenemos el sorteo de la fecha
             '
@@ -114,8 +111,8 @@ Public Sub CalcularStdAcum()
     
     Range("A1").Select          'Se posiciona en la celda del primer número
     Selection.AutoFilter        'Crea un autofiltro
-    Application.ScreenUpdating = True
    
+    Application.ScreenUpdating = True                           'Activa el refresco de pantalla
   On Error GoTo 0
     Exit Sub
 CalcularStdAcum_Error:

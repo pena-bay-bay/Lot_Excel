@@ -96,7 +96,7 @@ End Property
 Public Function Get_Aciertos(Optional Mas_Complementario As Boolean = True) As Integer
     Dim m_aciertos As Integer
     Dim m_array As Variant
-    Dim K As Integer
+    Dim k As Integer
     Dim n As Variant
     
     If m_apta Is Nothing Then Err.Raise "falta la apuesta"
@@ -105,11 +105,11 @@ Public Function Get_Aciertos(Optional Mas_Complementario As Boolean = True) As I
     m_aciertos = 0
     m_Complementario = False
     For Each n In m_array
-        K = n
-        If (m_rslt.Existe(K, Mas_Complementario)) Then
+        k = n
+        If (m_rslt.Existe(k, Mas_Complementario)) Then
             m_aciertos = m_aciertos + 1
         End If
-        If K = m_rslt.Complementario Then
+        If k = m_rslt.Complementario Then
             m_Complementario = True
         End If
     Next n
@@ -193,8 +193,7 @@ Public Function GetImporteEsperado() As Currency
         Case 3: oPremio.NumerosAcertados = TresAciertos
         Case 4: oPremio.NumerosAcertados = CuatroAciertos
             If oPremio.Pronosticos = 5 And m_Complementario Then
-                'oPremio.NumerosAcertados = CuatroAciertosMasC
-                oPremio.NumerosAcertados = CuatroAciertos
+                oPremio.NumerosAcertados = CuatroAciertosMasC
             End If
         Case 5: oPremio.NumerosAcertados = CincoAciertos
             If m_Complementario Then

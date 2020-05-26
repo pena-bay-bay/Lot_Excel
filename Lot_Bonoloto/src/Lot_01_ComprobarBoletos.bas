@@ -331,7 +331,7 @@ Private Function GetApuesta(vNewValue As Range) As Apuesta
     Dim mValor      As Variant
     Dim objResult   As Apuesta
     Dim i           As Integer
-    Dim N           As Numero
+    Dim n           As Numero
     
    On Error GoTo GetApuesta_Error
     '
@@ -375,10 +375,10 @@ Private Function GetApuesta(vNewValue As Range) As Apuesta
             Case 6 To 14
                     If IsNumeric(mValor) And _
                     Not IsEmpty(mValor) Then
-                        Set N = New Numero
-                        N.Valor = CInt(mValor)
-                        objResult.Combinacion.Add N
-                        Set N = Nothing
+                        Set n = New Numero
+                        n.Valor = CInt(mValor)
+                        objResult.Combinacion.Add n
+                        Set n = Nothing
                     End If
             Case 16: objResult.Metodo = mValor                   'MEtodo
         End Select

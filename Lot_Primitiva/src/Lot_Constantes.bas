@@ -6,18 +6,18 @@ Attribute VB_Name = "Lot_Constantes"
 ' Purpose   : Módulo de definición de constantes lot
 ' Version   : 1.8.01
 '---------------------------------------------------------------------------------------
+Option Explicit
 '// Variables de versión de la librería
-Public Const lotVersion = "2018.06"
-Public Const lotFeVersion = "dom, 17/06/2018 23:33"
+Public Const lotVersion = "2020.03"
+Public Const lotFeVersion = "mar, 26/05/2020 18:23"
 Public Const NOMBRE_APLICACION = "Loteria Primitiva"
 
-'// Variables de carga del bombo
-Public Const lotCARGADO = 1     'Indica si el bombo esta cargado
-Public Const lotVACIO = 0       'Indica si el bombo está vacio
-'
-'// Giros del bombo
-Public Const lotGIROS = 1       'Indicador de giros por vueltas
-Public Const lotTIEMPO = 2      'Indicador de giros por tiempo
+'// Variables relacionadas con el bombo
+Public Const lotVacio = 1       '
+Public Const lotLleno = 2
+Public Const lotCargado = 3
+Public Const lotTiempo = 1
+Public Const lotGiros = 2
 '
 '   Mensajes de error
 '
@@ -35,6 +35,22 @@ Public Const MSG_FECHAFINALMENOR = "* La Fecha Final es Menor que la Fecha Inici
 Public Const MSG_FECHAANALISNOJUEGO = "* La Fecha de Analisis no pertenece al Juego."
 Public Const MSG_FECHAFINALNOJUEGO = "* La Fecha Final no pertenece al Juego."
 Public Const MSG_FECHAINICIALNOJUEGO = "* La Fecha Inicial no pertenece al Juego."
+Public Const MSG_COMBISUGEVACIA = "* No exite combinación de sugerecia."
+Public Const MSG_METODOSUGERROR = "* Metodo de sugerencia erroneo."
+Public Const MSG_PARAMSUGERROR = "* Parametros de muestra estadistica incorrectos."
+Public Const MSG_SUGERENCIAERROR = "Sugerencia NO valida."
+
+'--- Errores ------------------------------------------------------------------*
+Public Const ERR_REGISTRONOTFOUND As Integer = -100
+Public Const ERR_VARIABLENOTSERIAL As Integer = 1001
+Public Const ERR_DELETEINDEXERROR As Integer = 1002
+Public Const ERR_INDEXERROR As Integer = 1003
+
+'--- Mensajes -----------------------------------------------------------------*
+Public Const MSG_REGISTRONOTFOUND As String = "No se ha encontrado el registro #"
+Public Const MSG_VARIABLENOTSERIAL As String = "Variable no seralizable como parámetro."
+Public Const MSG_DELETEINDEXERROR As String = "No se puede eliminar el elemento # de la colección."
+Public Const MSG_INDEXERROR As String = "No se puede acceder el elemento # de la colección."
 
 Public Const LT_ERROR = "#Err"
 Public Const LT_PAR = "par"
@@ -46,6 +62,7 @@ Public Const LT_BAJO = "bajo"
 Public Const ESTADO_INICIAL = 0
 Public Const BOTON_CERRAR = 1
 Public Const EJECUTAR = 5
+Public Const BORRAR = 7
 Public Const COLOREAR_NumeroS = 2
 Public Const COLOREAR_UNAFECHA = 3
 Public Const COLOREAR_CARACTERISTICAS = 4
@@ -86,6 +103,7 @@ Public Const COLOR_TERMINACION9 = 6
 
 '*----------------| Formatos
 Public Const FMT_IMPORTE = "_-* #,##0.0 _€_-;-* #,##0.0 _€_-;_-* ""-""?? _€_-;_-@_-"
+Public Const FMT_FECHA = "d/m/yyyy"
 
 '*-----------------| Barras de funciones |------------------------------+
 Public Const BARRA_ESTUDIOS = "bar_studio"
@@ -165,11 +183,12 @@ Public Enum ModalidadJuego
     LP_LB_6_49 = 1
     GP_5_54 = 2
     EU_5_50 = 3
+    EU_2_12 = 4
 End Enum
 '
 '
 '
-Public Const NOMBRE_MODALIDADES_JUEGO As String = "6 Bolas de 49;5 bolas de 54;5 bolas de 50"
+Public Const NOMBRE_MODALIDADES_JUEGO As String = "6 Bolas de 49;5 bolas de 54;5 bolas de 50;2 bolas de 12"
 '
 '
 '
@@ -183,11 +202,13 @@ Public Enum TipoOrdenacion
     ordDesviacion = 6
     ordProximaFecha = 7
     ordModa = 8
+    ordHomogeneo = 9
 End Enum
 '
 '
 '
-Public Const NOMBRES_ORDENACION = "Sin Definir; Probabilidad; Prob.Tiempo Medio; Frecuencia; Ausencia; Tiempo Medio; Desviacion; Proxima fecha; Moda"
+Public Const NOMBRES_ORDENACION = "Sin Definir;Probabilidad;Prob.Tiempo Medio;Frecuencia" & _
+                       ";Ausencia;Tiempo Medio;Desviacion;Proxima fecha;Moda;V.Homogeneo"
 '
 '
 '
@@ -202,17 +223,26 @@ End Enum
 '
 '
 '
-Public Const NOMBRES_PROCEDIMIENTOMETODO = "Sin Definir;Estadistico;Algoritmo Genético;Red Neuronal;Estadisticas Combinaciones"
+Public Const NOMBRES_AGRUPACION = "Sin Definir;Decenas;Septenas;Paridad;Peso;Terminacion"
 '
 '
 '
 Public Enum ProcedimientoMetodo
     mtdSinDefinir = 0
-    mtdEstadistico = 1
-    mtdAlgoritmoAG = 2
-    mtdRedNeuronal = 3
-    mtdEstadCombinacion = 4
+    mtdAleatorio = 1
+    mtdBombo = 2
+    mtdBomboCargado = 3
+    mtdEstadistico = 4
+    mtdEstadCombinacion = 5
+'   mtdEstaDosVariables = 6
+'   mtdAlgoritmoAG = 7
+'   mtdRedNeuronal = 8
 End Enum
+'
+'
+'
+Public Const NOMBRES_PROCEDIMIENTOMETODO = "Sin Definir;Aleatorio;Bombo;Bombo Cargado;Estadistico;Estadistica Combinaciones"
+'Public Const NOMBRES_PROCEDIMIENTOMETODO = "Sin Definir;Aleatorio;Bombo;Estadistico;Estadisticas Dos Variables;Algoritmo AG;Red Neuronal;Estadistica Combinaciones"
 '
 '
 '
@@ -222,12 +252,8 @@ Public Enum TipoAperturaFichero
     OpenForOutput = 3
 End Enum
 '
-'
-'
-Public Const NOMBRES_AGRUPACION = "Sin Definir; Decenas; Septenas; Paridad; Peso; Terminacion "
-'
 '   Definición de premios
-'                                          R;5ª;4ª;3ª;2ª;1ª
+'                                          R   ;5; 4;   3;     2;     1
 Public Const PREMIOS_BONOLOTO As String = "0,50;4;30;1000;100000;450000"
 '                                          R;5ª;4ª;3ª;2ª;1ª
 Public Const PREMIOS_PRIMITIVA As String = "1;8;85;3000;75000;1000000"
@@ -238,38 +264,50 @@ Public Const PREMIOS_GORDO As String = "1,5;3;8;20;50;250;3000;200000;1000000"
 '
 Public Const ERR_TODO = 999
 Public Const MSG_TODO = "Rutina pendiente de codificar."
+Public Const ERR_IDXINDIVIDUO = 10201
+Public Const MSG_IDXINDIVIDUO = "Indice desbordado al obtener el individuo de una poblacion"
 
+Public Const NOMBRES_TIPOS_FILTRO As String = "Paridad;Peso;Consecutivos;Decenas;Septenas;Suma;Terminaciones"
+Public Enum TipoFiltro
+    tfParidad = 1
+    tfAltoBajo = 2
+    tfConsecutivos = 3
+    tfDecenas = 4
+    tfSeptenas = 5
+    tfSuma = 6
+    tfTerminaciones = 7
+End Enum
 
+'------------------------------------------------------------------------------*
+' Procedimiento  : TiposPeriodos
+' Fecha          : 22/04/2007 21:36
+' Propósito      : Periodos de tiempo utilizados en el lenguaje natural
+'------------------------------------------------------------------------------*
+Public Enum TiposPeriodos
+    ctSinDefinir = -1
+    ctPersonalizadas = 0
+    ctSemanaPasada = 1
+    ctQuincenaPasada = 2
+    ctMesAnterior = 3
+    ctAñoAnterior = 4
+    ctSemanaActual = 5
+    ctQuincenaActual = 6
+    ctMesActual = 7
+    ctAñoActual = 8
+    ctLoQueVadeSemana = 9
+    ctLoQueVadeMes = 10
+    ctLoQueVadeAño = 11
+    ctLoQueVadeTrimestre = 12
+    ctUltimaSemana = 13
+    ctUltimaQuincena = 14
+    ctUltimoMes = 15
+    ctUltimoTrimestre = 16
+    ctUltimoAño = 17
+    ctHastaHoy = 18
+    ctHoy = 19
+    ctAyer = 20
+    ctMañana = 21
+End Enum
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Public Const MinDate = #1/1/1900#
+Public Const MaxDate = #12/31/2999#

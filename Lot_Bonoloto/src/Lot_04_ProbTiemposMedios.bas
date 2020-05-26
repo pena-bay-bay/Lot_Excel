@@ -23,7 +23,7 @@ Dim oCombinacion        As Combinacion          ' Conjunto de números
 Dim oSorteoEngine       As SorteoEngine         ' Motor de sorteos
 Dim iCol                As Integer              ' Coordenada de columnas
 Dim iRow                As Integer              ' Coordenada de Filas
-Dim N                   As Integer              ' Entero
+Dim n                   As Integer              ' Entero
 Dim rgCelda             As Range                ' Celda activa
 
 '---------------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ Private Sub cmd_CalculaTodosProb(obj_muestra As Muestra)
     '
     '   Para los 49 Numeros
     '
-    For N = 1 To 49
+    For n = 1 To 49
         '
         '   Posiciona el cursor en la celda correspondiente
         '
@@ -154,20 +154,20 @@ Private Sub cmd_CalculaTodosProb(obj_muestra As Muestra)
         '
         '   Dibuja la información del Numero N
         '
-        cmd_CalculaUnNumero obj_muestra, N, rgCelda
+        cmd_CalculaUnNumero obj_muestra, n, rgCelda
         '
         '   Recalcula coordenadas para el siguiente número
         '         x = x + 15
         '         y = y + 100
         '   cada 10 Numeros x = 1
         '
-        If (N Mod 10) = 0 Then
+        If (n Mod 10) = 0 Then
             iCol = 1
             iRow = iRow + 100
         Else
             iCol = iCol + 15
         End If
-    Next N
+    Next n
     
     Cells.Select                                ' Selecciona todas las celdas de la hoja
     Cells.EntireColumn.AutoFit                  ' Autoajusta el tamaño de las columnas
@@ -281,11 +281,11 @@ On Error GoTo cmd_NumerosSorteo_Error
     '
     '   Bucle de selección de cada Numero del sorteo
     '
-    For N = 1 To oSorteo.Combinacion.Count
+    For n = 1 To oSorteo.Combinacion.Count
         '
         '   Obtenemos el Numero iesimo
         '
-        Set oNumero = oSorteo.Combinacion.Numeros(N)
+        Set oNumero = oSorteo.Combinacion.Numeros(n)
         '
         '   Para el valor del Numero
         '
@@ -301,13 +301,13 @@ On Error GoTo cmd_NumerosSorteo_Error
         '
         '   Calculamos coordenada siguiente Numero
         '
-        If (N Mod 2) = 0 Then
+        If (n Mod 2) = 0 Then
             iCol = 1
             iRow = iRow + 120
         Else
             iCol = iCol + 15
         End If
-    Next N
+    Next n
 
 cmd_NumerosSorteo_CleanExit:
    On Error GoTo 0
@@ -339,7 +339,7 @@ Private Sub cmd_CalculaCombinacion(obj_muestra As Muestra, obj_Combinacion As Co
     '
     '   inicializa coordenadas x=1, y=1
     '
-    iCol = 1:    iRow = 1:  N = 0
+    iCol = 1:    iRow = 1:  n = 0
     '
     '   Borra la hoja de salida
     '
@@ -367,7 +367,7 @@ Private Sub cmd_CalculaCombinacion(obj_muestra As Muestra, obj_Combinacion As Co
         '
         '   nesima bola
         '
-        N = N + 1
+        n = n + 1
         '
         '   posicion
         '
@@ -379,7 +379,7 @@ Private Sub cmd_CalculaCombinacion(obj_muestra As Muestra, obj_Combinacion As Co
         '
         '   Calculamos coordenada siguiente Numero
         '
-        If (N Mod 2) = 0 Then
+        If (n Mod 2) = 0 Then
             iCol = 1
             iRow = iRow + 120
         Else

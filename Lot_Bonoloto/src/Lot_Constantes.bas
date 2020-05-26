@@ -9,7 +9,7 @@ Attribute VB_Name = "Lot_Constantes"
 Option Explicit
 '// Variables de versión de la librería
 Public Const lotVersion = "2020.03"
-Public Const lotFeVersion = "mie, 18/03/2020 20:16"
+Public Const lotFeVersion = "mar, 26/05/2020 17:25"
 Public Const NOMBRE_APLICACION = "Bonoloto"
 
 '// Variables relacionadas con el bombo
@@ -35,6 +35,10 @@ Public Const MSG_FECHAFINALMENOR = "* La Fecha Final es Menor que la Fecha Inici
 Public Const MSG_FECHAANALISNOJUEGO = "* La Fecha de Analisis no pertenece al Juego."
 Public Const MSG_FECHAFINALNOJUEGO = "* La Fecha Final no pertenece al Juego."
 Public Const MSG_FECHAINICIALNOJUEGO = "* La Fecha Inicial no pertenece al Juego."
+Public Const MSG_COMBISUGEVACIA = "* No exite combinación de sugerecia."
+Public Const MSG_METODOSUGERROR = "* Metodo de sugerencia erroneo."
+Public Const MSG_PARAMSUGERROR = "* Parametros de muestra estadistica incorrectos."
+Public Const MSG_SUGERENCIAERROR = "Sugerencia NO valida."
 
 '--- Errores ------------------------------------------------------------------*
 Public Const ERR_REGISTRONOTFOUND As Integer = -100
@@ -305,6 +309,8 @@ Public Enum TiposPeriodos
     ctMañana = 21
 End Enum
 
+Public Const MinDate = #1/1/1900#
+Public Const MaxDate = #12/31/2999#
 
 
 

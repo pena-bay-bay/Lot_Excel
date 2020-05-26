@@ -112,7 +112,7 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
         .Juego = JUEGO_DEFECTO
         .FechaAnalisis = vNewValue.FechaInicial
         .FechaFinal = oInfo.GetAnteriorSorteo(vNewValue.FechaInicial)
-        .NumeroSorteos = 50
+        .NumeroSorteos = 100
     End With
     '
     '   Visualiza los valores del proceso

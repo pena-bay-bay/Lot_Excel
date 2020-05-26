@@ -5,7 +5,7 @@ Attribute VB_Name = "Lot_fnBarras"
 ' Author    : Carlos Almela Baeza
 ' Purpose   : Aglutina el control del las macros
 '---------------------------------------------------------------------------------------
-
+Option Explicit
 Public mobjEstadoAplicacion    As New EstadoAplicacion  'Objeto estado de la aplicación
 Private DB                     As New BdDatos           'Objeto Base de Datos
 '---------------------------------------------------------------------------------------
@@ -16,12 +16,12 @@ Private DB                     As New BdDatos           'Objeto Base de Datos
 '---------------------------------------------------------------------------------------
 '
 Public Sub Inicio_Aplicacion()
-    Application.ScreenUpdating = False                          'Desactiva el reflejo de pantalla
+    Application.ScreenUpdating = False                          'Desactiva el refresco de pantalla
     mobjEstadoAplicacion.OcultarTodasLasBarrasDeHerramientas    'Oculta todas las Barras de herramientas
     Application.Caption = "Hoja de Control de la Primi"         'Titulo del Libro
     Crear_Barra_Herramientas (BARRA_FUNCIONES)                  'Crea la Barra de herramientas particularizada de la aplicación
     DB.Ir_A_Hoja "Movimientos"                                  'Posicionarse en el inicio
-    Application.ScreenUpdating = True                           'Activa el reflejo de pantalla
+    Application.ScreenUpdating = True                           'Activa el refresco de pantalla
 End Sub
 
 '---------------------------------------------------------------------------------------

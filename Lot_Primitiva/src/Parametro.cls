@@ -66,11 +66,6 @@ Public Property Get FechaAlta() As Date
 End Property
 
 
-
-Public Function Parse(datRecord As ADODB.Record) As Parametro
-
-End Function
-
 Public Property Get Valor() As Variant
     Dim mDoble As Double
     Select Case Tipo

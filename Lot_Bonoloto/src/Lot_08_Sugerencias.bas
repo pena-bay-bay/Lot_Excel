@@ -49,6 +49,7 @@ Public Sub btn_SugerirApuestas()
     '   Borra el contenido de la hoja de salida
     '
     Borra_Salida
+    Application.ScreenUpdating = False       'Desactiva el refresco de pantalla
     '
     '   Crea un formulario de captura de métodos
     '
@@ -103,6 +104,7 @@ Public Sub btn_SugerirApuestas()
         End Select
     Loop
 
+    Application.ScreenUpdating = True       'Desactiva el refresco de pantalla
 btn_SugerirApuestas_CleanExit:
    On Error GoTo 0
    Exit Sub
@@ -168,6 +170,10 @@ Private Sub VisualizarSugerencias(datSelMetodos As Collection, _
             '
             If mModel.GetRecord(mCurrentId) Then
                 '
+                '   Asignamos pronósticos
+                '
+                mModel.Metodo.Pronosticos = datPronosticos
+                '
                 '   Creamos una sugerencia
                 '
                 Set mSuge = mCalSuge.GetSugerencia(mModel.Metodo, datFechaAnalisis)
@@ -206,6 +212,10 @@ Private Sub VisualizarSugerencias(datSelMetodos As Collection, _
                     Set mModel = mCtrl.GoPageNumber(mCurrentPage)
                 End If
                 For Each mMtdo In mModel.Metodos.Items
+                    '
+                    '   Asignamos pronósticos
+                    '
+                    mMtdo.Pronosticos = datPronosticos
                     '
                     '   Creamos una sugerencia
                     '
@@ -250,7 +260,7 @@ End Sub
 '------------------------------------------------------------------------------*
 Private Sub DisLiterales(datSorteo As Sorteo, datFechaAnalisis As Date)
     Dim C As Integer
-    Dim N As Integer
+    Dim n As Integer
     Dim mVar As Variant
     
   On Error GoTo DisLiterales_Error
@@ -288,10 +298,10 @@ Private Sub DisLiterales(datSorteo As Sorteo, datFechaAnalisis As Date)
         ActiveCell.Offset(1, 0).Value = "Combinación:"
         C = datSorteo.Complementario
         For i = 1 To datSorteo.Combinacion.Count
-            N = datSorteo.Combinacion.Numeros(i).Valor
-            If N <> C Then
+            n = datSorteo.Combinacion.Numeros(i).Valor
+            If n <> C Then
                 ActiveCell.Offset(0, i).Value = "N" & i
-                ActiveCell.Offset(1, i).Value = N
+                ActiveCell.Offset(1, i).Value = n
                 ActiveCell.Offset(1, i).Interior.ColorIndex = COLOR_VERDE
             End If
         Next i
@@ -416,10 +426,10 @@ Private Sub DisLiterales(datSorteo As Sorteo, datFechaAnalisis As Date)
     '
     '   Autoajustar celdas
     '
-    Range("A1").Activate                    'Se posiciona el cursor en la celda A1
     Cells.Select                            'Selecciona todas las celdas de la hoja
     Cells.EntireColumn.AutoFit              'Autoajusta el tamaño de las columnas
-
+    Range("A1").Select                      'Se posiciona el cursor en la celda A1
+    
 DisLiterales_CleanExit:
     On Error GoTo 0
     Exit Sub
@@ -439,7 +449,7 @@ Private Sub DisSugerencia(datSuge As Sugerencia, _
                           datSorteo As Sorteo, _
                           datLinea As Integer)
     Dim j           As Integer
-    Dim N           As Integer
+    Dim n           As Integer
     Dim mNum        As Numero
     Dim mCuValidar  As CU_ValidarSugerencia
   
@@ -464,11 +474,11 @@ Private Sub DisSugerencia(datSuge As Sugerencia, _
         '
         For j = 1 To datSuge.Combinacion.Count
             Set mNum = datSuge.Combinacion.Numeros(j)
-            N = mNum.Valor
-            ActiveCell.Offset(datLinea, j).Value = N
+            n = mNum.Valor
+            ActiveCell.Offset(datLinea, j).Value = n
             If datSorteo.Complementario = mNum.Valor Then
                 ActiveCell.Offset(datLinea, j).Interior.ColorIndex = COLOR_AMARILLO
-            ElseIf datSorteo.Combinacion.Contiene(N) Then
+            ElseIf datSorteo.Combinacion.Contiene(n) Then
                 ActiveCell.Offset(datLinea, j).Interior.ColorIndex = COLOR_VERDE_CLARO
             End If
         Next j
@@ -487,8 +497,8 @@ Private Sub DisSugerencia(datSuge As Sugerencia, _
     Else
         For j = 1 To datSuge.Combinacion.Count
             Set mNum = datSuge.Combinacion.Numeros(j)
-            N = mNum.Valor
-            ActiveCell.Offset(datLinea, j).Value = N
+            n = mNum.Valor
+            ActiveCell.Offset(datLinea, j).Value = n
         Next j
     End If
     '

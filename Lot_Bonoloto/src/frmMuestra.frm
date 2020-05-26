@@ -69,14 +69,6 @@ Private Sub UserForm_Initialize()
     If Not m_oInfo.EsFechaSorteo(m_dtFecha) Then
         m_dtFecha = m_oInfo.GetProximoSorteo(m_dtFecha)
     End If
-'    '
-'    ' Si la fecha del proximo sorteo es la del último resultado
-'    ' pasar a la siguiente fecha
-'    '
-'    If m_dtFecha = m_fin_DataBase Then
-'        m_dtFecha = m_oInfo.GetProximoSorteo(m_dtFecha)
-'    End If
-    
     '
     ' inicializamos el contenido de la caja de texto con la fecha fomrateada
     '
@@ -236,6 +228,7 @@ Private Sub optTipo_Click()
         txtNumReg.Enabled = False
         txtNumRang.Enabled = True
         cboRango.Enabled = True
+        m_objParMuestra.TipoMuestra = False
     End If
 End Sub
 
@@ -251,6 +244,7 @@ Private Sub optTipo2_Click()
         txtNumReg.Enabled = True
         txtNumRang.Enabled = False
         cboRango.Enabled = False
+        m_objParMuestra.TipoMuestra = True
     End If
 End Sub
 
@@ -303,7 +297,6 @@ Private Sub EstablecerPeriodo()
     
    On Error GoTo EstablecerPeriodo_Error
     Set m_info = New InfoSorteo
-    m_info.Constructor Bonoloto
     '
     '   Asigna fecha de analisis
     '
@@ -335,13 +328,13 @@ Private Sub EstablecerPeriodo()
         End Select
         m_dias = CInt(txtNumRang.Text)
         m_dias = m_dias * m_factorMultiplicador
-        m_objParMuestra.FechaInicial = m_info.GetAnteriorSorteo(m_objParMuestra.FechaFinal - m_dias)
+        m_objParMuestra.DiasAnalisis = m_dias
     '
     '   Tratamiento por registros
     '
     ElseIf (optTipo2.Value) Then
         m_reg = CInt(txtNumReg.Text)
-        m_objParMuestra.FechaInicial = DB.GetFecha(m_objParMuestra.FechaFinal, m_reg)
+        m_objParMuestra.NumeroSorteos = m_reg
     End If
 
     

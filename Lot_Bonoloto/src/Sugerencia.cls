@@ -21,31 +21,34 @@ Option Explicit
 Option Base 0
 '
 '--- Variables Privadas -------------------------------------------------------*
-Private mModalidad As ModalidadJuego
-Private mCombinacion As Combinacion
-'--- Constantes ---------------------------------------------------------------*
-'--- Mensajes -----------------------------------------------------------------*
-'--- Errores ------------------------------------------------------------------*
+Private mModalidad              As ModalidadJuego
+Private mCombinacion            As Combinacion
+Private mError                  As Integer      ' Código de Error
+
 '--- Propiedades --------------------------------------------------------------*
 Public Entidad As EntidadNegocio
 Public Metodo As Metodo
 Public Parametros As ParametrosMuestra
 
+
+
 Public Property Get Modalidad() As ModalidadJuego
     Modalidad = mModalidad
 End Property
-
 Public Property Let Modalidad(ByVal eModalidad As ModalidadJuego)
     mModalidad = eModalidad
 End Property
 
+
+
 Public Property Get Combinacion() As Combinacion
     Set Combinacion = mCombinacion
 End Property
-
 Public Property Set Combinacion(objCombinacion As Combinacion)
     Set mCombinacion = objCombinacion
 End Property
+
+
 
 
 '--- Métodos Privados ---------------------------------------------------------*
@@ -64,54 +67,129 @@ Private Sub Class_Terminate()
     Set Parametros = Nothing
 End Sub
 '--- Métodos Públicos ---------------------------------------------------------*
+
+
 '------------------------------------------------------------------------------*
 ' Procedimiento  : IsValid
-' Fecha          :
+' Fecha          : mi., 20/may/2020 17:04:14
 ' Propósito      : validar los atributos de la clase
 '------------------------------------------------------------------------------*
 Public Function IsValid() As Boolean
-    Dim bResult As Boolean
+ On Error GoTo IsValid_Error
+    mError = 0
+    '
+    '   Validar el contenido de la sugerencia
+    '
+    If Me.Combinacion.Count = 0 Then
+        mError = 1
+    End If
+    '
+    '   Validar el método de sugerencia
+    '
     If Not (Metodo.IsValid) Then
-        bResult = False
-    Else
-        bResult = True
+        mError = mError + 2
     End If
-    If Not (Parametros.Validar) Then
-        bResult = False
-    Else
-        bResult = True
+    '
+    '   Validar los parámetros estadisticos
+    '
+    If Metodo.TipoProcedimiento = mtdBomboCargado Or _
+    Metodo.TipoProcedimiento = mtdEstadCombinacion Or _
+    Metodo.TipoProcedimiento = mtdEstadistico Then
+        '
+        '   Validar parámetros
+        '
+        If Not Me.Parametros.Validar Then
+            mError = mError + 4
+        End If
     End If
-    IsValid = bResult
+    
+    If mError = 0 Then
+        IsValid = True
+    Else
+        IsValid = False
+    End If
+  
+  On Error GoTo 0
+IsValid__CleanExit:
+    Exit Function
+IsValid_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "Sugerencia.cls.IsValid", ErrSource)
+    Err.Raise ErrNumber, "Sugerencia.cls.IsValid", ErrDescription
 End Function
 
-Public Function MensajeError() As String
-    Dim sResult As String
-    MensajeError = sResult
+
+
+
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : GetMensaje
+' Fecha          : mi., 20/may/2020 17:11:21
+' Propósito      : Devuelve el error de inconsistencia
+'------------------------------------------------------------------------------*
+Public Function GetMensaje() As String
+    Dim m_Mensaje           As String
+  On Error GoTo GetMensaje_Error
+    
+    If mError = 0 Then
+         m_Mensaje = MSG_NOERROR
+    Else
+         m_Mensaje = MSG_HAYERRORES & vbCrLf
+    End If
+    If mError And 1 Then
+         m_Mensaje = m_Mensaje & MSG_COMBISUGEVACIA & vbCrLf
+    End If
+    If mError And 2 Then
+         m_Mensaje = m_Mensaje & MSG_METODOSUGERROR & vbCrLf
+    End If
+    If mError And 4 Then
+         m_Mensaje = m_Mensaje & MSG_PARAMSUGERROR & vbCrLf
+    End If
+    '
+    '
+    GetMensaje = m_Mensaje
+   
+On Error GoTo 0
+GetMensaje_CleanExit:
+    Exit Function
+
+GetMensaje_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "ParametrosMuestra.GetMensaje", ErrSource)
+    Err.Raise ErrNumber, "ParametrosMuestra.GetMensaje", ErrDescription
 End Function
 
+
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : ToString
+' Fecha          : mi., 20/may/2020 17:04:14
+' Propósito      :
+'------------------------------------------------------------------------------*
 Public Function ToString() As String
     Dim sResult As String
     Dim mModJuego As String
-    Select Case mModalidad
-        Case LP_LB_6_49: mModJuego = "6/49"
-        Case GP_5_54: mModJuego = "5/54"
-        Case EU_5_50: mModJuego = "5/50"
-        Case EU_2_12: mModJuego = "2/12"
-    End Select
         
-    ' Sugerencia (Modalidad-fecha): nn-nn-nn-nn-nn-nn-nn-nn, Metodo
-    sResult = "Sugerencia: ($1-$2) $3 , $4"
-    sResult = Replace(sResult, "$1", mModJuego)
-    sResult = Replace(sResult, "$2", Format(Parametros.FechaAnalisis, "dd/mm/yyyy"))
-    sResult = Replace(sResult, "$3", mCombinacion.TextoOrdenado)
-    sResult = Replace(sResult, "$4", Metodo.ToString)
-    ToString = sResult
+    If mError = 0 Then
+        Select Case mModalidad
+            Case LP_LB_6_49: mModJuego = "6/49"
+            Case GP_5_54: mModJuego = "5/54"
+            Case EU_5_50: mModJuego = "5/50"
+            Case EU_2_12: mModJuego = "2/12"
+        End Select
+            
+        ' Sugerencia (Modalidad-fecha): nn-nn-nn-nn-nn-nn-nn-nn, Metodo
+        sResult = "Sugerencia: ($1-$2) $3 , $4"
+        sResult = Replace(sResult, "$1", mModJuego)
+        sResult = Replace(sResult, "$2", Format(Parametros.FechaAnalisis, "dd/mm/yyyy"))
+        sResult = Replace(sResult, "$3", mCombinacion.TextoOrdenado)
+        sResult = Replace(sResult, "$4", Metodo.ToString)
+        ToString = sResult
+    Else
+        ToString = MSG_SUGERENCIAERROR
+    End If
 End Function
 
 '' *===========(EOF): Sugerencia.cls
-
-
-
-
-
-

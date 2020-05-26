@@ -14,13 +14,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
-
-
-
-
-
-
-
 '---------------------------------------------------------------------------------------
 ' Modulo    : frmRealizarColoreado
 ' Creado    : 16/03/2007  21:54

@@ -12,6 +12,7 @@ Attribute VB_Exposed = True
 ' * Created 04/07/2005 23:26
 ' * version 1.0.02
 ' **/
+Option Explicit
 
 '//Propiedades privadas
 Private m_col As Collection
@@ -29,7 +30,7 @@ End Sub
 ' Destructor
 Private Sub Class_Terminate()
     'destruye la colección cuando se termina la clase
-    Set mCol = Nothing
+    Set m_col = Nothing
 End Sub
 
 '/**
