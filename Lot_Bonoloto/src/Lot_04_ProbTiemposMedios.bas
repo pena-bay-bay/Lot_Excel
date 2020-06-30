@@ -25,6 +25,8 @@ Dim iCol                As Integer              ' Coordenada de columnas
 Dim iRow                As Integer              ' Coordenada de Filas
 Dim n                   As Integer              ' Entero
 Dim rgCelda             As Range                ' Celda activa
+Dim iMin                As Integer              ' valor minimo
+Dim iMax                As Integer              ' valor maximo
 
 '---------------------------------------------------------------------------------------
 ' Procedimiento : btn_Prob_TiemposMedios
@@ -143,10 +145,24 @@ Private Sub cmd_CalculaTodosProb(obj_muestra As Muestra)
     '   En negrita
     '
     ActiveCell.Font.Bold = True
+        '
     '
-    '   Para los 49 Numeros
     '
-    For n = 1 To 49
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto, LoteriaPrimitiva:
+            iMin = 1
+            iMax = 49
+        Case GordoPrimitiva:
+            iMin = 1
+            iMax = 54
+        Case Euromillones
+            iMin = 1
+            iMax = 50
+    End Select
+    '
+    '
+    '
+    For n = iMin To iMax
         '
         '   Posiciona el cursor en la celda correspondiente
         '

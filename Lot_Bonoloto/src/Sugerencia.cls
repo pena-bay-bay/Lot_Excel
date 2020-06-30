@@ -192,4 +192,24 @@ Public Function ToString() As String
     End If
 End Function
 
+'------------------------------------------------------------------------------*
+' Procedimiento  : Sort
+' Fecha          :
+' Propósito      :
+'------------------------------------------------------------------------------*
+Public Sub Sort(Optional datAscendente As Boolean)
+    Dim mComb    As Combinacion
+    Dim mText    As String
+    
+    Set mComb = New Combinacion
+    
+    If IsMissing(datAscendente) Then
+        datAscendente = True
+    End If
+    mText = mCombinacion.TextoOrdenado
+    mComb.Texto = mText
+    Set mCombinacion = mComb
+    
+    Set mComb = Nothing
+End Sub
 '' *===========(EOF): Sugerencia.cls

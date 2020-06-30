@@ -25,7 +25,7 @@ Public Sub btn_ComprobarApuestas()
     '
     '  Focalizar la hoja de salida
     '
-    DB.Ir_A_Hoja "MisApuestas"
+    Ir_A_Hoja "MisApuestas"
     '
     '  Definir el formulario
     '
@@ -373,7 +373,7 @@ Private Sub VerApuestasSorteos(oApuesta As Apuesta, oParam As ParametrosComproba
                 ' el id de la apuesta y la fecha del sorteo
                 '
                 sKey = Format(oSorteo.Fecha, "yyyy-MM-dd")
-                oPremio.key = sKey
+                oPremio.Key = sKey
                 '
                 ' Se agrega a la colección
                 '

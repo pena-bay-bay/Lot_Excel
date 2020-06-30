@@ -86,7 +86,7 @@ Private Sub ParametrosMuestraTest()
     Set m_objParMuestra = New ParametrosMuestra
     With m_objParMuestra
         .TipoMuestra = True
-        .Juego = gordoPrimitiva
+        .Juego = GordoPrimitiva
         .FechaAnalisis = #4/16/2017#         'Domingo
         .FechaFinal = #4/9/2017#             'Domingo
         .NumeroSorteos = 10
@@ -107,7 +107,7 @@ Private Sub MuestraTest()
     Dim m_objRg             As Range        'rango de datos
     Dim m_objBd             As New BdDatos  'base de datos
      
-    m_objBd.Ir_A_Hoja ("Salida")
+    Ir_A_Hoja ("Salida")
     Set m_objParMuestra = New ParametrosMuestra
     Set m_objMuestra = New Muestra
     
@@ -142,21 +142,21 @@ End Sub
 ' Purpose   : Probar la clase ParametrosMuestra
 '---------------------------------------------------------------------------------------
 '
-Private Sub Print_ParametrosMuestra(Obj As ParametrosMuestra)
+Private Sub Print_ParametrosMuestra(obj As ParametrosMuestra)
     Debug.Print "==> Pruebas ParametrosMuestraTest"
-    Debug.Print vbTab & "DiasAnalisis      =" & Obj.DiasAnalisis
-    Debug.Print vbTab & "FechaAnalisis     =" & Obj.FechaAnalisis
-    Debug.Print vbTab & "FechaFinal        =" & Obj.FechaFinal
-    Debug.Print vbTab & "FechaInicial      =" & Obj.FechaInicial
-    Debug.Print vbTab & "Juego             =" & Obj.Juego
-    Debug.Print vbTab & "NumeroSorteos     =" & Obj.NumeroSorteos
-    Debug.Print vbTab & "ResgistroAnalisis =" & Obj.ResgistroAnalisis
-    Debug.Print vbTab & "ResgistroFinal    =" & Obj.ResgistroFinal
-    Debug.Print vbTab & "ResgistroInicial  =" & Obj.ResgistroInicial
+    Debug.Print vbTab & "DiasAnalisis      =" & obj.DiasAnalisis
+    Debug.Print vbTab & "FechaAnalisis     =" & obj.FechaAnalisis
+    Debug.Print vbTab & "FechaFinal        =" & obj.FechaFinal
+    Debug.Print vbTab & "FechaInicial      =" & obj.FechaInicial
+    Debug.Print vbTab & "Juego             =" & obj.Juego
+    Debug.Print vbTab & "NumeroSorteos     =" & obj.NumeroSorteos
+    Debug.Print vbTab & "ResgistroAnalisis =" & obj.ResgistroAnalisis
+    Debug.Print vbTab & "ResgistroFinal    =" & obj.ResgistroFinal
+    Debug.Print vbTab & "ResgistroInicial  =" & obj.ResgistroInicial
     On Error Resume Next
-    Debug.Print vbTab & "ToString()         " & Obj.ToString()
-    Debug.Print vbTab & "Validar()          " & Obj.Validar()
-    Debug.Print vbTab & "GetMensaje()       " & Obj.GetMensaje()
+    Debug.Print vbTab & "ToString()         " & obj.ToString()
+    Debug.Print vbTab & "Validar()          " & obj.Validar()
+    Debug.Print vbTab & "GetMensaje()       " & obj.GetMensaje()
     Err.Clear
 End Sub
 
@@ -238,35 +238,35 @@ End Sub
 ' Purpose   : Probar la clase ParametrosMuestra
 '---------------------------------------------------------------------------------------
 '
-Private Sub Print_Bola(Obj As BolaV2)
+Private Sub Print_Bola(obj As BolaV2)
     Debug.Print "==> Pruebas BolaTest"
-    Debug.Print vbTab & "Apariciones           =" & Obj.Apariciones
-    Debug.Print vbTab & "Ausencias             =" & Obj.Ausencias
-    Debug.Print vbTab & "ColorFrecuencia       =" & Obj.ColorFrecuencia
-    Debug.Print vbTab & "ColorProbabilidad     =" & Obj.ColorProbabilidad
-    Debug.Print vbTab & "ColorTiempoMedio      =" & Obj.ColorTiempoMedio
-    Debug.Print vbTab & "DesviacionTiempoMedio =" & Obj.DesviacionTiempoMedio
-    Debug.Print vbTab & "FechaAnalisis         =" & Obj.FechaAnalisis
-    Debug.Print vbTab & "FechasAparicion       =" & Obj.FechasAparicion.Count
-    Debug.Print vbTab & "FechaUltimaAparicion  =" & Obj.FechaUltimaAparicion
-    Debug.Print vbTab & "Frecuencia            =" & Obj.Frecuencias.Count
-    Debug.Print vbTab & "Juego                 =" & Obj.Juego
-    Debug.Print vbTab & "MaximoTiempo          =" & Obj.MaximoTiempo
-    Debug.Print vbTab & "Mediana               =" & Obj.Mediana
-    Debug.Print vbTab & "MinimoTiempo          =" & Obj.MinimoTiempo
-    Debug.Print vbTab & "Moda                  =" & Obj.Moda
-    Debug.Print vbTab & "Numero                =" & Obj.Numero.Valor
-    Debug.Print vbTab & "Probabilidad          =" & Obj.Probabilidad
-    Debug.Print vbTab & "ProbabilidadFrecuencia =" & Obj.ProbabilidadFrecuencia
-    Debug.Print vbTab & "probabilidadTiempo    =" & Obj.ProbabilidadTiempo
-    Debug.Print vbTab & "ProximaFechaAparicion =" & Obj.ProximaFechaAparicion
-    Debug.Print vbTab & "RegistroAnalisis      =" & Obj.RegistroAnalisis
-    Debug.Print vbTab & "RegistroAparicion     =" & Obj.RegistroAparicion
-    Debug.Print vbTab & "Tendencia             =" & Obj.Tendencia
-    Debug.Print vbTab & "TiempoMedio           =" & Obj.TiempoMedio
-    Debug.Print vbTab & "TipoAusencia          =" & Obj.TipoAusencia
-    Debug.Print vbTab & "TotalNumeros          =" & Obj.TotalNumeros
-    Debug.Print vbTab & "UltimoRegistro        =" & Obj.UltimoRegistro
+    Debug.Print vbTab & "Apariciones           =" & obj.Apariciones
+    Debug.Print vbTab & "Ausencias             =" & obj.Ausencias
+    Debug.Print vbTab & "ColorFrecuencia       =" & obj.ColorFrecuencia
+    Debug.Print vbTab & "ColorProbabilidad     =" & obj.ColorProbabilidad
+    Debug.Print vbTab & "ColorTiempoMedio      =" & obj.ColorTiempoMedio
+    Debug.Print vbTab & "DesviacionTiempoMedio =" & obj.DesviacionTiempoMedio
+    Debug.Print vbTab & "FechaAnalisis         =" & obj.FechaAnalisis
+    Debug.Print vbTab & "FechasAparicion       =" & obj.FechasAparicion.Count
+    Debug.Print vbTab & "FechaUltimaAparicion  =" & obj.FechaUltimaAparicion
+    Debug.Print vbTab & "Frecuencia            =" & obj.Frecuencias.Count
+    Debug.Print vbTab & "Juego                 =" & obj.Juego
+    Debug.Print vbTab & "MaximoTiempo          =" & obj.MaximoTiempo
+    Debug.Print vbTab & "Mediana               =" & obj.Mediana
+    Debug.Print vbTab & "MinimoTiempo          =" & obj.MinimoTiempo
+    Debug.Print vbTab & "Moda                  =" & obj.Moda
+    Debug.Print vbTab & "Numero                =" & obj.Numero.Valor
+    Debug.Print vbTab & "Probabilidad          =" & obj.Probabilidad
+    Debug.Print vbTab & "ProbabilidadFrecuencia =" & obj.ProbabilidadFrecuencia
+    Debug.Print vbTab & "probabilidadTiempo    =" & obj.ProbabilidadTiempo
+    Debug.Print vbTab & "ProximaFechaAparicion =" & obj.ProximaFechaAparicion
+    Debug.Print vbTab & "RegistroAnalisis      =" & obj.RegistroAnalisis
+    Debug.Print vbTab & "RegistroAparicion     =" & obj.RegistroAparicion
+    Debug.Print vbTab & "Tendencia             =" & obj.Tendencia
+    Debug.Print vbTab & "TiempoMedio           =" & obj.TiempoMedio
+    Debug.Print vbTab & "TipoAusencia          =" & obj.TipoAusencia
+    Debug.Print vbTab & "TotalNumeros          =" & obj.TotalNumeros
+    Debug.Print vbTab & "UltimoRegistro        =" & obj.UltimoRegistro
 End Sub
 
 '------------------------------------------------------------------------------*
@@ -276,96 +276,96 @@ End Sub
 '------------------------------------------------------------------------------*
 '
 Public Sub BomboTest()
-    Dim Obj As BomboV2
+    Dim obj As BomboV2
     
  On Error GoTo BomboTest_Error
     '
     '   PU01: Bombo en vacio (Carga, Giros, Extraccion)
     '
-    Set Obj = New BomboV2
-    Print_Bombo Obj
-    Obj.Cargar
-    Obj.Girar
-    Debug.Print "Extraemos bolas de bombo vacio:" & Obj.ExtraerBolas(1)
-    Set Obj = Nothing
+    Set obj = New BomboV2
+    Print_Bombo obj
+    obj.Cargar
+    obj.Girar
+    Debug.Print "Extraemos bolas de bombo vacio:" & obj.ExtraerBolas(1)
+    Set obj = Nothing
     '
     '   PU02: Bombo Bonoloto (Carga, Giros, Extraccion)
     '
-    Set Obj = New BomboV2
-    With Obj
+    Set obj = New BomboV2
+    With obj
         .Juego = Bonoloto
         .NumGiros = 100
         .TipoGiros = lotGiros
     End With
-    Print_Bombo Obj
-    Obj.Cargar
-    Obj.Girar
-    Debug.Print "Extraemos bolas de bombo :" & Obj.ExtraerBolas(7)
-    Set Obj = Nothing
+    Print_Bombo obj
+    obj.Cargar
+    obj.Girar
+    Debug.Print "Extraemos bolas de bombo :" & obj.ExtraerBolas(7)
+    Set obj = Nothing
     '
     '   PU04: Bombo Euromillones (Carga, Giros, Extraccion)
     '
-    Set Obj = New BomboV2
-    With Obj
+    Set obj = New BomboV2
+    With obj
         .Juego = Euromillones
         .NumGiros = 100
         .TipoGiros = lotTiempo
         .TiempoGiro = #12:00:01 AM#   ' 1 segundo
     End With
-    Print_Bombo Obj
-    Obj.Cargar
-    Obj.Girar
-    Debug.Print "Extraemos bolas de bombo :" & Obj.ExtraerBolas(5)
-    Set Obj = Nothing
+    Print_Bombo obj
+    obj.Cargar
+    obj.Girar
+    Debug.Print "Extraemos bolas de bombo :" & obj.ExtraerBolas(5)
+    Set obj = Nothing
 
     '
     '   PU05: Bombo Euromillones Estrellas (Carga, Giros, Extraccion)
     '
-    Set Obj = New BomboV2
-    With Obj
+    Set obj = New BomboV2
+    With obj
         .Juego = Euromillones
         .TipoBombo = 2
         .NumGiros = 50
         .TipoGiros = lotGiros
         .TiempoGiro = #12:00:01 AM#   ' 1 segundo
     End With
-    Print_Bombo Obj
-    Obj.Cargar
-    Obj.Girar
-    Debug.Print "Extraemos bolas de bombo :" & Obj.ExtraerBolas(2)
-    Set Obj = Nothing
+    Print_Bombo obj
+    obj.Cargar
+    obj.Girar
+    Debug.Print "Extraemos bolas de bombo :" & obj.ExtraerBolas(2)
+    Set obj = Nothing
 
     '
     '   PU06: Bombo Gordo primitiva (Carga, Giros, Extraccion)
     '
-    Set Obj = New BomboV2
-    With Obj
-        .Juego = gordoPrimitiva
+    Set obj = New BomboV2
+    With obj
+        .Juego = GordoPrimitiva
         .TipoBombo = 1
         .NumGiros = 50
         .TipoGiros = lotGiros
     End With
-    Obj.Cargar
-    Print_Bombo Obj
-    Obj.Girar
-    Debug.Print "Extraemos bolas de bombo :" & Obj.ExtraerBolas(6)
-    Set Obj = Nothing
+    obj.Cargar
+    Print_Bombo obj
+    obj.Girar
+    Debug.Print "Extraemos bolas de bombo :" & obj.ExtraerBolas(6)
+    Set obj = Nothing
     '
     '
     '   PU07: Bombo Gordo primitiva - Clave (Carga, Giros, Extraccion)
     '
-    Set Obj = New BomboV2
-    With Obj
-        .Juego = gordoPrimitiva
+    Set obj = New BomboV2
+    With obj
+        .Juego = GordoPrimitiva
         .TipoBombo = 2
         .NumGiros = 50
         .TipoGiros = lotGiros
     End With
-    Obj.Cargar
-    Print_Bombo Obj
-    Obj.Girar
-    Debug.Print "Extraemos bolas de bombo :" & Obj.ExtraerBolas(1)
-    Set Obj = Nothing
+    obj.Cargar
+    Print_Bombo obj
+    obj.Girar
+    Debug.Print "Extraemos bolas de bombo :" & obj.ExtraerBolas(1)
+    Set obj = Nothing
     '
     '   PU08: Bombo Estrellas Cargado (Carga, Giros, Extraccion)
     '
@@ -383,8 +383,8 @@ Public Sub BomboTest()
     mProb(10, 0) = 11: mProb(10, 1) = 0.01689
     mProb(11, 0) = 12: mProb(11, 1) = 0.025396825
                 
-    Set Obj = New BomboV2
-    With Obj
+    Set obj = New BomboV2
+    With obj
         .Juego = Euromillones
         .TipoBombo = 2
         .NumGiros = 50
@@ -392,30 +392,30 @@ Public Sub BomboTest()
         .Cargar
         .ProbabilidadesBolas = mProb
     End With
-    Print_Bombo Obj
-    Obj.Girar
-    Debug.Print "Extraemos bolas de bombo :" & Obj.ExtraerBolas(2)
-    Set Obj = Nothing
+    Print_Bombo obj
+    obj.Girar
+    Debug.Print "Extraemos bolas de bombo :" & obj.ExtraerBolas(2)
+    Set obj = Nothing
     '
     '   PU09: Bombo Bonoloto Reinicio
     '
-    Set Obj = New BomboV2
-    With Obj
+    Set obj = New BomboV2
+    With obj
         .Juego = Bonoloto
         .TipoBombo = 1
         .NumGiros = 50
         .TipoGiros = lotGiros
     End With
-    Obj.Cargar
-    Print_Bombo Obj
-    Obj.Girar
-    Debug.Print "Extraemos bolas de bombo :" & Obj.ExtraerBolas(10)
-    Obj.Reiniciar
-    Print_Bombo Obj
-    Obj.Girar
-    Debug.Print "Extraemos bolas de bombo :" & Obj.ExtraerBolas(10)
+    obj.Cargar
+    Print_Bombo obj
+    obj.Girar
+    Debug.Print "Extraemos bolas de bombo :" & obj.ExtraerBolas(10)
+    obj.Reiniciar
+    Print_Bombo obj
+    obj.Girar
+    Debug.Print "Extraemos bolas de bombo :" & obj.ExtraerBolas(10)
     
-    Set Obj = Nothing
+    Set obj = Nothing
     
     '
     '   PU10: Bombo Bonoloto tipo giros
@@ -458,18 +458,18 @@ End Sub
 '    Next i
 'End Sub
 
-Private Sub Print_Bombo(Obj As BomboV2)
+Private Sub Print_Bombo(obj As BomboV2)
     Debug.Print "==> Pruebas BomboTest"
-    Debug.Print vbTab & "Bolas.Count           =" & Obj.Bolas.Count
-    Debug.Print vbTab & "Cargado               =" & Obj.Cargado
-    Debug.Print vbTab & "Juego                 =" & Obj.Juego
-    Debug.Print vbTab & "NumBolas              =" & Obj.NumBolas
-    Debug.Print vbTab & "NumGiros              =" & Obj.NumGiros
-    Debug.Print vbTab & "ProbabilidadesBolas   =" & UBound(Obj.ProbabilidadesBolas)
-    Debug.Print vbTab & "Situacion             =" & Obj.Situacion
-    Debug.Print vbTab & "TiempoGiro            =" & Obj.TiempoGiro
-    Debug.Print vbTab & "TipoBombo             =" & Obj.TipoBombo
-    Debug.Print vbTab & "TipoGiros             =" & Obj.TipoGiros
+    Debug.Print vbTab & "Bolas.Count           =" & obj.Bolas.Count
+    Debug.Print vbTab & "Cargado               =" & obj.Cargado
+    Debug.Print vbTab & "Juego                 =" & obj.Juego
+    Debug.Print vbTab & "NumBolas              =" & obj.NumBolas
+    Debug.Print vbTab & "NumGiros              =" & obj.NumGiros
+    Debug.Print vbTab & "ProbabilidadesBolas   =" & UBound(obj.ProbabilidadesBolas)
+    Debug.Print vbTab & "Situacion             =" & obj.Situacion
+    Debug.Print vbTab & "TiempoGiro            =" & obj.TiempoGiro
+    Debug.Print vbTab & "TipoBombo             =" & obj.TipoBombo
+    Debug.Print vbTab & "TipoGiros             =" & obj.TipoGiros
 End Sub
 
 

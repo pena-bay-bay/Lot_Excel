@@ -108,10 +108,10 @@ Public Function GetProximoSorteo(vNewDate As Date) As Date
                     GetProximoSorteo = GetProximoSorteo + 4
             End Select
             
-        Case Juego.gordoPrimitiva
+        Case Juego.GordoPrimitiva
             mDias = 1       ' D
             If mDiaSemana > 1 Then
-                GetProximoSorteo = GetProximoSorteo + (7 - mDiaSemana)
+                GetProximoSorteo = GetProximoSorteo + (7 - mDiaSemana) + 1
             Else
                 GetProximoSorteo = GetProximoSorteo + 7
             End If
@@ -199,7 +199,7 @@ Public Function GetSorteosEntreFechas(vNewDateIni As Date, vNewDateFin As Date) 
                     mSorteos = mSorteos + 1
                 End If
                 
-            Case Juego.gordoPrimitiva:
+            Case Juego.GordoPrimitiva:
                 '
                 ' Si es el Gordo de la primitiva y es domingo suma 1 sorteo
                 '
@@ -248,7 +248,7 @@ Public Function EsFechaSorteo(vNewDate As Date) As Boolean
                     EsFechaSorteo = True
                 End If
                 
-            Case Juego.gordoPrimitiva:
+            Case Juego.GordoPrimitiva:
                 If mDiaSem = 1 Then
                     EsFechaSorteo = True
                 End If
@@ -318,10 +318,10 @@ Public Function GetAnteriorSorteo(vNewDate As Date) As Date
                     GetAnteriorSorteo = GetAnteriorSorteo - 4
             End Select
             
-        Case Juego.gordoPrimitiva
+        Case Juego.GordoPrimitiva
             mDias = 1       ' D
             If mDiaSemana > 1 Then
-                GetAnteriorSorteo = GetAnteriorSorteo - (7 - mDiaSemana)
+                GetAnteriorSorteo = (GetAnteriorSorteo - mDiaSemana) + 1
             Else
                 GetAnteriorSorteo = GetAnteriorSorteo - 7
             End If

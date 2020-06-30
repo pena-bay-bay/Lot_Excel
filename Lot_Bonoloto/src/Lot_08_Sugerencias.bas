@@ -468,6 +468,13 @@ Private Sub DisSugerencia(datSuge As Sugerencia, _
         .TintAndShade = 0.799981688894314
         .PatternTintAndShade = 0
     End With
+    '
+    '   Ordenamos la Suge
+    '
+    datSuge.Sort
+    '
+    '
+    '
     If Not (datSorteo Is Nothing) Then
         '
         '   Bucle combinación

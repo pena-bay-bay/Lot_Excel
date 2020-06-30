@@ -29,21 +29,21 @@ Option Base 0
 '------------------------------------------------------------------------------*
 '
 Private Sub NumeroTest()
-    Dim Obj As Numero
+    Dim obj As Numero
   
   On Error GoTo NumeroTest_Error
-    Set Obj = New Numero
+    Set obj = New Numero
     '
     '   Numero Válido
     '
-    Obj.Valor = 5
-    PrintNumero Obj
+    obj.Valor = 5
+    PrintNumero obj
     '
     '   Numero no Valido
     '
-    Set Obj = New Numero
-    Obj.Valor = 80
-    PrintNumero Obj
+    Set obj = New Numero
+    obj.Valor = 80
+    PrintNumero obj
       
   On Error GoTo 0
 NumeroTest__CleanExit:
@@ -65,45 +65,45 @@ End Sub
 '------------------------------------------------------------------------------*
 '
 Private Sub CombinacionTest()
-    Dim Obj     As Combinacion
+    Dim obj     As Combinacion
     Dim oNum    As Numero
   On Error GoTo CombinacionTest_Error
     '
     '   Combinacion Vacia
     '
-    Set Obj = New Combinacion
-    PrintCombinacion Obj
+    Set obj = New Combinacion
+    PrintCombinacion obj
     '
     '   Combinacion Valida  28-1-31-25-33-8-7
     '
     Set oNum = New Numero
     oNum.Valor = 28
-    Obj.Add oNum
+    obj.Add oNum
     Set oNum = New Numero
     oNum.Valor = 1
-    Obj.Add oNum
+    obj.Add oNum
     Set oNum = New Numero
     oNum.Valor = 31
-    Obj.Add oNum
+    obj.Add oNum
     Set oNum = New Numero
     oNum.Valor = 25
-    Obj.Add oNum
+    obj.Add oNum
     Set oNum = New Numero
     oNum.Valor = 33
-    Obj.Add oNum
+    obj.Add oNum
     Set oNum = New Numero
     oNum.Valor = 8
-    Obj.Add oNum
+    obj.Add oNum
     Set oNum = New Numero
     oNum.Valor = 7
-    Obj.Add oNum
+    obj.Add oNum
     '
     '
-    PrintCombinacion Obj
+    PrintCombinacion obj
     '
     '   Combinación no Valida
     '
-    Set Obj = New Combinacion
+    Set obj = New Combinacion
       
   On Error GoTo 0
 CombinacionTest__CleanExit:
@@ -127,19 +127,19 @@ End Sub
 ' Parámetros     : Numero
 '------------------------------------------------------------------------------*
 '
-Private Sub PrintNumero(Obj As Numero)
+Private Sub PrintNumero(obj As Numero)
     Debug.Print "==> Pruebas Numero"
-    Debug.Print vbTab & "Decena       =" & Obj.Decena
-    Debug.Print vbTab & "Error        =" & Obj.Error
-    Debug.Print vbTab & "EsPar        =" & Obj.EsPar
-    Debug.Print vbTab & "EsValido     =" & Obj.EsValido(JUEGO_DEFECTO)
-    Debug.Print vbTab & "GetMensaje   =" & Obj.GetMensaje()
-    Debug.Print vbTab & "Orden        =" & Obj.Orden
-    Debug.Print vbTab & "Paridad      =" & Obj.Paridad
-    Debug.Print vbTab & "Peso         =" & Obj.Peso
-    Debug.Print vbTab & "Septena      =" & Obj.Septena
-    Debug.Print vbTab & "Terminacion  =" & Obj.Terminacion
-    Debug.Print vbTab & "Valor        =" & Obj.Valor
+    Debug.Print vbTab & "Decena       =" & obj.Decena
+    Debug.Print vbTab & "Error        =" & obj.Error
+    Debug.Print vbTab & "EsPar        =" & obj.EsPar
+    Debug.Print vbTab & "EsValido     =" & obj.EsValido(JUEGO_DEFECTO)
+    Debug.Print vbTab & "GetMensaje   =" & obj.GetMensaje()
+    Debug.Print vbTab & "Orden        =" & obj.Orden
+    Debug.Print vbTab & "Paridad      =" & obj.Paridad
+    Debug.Print vbTab & "Peso         =" & obj.Peso
+    Debug.Print vbTab & "Septena      =" & obj.Septena
+    Debug.Print vbTab & "Terminacion  =" & obj.Terminacion
+    Debug.Print vbTab & "Valor        =" & obj.Valor
 End Sub
 
 '------------------------------------------------------------------------------*
@@ -149,25 +149,24 @@ End Sub
 ' Parámetros     : Combinacion
 '------------------------------------------------------------------------------*
 '
-Private Sub PrintCombinacion(Obj As Combinacion)
+Private Sub PrintCombinacion(obj As Combinacion)
     Debug.Print "==> Pruebas Combinacion"
     Debug.Print vbTab & "Add                 =" & "#Metodo" 'obj.Add
     Debug.Print vbTab & "Clear               =" & "#Metodo" 'obj.Clear
-    Debug.Print vbTab & "Contiene            =" & Obj.Contiene(5)
-    Debug.Print vbTab & "Count               =" & Obj.Count
+    Debug.Print vbTab & "Contiene            =" & obj.Contiene(5)
+    Debug.Print vbTab & "Count               =" & obj.Count
     Debug.Print vbTab & "Delete              =" & "#Metodo" 'obj.Delete
-    Debug.Print vbTab & "EstaOrdenado        =" & Obj.EstaOrdenado
-    Debug.Print vbTab & "FormulaAltoBajo     =" & Obj.FormulaAltoBajo
-    Debug.Print vbTab & "FormulaConsecutivos =" & Obj.FormulaConsecutivos
-    Debug.Print vbTab & "FormulaDecenas      =" & Obj.FormulaDecenas
-    Debug.Print vbTab & "FormulaParidad      =" & Obj.FormulaParidad
-    Debug.Print vbTab & "FormulaSeptenas     =" & Obj.FormulaSeptenas
-    Debug.Print vbTab & "FormulaTerminaciones=" & Obj.FormulaTerminaciones
+    Debug.Print vbTab & "EstaOrdenado        =" & obj.EstaOrdenado
+    Debug.Print vbTab & "FormulaAltoBajo     =" & obj.FormulaAltoBajo
+    Debug.Print vbTab & "FormulaConsecutivos =" & obj.FormulaConsecutivos
+    Debug.Print vbTab & "FormulaDecenas      =" & obj.FormulaDecenas
+    Debug.Print vbTab & "FormulaParidad      =" & obj.FormulaParidad
+    Debug.Print vbTab & "FormulaSeptenas     =" & obj.FormulaSeptenas
+    Debug.Print vbTab & "FormulaTerminaciones=" & obj.FormulaTerminaciones
     Debug.Print vbTab & "Numeros             =" & "#Col"  'obj.Numeros
-    Debug.Print vbTab & "Producto            =" & Obj.Producto
-    Debug.Print vbTab & "Suma                =" & Obj.Suma
-    Debug.Print vbTab & "Texto               =" & Obj.Texto
-    Debug.Print vbTab & "TextoOrdenado       =" & Obj.TextoOrdenado
+    Debug.Print vbTab & "Suma                =" & obj.Suma
+    Debug.Print vbTab & "Texto               =" & obj.Texto
+    Debug.Print vbTab & "TextoOrdenado       =" & obj.TextoOrdenado
 End Sub
 '---------------------------------------------------------------------------------------
 ' Procedure : PremioTest
@@ -185,7 +184,7 @@ Public Sub PremioTest()
     m_obj.Pronosticos = 7
     
     Debug.Print "==> Pruebas Premio"
-    Debug.Print "Key                     = " & m_obj.key
+    Debug.Print "Key                     = " & m_obj.Key
     Debug.Print "BolasAcertadas          = " & m_obj.BolasAcertadas
     Debug.Print "ComplementarioAcertado  = " & m_obj.ComplementarioAcertado
     Debug.Print "NumeroEstrellasAcertadas= " & m_obj.NumeroEstrellasAcertadas
@@ -219,20 +218,20 @@ End Sub
 '---------------------------------------------------------------------------------------
 '
 Private Sub Premio2Test()
-    Dim Obj As Premio2
-    Set Obj = New Premio2
+    Dim obj As Premio2
+    Set obj = New Premio2
     Dim obj1 As Premio2
     Set obj1 = New Premio2
-    With Obj
+    With obj
         .CategoriaPremio = Cuarta
         .Importe = 125
         .Juego = Bonoloto
         .NumeroAcertantesEspaña = 20
         .NumeroAcertantesEuropa = 15
     End With
-    PrintPremio2 Obj
+    PrintPremio2 obj
     'obj.Parse
-    obj1.Parse Obj.ToString()
+    obj1.Parse obj.ToString()
     PrintPremio2 obj1
 End Sub
 '---------------------------------------------------------------------------------------
@@ -295,7 +294,7 @@ End Sub
 Private Sub PrintPremio(objPremio As Premio)
 
   On Error GoTo PrintPremio_Error
-    Debug.Print " Key                    =>" & objPremio.key & " ==========="
+    Debug.Print " Key                    =>" & objPremio.Key & " ==========="
     Debug.Print "   BolasAcertadas       =>" & objPremio.BolasAcertadas
     Debug.Print "   CategoriaPremio      =>" & objPremio.CategoriaPremio
     Debug.Print "   Complementario       =>" & objPremio.ComplementarioAcertado
@@ -323,16 +322,16 @@ End Sub
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Private Sub PrintPremio2(Obj As Premio2)
+Private Sub PrintPremio2(obj As Premio2)
     Debug.Print " Premio ]================="
-    Debug.Print "   CategoriaPremio        =>" & Obj.CategoriaPremio
-    Debug.Print "   CategoriaTexto         =>" & Obj.CategoriaTexto
-    Debug.Print "   Importe                =>" & Obj.Importe
-    Debug.Print "   Juego                  =>" & Obj.Juego
-    Debug.Print "   Acertantes en Europa   =>" & Obj.NumeroAcertantesEuropa
-    Debug.Print "   Acertantes en España   =>" & Obj.NumeroAcertantesEspaña
-    Debug.Print "   EsValido()             =>" & Obj.EsValido()
-    Debug.Print "   ToString()             =>" & Obj.ToString()
+    Debug.Print "   CategoriaPremio        =>" & obj.CategoriaPremio
+    Debug.Print "   CategoriaTexto         =>" & obj.CategoriaTexto
+    Debug.Print "   Importe                =>" & obj.Importe
+    Debug.Print "   Juego                  =>" & obj.Juego
+    Debug.Print "   Acertantes en Europa   =>" & obj.NumeroAcertantesEuropa
+    Debug.Print "   Acertantes en España   =>" & obj.NumeroAcertantesEspaña
+    Debug.Print "   EsValido()             =>" & obj.EsValido()
+    Debug.Print "   ToString()             =>" & obj.ToString()
 End Sub
 Private Sub InfoSorteoTest()
     Dim mInfo As InfoSorteo
@@ -354,7 +353,7 @@ Private Sub InfoSorteoTest()
         mFechaF = mInfo.GetProximoSorteo(mFechaI)
         Debug.Print "GetProximoSorteo(" & mFechaI & ", Bonoloto) => "; mFechaF
         Debug.Print "EsFechaSorteo (" & mFechaI & ", Bonoloto) => " & mInfo.EsFechaSorteo(mFechaI)
-        mInfo.Constructor gordoPrimitiva
+        mInfo.Constructor GordoPrimitiva
         mFechaF = mInfo.GetProximoSorteo(mFechaI)
         Debug.Print "GetProximoSorteo(" & mFechaI & ", GordoPrimitiva) => "; mFechaF
         mInfo.Constructor LoteriaPrimitiva

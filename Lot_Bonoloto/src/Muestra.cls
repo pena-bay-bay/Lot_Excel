@@ -24,6 +24,7 @@ Private mRegTotal               As Integer                  ' Total de registros
 Private mTotalNumeros           As Integer                  ' Total de números analizados
 Private m_Estrellas             As Collection               ' Colección de Estrellas
 Private m_Reintegros            As Collection               ' Colección de Reintegros
+Private mTipoBombo              As Integer                  ' Tipo de bombo al que se aplica la estadistica
 
 '---------------------------------------------------------------------------------------
 ' Procedimiento : Class_Initialize
@@ -39,6 +40,14 @@ Private Sub Class_Initialize()
     Set m_bol = New bola                                    ' Se inicializa la Bola
                                                             ' Se define la matriz de frecuencias
 '    Rango_Frecuencias = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100)
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto, LoteriaPrimitiva:
+            mTipoBombo = 1                                  ' Bombo de 49 bolas
+        Case GordoPrimitiva:
+            mTipoBombo = 2                                  ' Bombo de 54 bolas
+        Case Euromillones:
+            mTipoBombo = 3                                  ' Bombo de 50 bolas
+    End Select
 End Sub
 
 Private Sub Class_Terminate()
@@ -53,7 +62,7 @@ End Sub
 ' Autor         : Carlos Almela Baeza
 ' Objeto        :
 '---------------------------------------------------------------------------------------
-Public Sub Constructor(rg_muestra As Range, vNewJuego As Juego)
+Public Sub Constructor(rg_muestra As Range, Optional vNewMod As ModalidadJuego)
         Dim i               As Integer
         Dim mStrKey         As String
         Dim rgRow           As Range
@@ -61,6 +70,8 @@ Public Sub Constructor(rg_muestra As Range, vNewJuego As Juego)
         Dim objNum          As New Numero
         Dim nRegAnalisis    As Integer
         Dim oInfoJuego      As InfoSorteo
+        Dim mMin            As Integer
+        Dim mMax            As Integer
   On Error GoTo Constructor_Error
         '
         '   Borra la coleccion de Numeros
@@ -68,16 +79,38 @@ Public Sub Constructor(rg_muestra As Range, vNewJuego As Juego)
         If m_col.Count > 0 Then
             EliminarTodosElementos m_col
         End If
+        '
+        '   Asignamos el tipo de bombo exterior
+        '
+        If Not IsMissing(vNewMod) Then
+            mTipoBombo = vNewMod
+        End If
+        
         mRegTotal = 0
+        Select Case mTipoBombo
+            Case 1:
+                mMin = 1
+                mMax = 49
+            Case 2:
+                mMin = 1
+                mMax = 54
+            Case 3:
+                mMin = 1
+                mMax = 50
+            Case 4:
+                mMin = 1
+                mMax = 12
+            Case 5:
+                mMin = 0
+                mMax = 9
+        End Select
+            
         '
         '   Se crea la colección de bolas en vacio
-        '   TODO: En función del juego se crearán 49, 50, 54 y 10 estrellas o clave
         '
-        For i = 1 To 49
+        For i = mMin To mMax
             Set m_bol = New bola
-            With m_bol
-                .Constructor (i)
-            End With
+            m_bol.Constructor (i)
             mStrKey = CStr(m_bol.Numero.Valor)
             m_col.Add m_bol, mStrKey
         Next i
@@ -85,52 +118,155 @@ Public Sub Constructor(rg_muestra As Range, vNewJuego As Juego)
         '   Se actualizan las bolas con la información de la muestra de sorteos
         '
         For Each rgRow In rg_muestra.Rows
+            '
+            '   Creamos el objeto Sorteo
+            '
             objSorteo.Constructor rgRow
-            '
-            '  para cada Numero en la combinación
-            '
-            For Each objNum In objSorteo.Combinacion.Numeros
-                '
-                '   Obtiene la clave del Numero
-                '
-                mStrKey = CStr(objNum.Valor)
-                '
-                '   Con la bola del Numero actualiza propiedades
-                '
-                With m_col.Item(mStrKey)
+            Select Case mTipoBombo
+                Case 1, 2, 3:
                     '
-                    '   Agrega Numero de registro
+                    '  para cada Numero en la combinación
                     '
-                    i = .colRegistros.Count
-                    If i = 0 Then
-                        Set .colRegistros = New Collection
-                        .colRegistros.Add objSorteo.Registro, CStr(i)
-                    Else
-                        .colRegistros.Add objSorteo.Registro, CStr(i), , i
-                    End If
+                    For Each objNum In objSorteo.Combinacion.Numeros
+                        '
+                        '   Obtiene la clave del Numero
+                        '
+                        mStrKey = CStr(objNum.Valor)
+                        '
+                        '   Con la bola del Numero actualiza propiedades
+                        '
+                        With m_col.Item(mStrKey)
+                            '
+                            '   Agrega Numero de registro
+                            '
+                            i = .colRegistros.Count
+                            If i = 0 Then
+                                Set .colRegistros = New Collection
+                                .colRegistros.Add objSorteo.Registro, CStr(i)
+                            Else
+                                .colRegistros.Add objSorteo.Registro, CStr(i), , i
+                            End If
+                            '
+                            '  Agrega fecha de aparicion
+                            '
+                            i = .colFechasAparicion.Count
+                            If i = 0 Then
+                                Set .colFechasAparicion = New Collection
+                                .colFechasAparicion.Add objSorteo.Fecha, CStr(i)
+                            Else
+                                .colFechasAparicion.Add objSorteo.Fecha, CStr(i), , i
+                            End If
+                            mRegTotal = mRegTotal + 1
+                        End With
+                    Next objNum
+                Case 4:
+                    Set objNum = New Numero
+                    objNum.Valor = objSorteo.EstrellaUno
                     '
-                    '  Agrega fecha de aparicion
+                    '   Obtiene la clave del Numero
                     '
-                    i = .colFechasAparicion.Count
-                    If i = 0 Then
-                        Set .colFechasAparicion = New Collection
-                        .colFechasAparicion.Add objSorteo.Fecha, CStr(i)
-                    Else
-                        .colFechasAparicion.Add objSorteo.Fecha, CStr(i), , i
-                    End If
-                    mRegTotal = mRegTotal + 1
-                End With
-            Next objNum
+                    mStrKey = CStr(objNum.Valor)
+                    '
+                    '   Con la bola del Numero actualiza propiedades
+                    '
+                    With m_col.Item(mStrKey)
+                        '
+                        '   Agrega Numero de registro
+                        '
+                        i = .colRegistros.Count
+                        If i = 0 Then
+                            Set .colRegistros = New Collection
+                            .colRegistros.Add objSorteo.Registro, CStr(i)
+                        Else
+                            .colRegistros.Add objSorteo.Registro, CStr(i), , i
+                        End If
+                        '
+                        '  Agrega fecha de aparicion
+                        '
+                        i = .colFechasAparicion.Count
+                        If i = 0 Then
+                            Set .colFechasAparicion = New Collection
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i)
+                        Else
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i), , i
+                        End If
+                        mRegTotal = mRegTotal + 1
+                    End With
+                    objNum.Valor = objSorteo.EstrellaDos
+                    '
+                    '   Obtiene la clave del Numero
+                    '
+                    mStrKey = CStr(objNum.Valor)
+                    '
+                    '   Con la bola del Numero actualiza propiedades
+                    '
+                    With m_col.Item(mStrKey)
+                        '
+                        '   Agrega Numero de registro
+                        '
+                        i = .colRegistros.Count
+                        If i = 0 Then
+                            Set .colRegistros = New Collection
+                            .colRegistros.Add objSorteo.Registro, CStr(i)
+                        Else
+                            .colRegistros.Add objSorteo.Registro, CStr(i), , i
+                        End If
+                        '
+                        '  Agrega fecha de aparicion
+                        '
+                        i = .colFechasAparicion.Count
+                        If i = 0 Then
+                            Set .colFechasAparicion = New Collection
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i)
+                        Else
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i), , i
+                        End If
+                        mRegTotal = mRegTotal + 1
+                    End With
+                
+                Case 5:
+                    Set objNum = New Numero
+                    objNum.Valor = objSorteo.Reintegro
+                    '
+                    '   Obtiene la clave del Numero
+                    '
+                    mStrKey = CStr(objNum.Valor)
+                    '
+                    '   Con la bola del Numero actualiza propiedades
+                    '
+                    With m_col.Item(mStrKey)
+                        '
+                        '   Agrega Numero de registro
+                        '
+                        i = .colRegistros.Count
+                        If i = 0 Then
+                            Set .colRegistros = New Collection
+                            .colRegistros.Add objSorteo.Registro, CStr(i)
+                        Else
+                            .colRegistros.Add objSorteo.Registro, CStr(i), , i
+                        End If
+                        '
+                        '  Agrega fecha de aparicion
+                        '
+                        i = .colFechasAparicion.Count
+                        If i = 0 Then
+                            Set .colFechasAparicion = New Collection
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i)
+                        Else
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i), , i
+                        End If
+                        mRegTotal = mRegTotal + 1
+                    End With
+                End Select
         Next rgRow
         '
         '
         '
-        'nRegAnalisis = oInfoJuego.
         nRegAnalisis = mParametrosMuestra.ResgistroAnalisis
         '
         '  actualiza las estadisticas de todas las bolas
         '
-        For i = 1 To 49
+        For i = mMin To mMax
             mStrKey = CStr(i)
             m_col.Item(mStrKey).Actualizar (nRegAnalisis)
             m_col.Item(mStrKey).Total = mRegTotal
@@ -159,7 +295,6 @@ Constructor_Error:
     '   Lanza el Error
     Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
-
 
 '---------------------------------------------------------------------------------------
 ' Procedure : Asignar_colores

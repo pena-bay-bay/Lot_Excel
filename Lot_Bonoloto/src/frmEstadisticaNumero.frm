@@ -688,7 +688,14 @@ Private Sub CalMuestra()
     '
     '   Calcula las bolas para este rango
     '
-    mMuestra.Constructor oRange, JUEGO_DEFECTO
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto, LoteriaPrimitiva:
+             mMuestra.Constructor oRange, LP_LB_6_49
+        Case GordoPrimitiva:
+             mMuestra.Constructor oRange, GP_5_54
+        Case Euromillones
+             mMuestra.Constructor oRange, EU_5_50
+    End Select
   
 On Error GoTo 0
    Exit Sub

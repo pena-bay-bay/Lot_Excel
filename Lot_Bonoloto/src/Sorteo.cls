@@ -50,7 +50,6 @@ Private m_bOrdenado                 As Boolean
 '
 Private Sub Class_Initialize()
     Set m_objCombinacion = New Combinacion
-'    Set m_col = New Collection
     Set EntidadNegocio = New EntidadNegocio
 '
 ' TODO: crear la colección de premios por defecto
@@ -59,7 +58,6 @@ End Sub
 
 Private Sub Class_Terminate()
     Set m_objCombinacion = Nothing
-'    Set m_objEstrellas = Nothing
     Set m_objEstrellaUno = Nothing
     Set m_objEstrellaDos = Nothing
 End Sub
@@ -79,32 +77,64 @@ Public Sub Constructor(Fila As Range)
    On Error GoTo Constructor_Error
 
     Set mCol = New Collection
-    With Fila
-        Me.Registro = .Cells(1, 1).Value
-        Me.NumeroSorteo = .Cells(1, 2).Value
-        Me.Fecha = CDate(.Cells(1, 3).Value)
-        For i = 0 To 6
-            If IsNumeric(.Cells(1, 6 + i).Value) _
-            And Not IsEmpty(.Cells(1, 6 + i).Value) Then
-                If (.Cells(1, 6 + i).Value) < 50 Then
-                    Set m_num = New Numero
-                    m_num.Valor = .Cells(1, 6 + i).Value
-                    mStrKey = CStr(m_num.Valor)
-                    If (mCol.Count <> 0) Then
-                        mCol.Add m_num, mStrKey, , mCol.Count
-                    Else
-                        mCol.Add m_num, mStrKey
+    
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto, LoteriaPrimitiva:
+            With Fila
+                Me.Registro = .Cells(1, 1).Value
+                Me.NumeroSorteo = .Cells(1, 2).Value
+                Me.Fecha = CDate(.Cells(1, 3).Value)
+                For i = 0 To 6
+                    If IsNumeric(.Cells(1, 6 + i).Value) _
+                    And Not IsEmpty(.Cells(1, 6 + i).Value) Then
+                        If (.Cells(1, 6 + i).Value) < 50 Then
+                            Set m_num = New Numero
+                            m_num.Valor = .Cells(1, 6 + i).Value
+                            mStrKey = CStr(m_num.Valor)
+                            If (mCol.Count <> 0) Then
+                                mCol.Add m_num, mStrKey, , mCol.Count
+                            Else
+                                mCol.Add m_num, mStrKey
+                            End If
+                        End If
                     End If
-                End If
-            End If
-        Next i
-        m_iComplementario = .Cells(1, 12).Value
-        m_iReintegro = .Cells(1, 13).Value
-        m_bOrdenado = IIf(.Cells(1, 14).Value = "Si", True, False)
-        Set m_objCombinacion.Numeros = mCol
-        m_eTipoJuego = LP_LB_6_49
-        m_eJuego = JUEGO_DEFECTO
-    End With
+                Next i
+                m_iComplementario = .Cells(1, 12).Value
+                m_iReintegro = .Cells(1, 13).Value
+                m_bOrdenado = IIf(.Cells(1, 14).Value = "Si", True, False)
+                Set m_objCombinacion.Numeros = mCol
+                m_eTipoJuego = LP_LB_6_49
+                m_eJuego = JUEGO_DEFECTO
+            End With
+        
+        Case GordoPrimitiva:
+            With Fila
+                Me.Registro = .Cells(1, 1).Value
+                Me.NumeroSorteo = .Cells(1, 2).Value
+                Me.Fecha = CDate(.Cells(1, 3).Value)
+                m_bOrdenado = IIf(.Cells(1, 6).Value = "Si", True, False)
+                For i = 0 To 4
+                    If IsNumeric(.Cells(1, 7 + i).Value) _
+                    And Not IsEmpty(.Cells(1, 7 + i).Value) Then
+                        If (.Cells(1, 7 + i).Value) <= 54 Then
+                            Set m_num = New Numero
+                            m_num.Valor = .Cells(1, 7 + i).Value
+                            mStrKey = CStr(m_num.Valor)
+                            If (mCol.Count <> 0) Then
+                                mCol.Add m_num, mStrKey, , mCol.Count
+                            Else
+                                mCol.Add m_num, mStrKey
+                            End If
+                        End If
+                    End If
+                Next i
+                m_iReintegro = .Cells(1, 12).Value
+                Set m_objCombinacion.Numeros = mCol
+                m_eTipoJuego = GP_5_54
+                m_eJuego = JUEGO_DEFECTO
+            End With
+       End Select
+
 
    On Error GoTo 0
    Exit Sub
@@ -394,25 +424,6 @@ Public Property Let Ordenado(ByVal bOrdenado As Boolean)
 End Property
 
 '---------------------------------------------------------------------------------------
-' Procedure : Estrellas
-' Author    : CHARLY
-' Date      : 17/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-'Public Property Get Estrellas() As Combinacion
-'
-'    Set Estrellas = m_objEstrellas
-'
-'End Property
-'
-'Public Property Set Estrellas(objEstrellas As Combinacion)
-'
-'    Set m_objEstrellas = objEstrellas
-'
-'End Property
-'
-'---------------------------------------------------------------------------------------
 ' Procedure : ImporteVenta
 ' Author    : CHARLY
 ' Date      : 06/04/2014
@@ -481,9 +492,7 @@ Public Property Get EstrellaUno() As Numero
 EstrellaUno_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.EstrellaUno")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
 
@@ -506,9 +515,7 @@ Public Property Set EstrellaUno(objEstrellaUno As Numero)
 EstrellaUno_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.EstrellaUno")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
 
@@ -531,9 +538,7 @@ Public Property Get EstrellaDos() As Numero
 EstrellaDos_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.EstrellaDos")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
 
@@ -556,9 +561,7 @@ Public Property Set EstrellaDos(objEstrellaDos As Numero)
 EstrellaDos_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.EstrellaDos")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
 
@@ -581,9 +584,7 @@ Public Property Get ImporteBote() As Currency
 ImporteBote_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.ImporteBote")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
 
@@ -606,9 +607,7 @@ Public Property Let ImporteBote(ByVal cImporteBote As Currency)
 ImporteBote_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.ImporteBote")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
 
@@ -650,9 +649,7 @@ Public Function EsValido() As Boolean
 EsValido_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.EsValido")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Function
 
@@ -679,9 +676,7 @@ Public Function EsWarming() As Boolean
 EsWarming_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.EsWarming")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Function
 
@@ -737,9 +732,7 @@ Public Function ToString() As String
 ToString_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.ToString")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Function
 
@@ -763,9 +756,7 @@ Public Property Get Juego() As Juego
 Juego_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.Juego")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
 
@@ -785,7 +776,7 @@ Public Property Let Juego(ByVal eJuego As Juego)
     Select Case m_eJuego
         Case LoteriaPrimitiva: m_eTipoJuego = LP_LB_6_49
         Case Bonoloto: m_eTipoJuego = LP_LB_6_49
-        Case gordoPrimitiva: m_eTipoJuego = GP_5_54
+        Case GordoPrimitiva: m_eTipoJuego = GP_5_54
         Case Euromillones:: m_eTipoJuego = EU_5_50
         Case PrimitivaBonoloto:: m_eTipoJuego = LP_LB_6_49
     End Select
@@ -800,11 +791,8 @@ Public Property Let Juego(ByVal eJuego As Juego)
 Juego_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.Juego")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
-
 End Property
 
 '---------------------------------------------------------------------------------------
@@ -826,8 +814,6 @@ Private Sub SetPremiosDefecto()
 SetPremiosDefecto_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Sorteo.SetPremiosDefecto")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub

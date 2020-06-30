@@ -20,7 +20,7 @@ Attribute VB_Exposed = True
 ' *============================================================================*
 Option Explicit
 Option Base 0
-Public key As String
+Public Key As String
 Public BolasAcertadas As Integer
 Public ComplementarioAcertado As Boolean
 Public ClaveAcertada As Boolean
@@ -217,7 +217,7 @@ Public Property Get CategoriaPremio() As CategoriaPremio
                     End If
             End Select
 
-        Case gordoPrimitiva
+        Case GordoPrimitiva
             Select Case BolasAcertadas
                 Case 5:
                     If ClaveAcertada Then
@@ -318,7 +318,7 @@ Private Sub Class_Initialize()
     ClaveAcertada = False
     NumeroEstrellasAcertadas = 0
     Pronosticos = 0
-    key = "000000"
+    Key = "000000"
 End Sub
 
 ' *============================================================================*

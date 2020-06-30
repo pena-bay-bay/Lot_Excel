@@ -403,6 +403,7 @@ Private Sub txtFechaAnalisis_Change()
         txtFechaAnalisis.BackColor = RGB(255, 252, 162)    ' amarillo claro
     Else
         txtFechaAnalisis.BackColor = RGB(255, 255, 255)    'Blanco
+        mFechaAnalisis = CDate(txtFechaAnalisis.Text)
     End If
 End Sub
 

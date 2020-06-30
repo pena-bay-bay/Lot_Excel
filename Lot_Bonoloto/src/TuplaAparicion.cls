@@ -12,3 +12,12 @@ Option Explicit
 Public NumeroRegistro As Integer
 Public FechaAparicion As Date
 Public OrdenAparicion As Integer
+
+Public Function ToString() As String
+    Dim mStr As String
+    mStr = "#{0} => {1} Orden: {2}"
+    mStr = Replace(mStr, "{0}", CStr(NumeroRegistro))
+    mStr = Replace(mStr, "{1}", Format(FechaAparicion, "dd/mm/yyyy"))
+    mStr = Replace(mStr, "{2}", CStr(OrdenAparicion))
+    ToString = mStr
+End Function

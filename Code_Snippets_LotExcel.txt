@@ -24,6 +24,7 @@ Indice:
 	11.- Formatos
 	12.- Lista de operadores por categorias
 	13.- Funciones
+	14.- Operaciones con rangos
 
     Obtener la hora actual: ? format(Now(),"ddd, dd/MMM/yyyy hh:mm:ss",vbMonday)
     
@@ -1519,6 +1520,43 @@ Indice:
 			Year
 
 
+00.- Rutina de busqueda múltiple
+		Sub Busqueda_Multiple()
+		'
+		' Busqueda_Multiple Macro
+		'
+
+		'
+			Range("G2:K2").Select
+			Range(Selection, Selection.End(xlDown)).Select
+			Dim bFound As Boolean
+			Dim res As Range
+			Dim WhatToFind As Variant
+			Dim I As Integer
+			Dim LastRow As Integer
+			'
+			'   Iniciación variables
+			'
+			bFound = False
+			WhatToFind = 54
+			LastRow = 0
+			Set res = Selection.Find(What:=WhatToFind, LookIn:=xlValues, LookAt:=xlWhole)
+			If Not res Is Nothing Then
+				Do
+					I = I + 1
+					Debug.Print "(" & CStr(I) & ")=>" & res.Address & " Fila: " & res.Row
+					LastRow = res.Row
+					Set res = Selection.FindNext(res)
+					'
+					'	Al llegar al final empieza por el principio
+					'
+					If res.Row <= LastRow Then
+						bFound = True
+					End If
+				Loop While Not bFound
+			End If
+			Debug.Print Now
+		End Sub
 
 
 

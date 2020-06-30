@@ -63,7 +63,7 @@ Public Const ESTADO_INICIAL = 0
 Public Const BOTON_CERRAR = 1
 Public Const EJECUTAR = 5
 Public Const BORRAR = 7
-Public Const COLOREAR_NumeroS = 2
+Public Const COLOREAR_NUMEROS = 2
 Public Const COLOREAR_UNAFECHA = 3
 Public Const COLOREAR_CARACTERISTICAS = 4
 Public Const SIMULAR_METODOS = 6
@@ -163,7 +163,7 @@ Public Const NOMBRE_CATEGORIASPREMIOS As String = "Primera;Segunda;Tercera;Cuart
 Public Enum Juego
     LoteriaPrimitiva = 1
     Bonoloto = 2
-    gordoPrimitiva = 3
+    GordoPrimitiva = 3
     Euromillones = 4
     PrimitivaBonoloto = 5
 End Enum

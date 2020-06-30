@@ -7,86 +7,56 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-'---------------------------------------------------------------------------------------
-' Modulo    : BdDatos
-' Creado    : 01-nov-2006 17:16
-' Autor     : Carlos Almela Baeza
-' Version   : 1.0.0 Fecha
-' Objeto    : Objeto que abstrae los rangos de datos de la lógica
-'---------------------------------------------------------------------------------------
+' *============================================================================*
+' *
+' *     Fichero    : BdDatos.cls
+' *
+' *     Autor      : Carlos Almela Baeza
+' *     Creación   : mi., 01/nov/2006 17:16:00
+' *     Modificado : mi., 24/jun/2020 19:26:09
+' *     Versión    : 1.1
+' *     Propósito  : Acceder a los datos de la hoja
+' *                  Objeto que abstrae los rangos de datos de la lógica
+' *============================================================================*
 Option Explicit
+Option Base 0
+'--- Constantes ---------------------------------------------------------------*
+Private Const hjDatos As String = "Resultados"  'Hoja de resultados
+Private Const hjBoletos As String = "Boletos"   'Hoja de Boletos
+Private Const hjApuesta As String = "Apuestas"  'Hoja de Apuestas
 
-Const hjDatos = "Resultados"        'Hoja de resultados
-Const hjBoletos = "Boletos"         'Hoja de Boletos
-Const hjApuesta = "Apuestas"        'Hoja de Apuestas
+Private Const AdrssResultadosBL As String = "$A$2:$N${0}"
+Private Const AdrssResultadosLP As String = "$A$2:$N${0}"
+Private Const AdrssResultadosEU As String = "$A$2:$O${0}"
+Private Const AdrssResultadosGP As String = "$A$2:$N${0}"
 
+Private Const AdrssBoletosBL As String = "$A$2:$M${0}"
+Private Const AdrssBoletosLP As String = "$A$2:$M${0}"
+Private Const AdrssBoletosEU As String = "$A$2:$M${0}"
+Private Const AdrssBoletosGP As String = "$A$2:$M${0}"
+
+Private Const AdrssApuestasBL As String = "$A$2:$S${0}"
+Private Const AdrssApuestasLP As String = "$A$2:$S${0}"
+Private Const AdrssApuestasEU As String = "$A$2:$S${0}"
+Private Const AdrssApuestasGP As String = "$A$2:$S${0}"
+
+'
+'--- Variables Privadas -------------------------------------------------------*
+
+Private mRgSorteos As Range
+Private mRgBoletos As Range
+Private mRgApuestas As Range
 
 Private mstrRangoResultados As String       ' Address tabla de Resultados
-Private mstrRangoApuestas As String         ' Address tabla de Apuestas
-Private mstrRangoBoletos As String          ' Address Tabla de Boletos
-Private m_iUltimoRegistro As Integer
+Private mstrRangoApuestas   As String       ' Address tabla de Apuestas
+Private mstrRangoBoletos    As String       ' Address Tabla de Boletos
+Private m_iUltimoRegistro   As Integer      ' Último registro
 Private m_dtPrimerResultado As Date
 Private m_dtUltimoResultado As Date
-'---------------------------------------------------------------------------------------
-' Procedure : GetFecha
-' Author    : CAB3780Y
-' Date      : 29/03/2011
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Function GetFecha(mFecha As Date, mReg As Integer) As Date
-    Dim rg_res          As Range        'Rango de búsqueda
-    Dim res             As Range        'Rango de resultado
-    Dim Fila            As Range        'Celda de la fecha
-    Dim m_fechaOut      As Date         'Fecha de salida
-    Dim m_fila          As Integer      'Fila offset de referencia
-   
-   On Error GoTo GetFecha_Error
-
-    m_fechaOut = mFecha                 'Se asigna la fecha de entrada
-    Set rg_res = Me.RangoResultados     'Obtenemos el rango de resultados
-    '
-    '   Se busca la fecha de entrada
-    '
-    Set res = rg_res.Find(mFecha, _
-                          LookAt:=xlWhole, _
-                          LookIn:=xlValues, _
-                          MatchCase:=True)
-        
-    If Not (res Is Nothing) Then
-        '
-        '   A la fila donde localiza la fecha final del período
-        '   Se le restan el número de registros  y uno para
-        '   que sean los registros justos
-        '
-        m_fila = res.Row - mReg - 1
-        '
-        '   La primera celda es la fecha de los resultados
-        '
-        Set Fila = rg_res.Offset(m_fila, 2).Resize(1, 1)
-        m_fechaOut = Fila.Value
-    End If
-    GetFecha = m_fechaOut
-
-   On Error GoTo 0
-     Exit Function
-
-GetFecha_Error:
-
-    Dim sNumber As Integer
-    Dim sDescription As String
-    Dim sSource As String
-    With Err
-        sNumber = .Number
-        sDescription = .Description
-        sSource = .Source
-    End With
-    Call HandleException(sNumber, sDescription, sSource)
-    '    Sube el error
-    Err.Raise sNumber, sSource, sDescription
-   
-End Function
-
+Private mInfo               As InfoSorteo   ' Información del concurso
+'--- Mensajes -----------------------------------------------------------------*
+'--- Errores ------------------------------------------------------------------*
+'--- Propiedades --------------------------------------------------------------*
 '---------------------------------------------------------------------------------------
 ' Procedimiento : RangoApuestas
 ' Creación      : 22-dic-2002 19:47
@@ -158,6 +128,49 @@ Public Property Get AddressApuestas() As String
     AddressApuestas = mstrRangoApuestas
 End Property
 
+'--- Métodos Privados ---------------------------------------------------------*
+'
+'
+Private Sub Class_Initialize()
+    Dim mStr As String
+    Dim mRow As Integer
+    Dim mRg As Range
+    
+  On Error GoTo Class_Initialize_Error
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto:
+            '
+            '   Sorteos
+            '
+            Set mRg = Worksheets(hjDatos).Range("A:A")
+            mRow = Application.WorksheetFunction.Subtotal(2, mRg) + 1
+            mStr = Replace(AdrssResultadosBL, "{0}", CStr(mRow))
+            Set mRgSorteos = Worksheets(hjDatos).Range(mStr)
+            '
+            '   Boletos
+            '
+        Case LoteriaPrimitiva:
+        Case GordoPrimitiva:
+        Case Euromillones:
+    End Select
+  On Error GoTo 0
+Class_Initialize_CleanExit:
+    Exit Sub
+Class_Initialize_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "BdDatos.Class_Initialize", ErrSource)
+    Err.Raise ErrNumber, ErrSource, ErrDescription
+End Sub
+
+
+
+Private Sub Class_Terminate()
+    Set mRgSorteos = Nothing
+    Set mRgBoletos = Nothing
+    Set mRgApuestas = Nothing
+End Sub
+
 '---------------------------------------------------------------------------------------
 ' Procedure : set_mstrRangoResultados
 ' DateTime  : 03/jun/2007 20:46
@@ -170,6 +183,201 @@ Private Sub set_mstrRangoResultados()
     Set rg = Worksheets(hjDatos).Range("A:A")
     mstrRangoResultados = "A2:N" & Application.WorksheetFunction.Subtotal(2, rg) + 1
 End Sub
+
+
+'---------------------------------------------------------------------------------------
+' Procedure : GetRowFechaMenorOIgual
+' Author    : Charly
+' Date      : 16/06/2020
+' Purpose   : Devuelve el registro de un sorteo menor o igual a una fecha dada
+'---------------------------------------------------------------------------------------
+'
+Private Function GetRowFechaMenorOIgual(datFecha As Date) As Integer
+    Dim rg_res          As Range        'Rango de búsqueda
+    Dim res             As Range
+    Dim mFind           As Boolean
+    Dim mRow            As Integer
+  On Error GoTo GetRowFechaMenorOIgual_Error
+    '
+    '   Definimos un objeto para el control de sorteos
+    '
+    Set mInfo = New InfoSorteo
+    '
+    '   Establecemos el rango de búsqueda
+    '
+    Set rg_res = Me.RangoResultados
+    '
+    '   Inicializamos el indicador de fecha encontrada
+    '
+    mFind = False
+    '
+    '   Bucle de busqueda hasta que se encuentre
+    '
+    While (Not mFind) And (datFecha >= PrimerResultado)
+        '
+        '   Buscamos el dato en el rango
+        '
+        Set res = rg_res.Find(datFecha, lookat:=xlWhole, LookIn:=xlValues, MatchCase:=True)
+        '
+        '   Si no hemos encontrado la fecha
+        '
+        If res Is Nothing Then
+            '
+            '   Buscamos la fecha anterior al sorteo
+            '
+            datFecha = mInfo.GetAnteriorSorteo(datFecha)
+            ' datFecha = datFecha - 1
+        Else
+            '
+            '   Establecemos la fila encontrada
+            '
+            GetRowFechaMenorOIgual = res.Row - 2
+            '
+            '   establecemos el indicador de encontrado a true
+            '
+            mFind = True
+        End If
+    Wend
+    
+  On Error GoTo 0
+GetRowFechaMenorOIgual_CleanExit:
+    Exit Function
+GetRowFechaMenorOIgual_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "BdDatos.GetRowFechaMenorOIgual", ErrSource)
+    Err.Raise ErrNumber, ErrSource, ErrDescription
+End Function
+
+'---------------------------------------------------------------------------------------
+' Procedure : GetRowFechaMayorOIgual
+' Author    : Charly
+' Date      : 16/06/2020
+' Purpose   : Devuelve el registro de un sorteo mayor o igual a una fecha dada
+'---------------------------------------------------------------------------------------
+'
+Private Function GetRowFechaMayorOIgual(datFecha As Date) As Integer
+    Dim rg_res          As Range        'Rango de búsqueda
+    Dim res             As Range
+    Dim mFind           As Boolean
+    Dim mRow            As Integer
+  On Error GoTo GetRowFechaMayorOIgual_Error
+    '
+    '   Definimos un objeto para el control de sorteos
+    '
+    Set mInfo = New InfoSorteo
+    '
+    '   Establecemos el rango de búsqueda
+    '
+    Set rg_res = Me.RangoResultados
+    '
+    '   Inicializamos el indicador de fecha encontrada
+    '
+    mFind = False
+    '
+    '   Bucle de busqueda hasta que se encuentre
+    '
+    While (Not mFind) And (datFecha <= UltimoResultado)
+        '
+        '   Buscamos el dato en el rango
+        '
+        Set res = rg_res.Find(datFecha, lookat:=xlWhole, LookIn:=xlValues, MatchCase:=True)
+        '
+        '   Si no hemos encontrado la fecha
+        '
+        If res Is Nothing Then
+            '
+            '   Buscamos la fecha anterior al sorteo
+            '
+            datFecha = mInfo.GetProximoSorteo(datFecha)
+        Else
+            '
+            '   Establecemos la fila encontrada
+            '
+            GetRowFechaMayorOIgual = res.Row - 2
+            '
+            '   establecemos el indicador de encontrado a true
+            '
+            mFind = True
+        End If
+    Wend
+    
+  On Error GoTo 0
+GetRowFechaMayorOIgual_CleanExit:
+    Exit Function
+GetRowFechaMayorOIgual_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "BdDatos.GetRowFechaMayorOIgual", ErrSource)
+    Err.Raise ErrNumber, ErrSource, ErrDescription
+End Function
+
+
+
+'--- Métodos Públicos ---------------------------------------------------------*
+
+
+
+'---------------------------------------------------------------------------------------
+' Procedure : GetFecha
+' Author    : CAB3780Y
+' Date      : 29/03/2011
+' Purpose   :
+'---------------------------------------------------------------------------------------
+'
+Public Function GetFecha(mFecha As Date, mReg As Integer) As Date
+    Dim rg_res          As Range        'Rango de búsqueda
+    Dim res             As Range        'Rango de resultado
+    Dim Fila            As Range        'Celda de la fecha
+    Dim m_fechaOut      As Date         'Fecha de salida
+    Dim m_fila          As Integer      'Fila offset de referencia
+   
+   On Error GoTo GetFecha_Error
+
+    m_fechaOut = mFecha                 'Se asigna la fecha de entrada
+    Set rg_res = Me.RangoResultados     'Obtenemos el rango de resultados
+    '
+    '   Se busca la fecha de entrada
+    '
+    Set res = rg_res.Find(mFecha, _
+                          lookat:=xlWhole, _
+                          LookIn:=xlValues, _
+                          MatchCase:=True)
+        
+    If Not (res Is Nothing) Then
+        '
+        '   A la fila donde localiza la fecha final del período
+        '   Se le restan el número de registros  y uno para
+        '   que sean los registros justos
+        '
+        m_fila = res.Row - mReg - 1
+        '
+        '   La primera celda es la fecha de los resultados
+        '
+        Set Fila = rg_res.Offset(m_fila, 2).Resize(1, 1)
+        m_fechaOut = Fila.Value
+    End If
+    GetFecha = m_fechaOut
+
+   On Error GoTo 0
+     Exit Function
+
+GetFecha_Error:
+
+    Dim sNumber As Integer
+    Dim sDescription As String
+    Dim sSource As String
+    With Err
+        sNumber = .Number
+        sDescription = .Description
+        sSource = .Source
+    End With
+    Call HandleException(sNumber, sDescription, sSource)
+    '    Sube el error
+    Err.Raise sNumber, sSource, sDescription
+   
+End Function
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : set_mstrRangoApuestas
@@ -190,19 +398,19 @@ End Sub
 ' Objeto        :
 '---------------------------------------------------------------------------------------
 '
-Public Function Get_Resultado(Fecha As Date) As Resultado
-    Dim objResult As Resultado
+Public Function Get_Resultado(Fecha As Date) As Sorteo
+    Dim objResult As Sorteo
     Dim rg_res As Range
     Dim res As Range
     Dim Fila As Range
     Dim Columnas As Integer
    On Error GoTo Get_Resultado_Error
     Set rg_res = Me.RangoResultados
-    Set res = rg_res.Find(Fecha, LookAt:=xlWhole, LookIn:=xlValues, MatchCase:=True)
+    Set res = rg_res.Find(Fecha, lookat:=xlWhole, LookIn:=xlValues, MatchCase:=True)
         
     If Not (res Is Nothing) Then
         Columnas = rg_res.Columns.Count
-        Set objResult = New Resultado
+        Set objResult = New Sorteo
         Set Fila = rg_res.Offset(res.Row - 2, 0).Resize(1, Columnas)
         objResult.Constructor Fila
     End If
@@ -256,25 +464,6 @@ Private Sub set_mstrRangoBoletos()
     mstrRangoBoletos = "A2:K" & Application.WorksheetFunction.Subtotal(2, rg) + 1
 End Sub
 
-'---------------------------------------------------------------------------------------
-' Procedimiento : Ir_A_Hoja
-' Creación      : 05-nov-2006 20:38
-' Autor         : Carlos Almela Baeza
-' Objeto        : Selecciona la hoja del libro donde actua la macro
-'---------------------------------------------------------------------------------------
-'
-Public Sub Ir_A_Hoja(hoja As String)
-    Dim Wrk As Workbook
-    Dim Pagina As Worksheet
-    For Each Wrk In Workbooks
-        For Each Pagina In Wrk.Sheets
-            If Pagina.Name = hoja Then
-                Pagina.Select
-                Exit Sub
-            End If
-        Next Pagina
-    Next Wrk
-End Sub
 
 
 
@@ -291,19 +480,21 @@ Public Function Resultados_Fechas(ByVal Fecha_Inicial As Date, ByVal Fecha_Final
     Dim rg_res As Range
     Dim m_rowIni, m_rowFin, Columnas As Integer
     Dim m_filas As Integer
-    Dim m_DiaSem As Variant
+    Dim mInfo As InfoSorteo
     
    On Error GoTo Resultados_Fechas_Error
     '
-    '   Control del Domingo
+    '   Comprobamos que sean fechas de sorteo
     '
-    m_DiaSem = Application.WorksheetFunction.Weekday(Fecha_Inicial)
-    If (m_DiaSem = 1) Then
-        Fecha_Inicial = Fecha_Inicial + 1
+    Set mInfo = New InfoSorteo
+    mInfo.Constructor JUEGO_DEFECTO
+        
+    If Not mInfo.EsFechaSorteo(Fecha_Inicial) Then   ' Mayor o Igual a la fecha inicial
+        Fecha_Inicial = mInfo.GetProximoSorteo(Fecha_Inicial)
     End If
-    m_DiaSem = Application.WorksheetFunction.Weekday(Fecha_Final)
-    If (m_DiaSem = 1) Then
-        Fecha_Final = Fecha_Final - 1
+    
+    If Not mInfo.EsFechaSorteo(Fecha_Final) Then     ' Menor o Igual a la fecha final
+        Fecha_Final = mInfo.GetAnteriorSorteo(Fecha_Final)
     End If
     '
     '   Control de fuera de rango
@@ -317,17 +508,19 @@ Public Function Resultados_Fechas(ByVal Fecha_Inicial As Date, ByVal Fecha_Final
     '
     '
     '
-    Set rg_res = Me.RangoResultados
-    Set res = rg_res.Find(Fecha_Inicial, LookAt:=xlWhole, LookIn:=xlValues, MatchCase:=True)
-
-    If Not (res Is Nothing) Then
-        m_rowIni = res.Row - 2
-    End If
-    Set rg_res = Me.RangoResultados
-    Set res = rg_res.Find(Fecha_Final, LookAt:=xlWhole, LookIn:=xlValues, MatchCase:=True)
-    If Not (res Is Nothing) Then
-        m_rowFin = res.Row - 2
-    End If
+    m_rowIni = GetRowFechaMayorOIgual(Fecha_Inicial)
+'    Set rg_res = Me.RangoResultados
+'    Set res = rg_res.Find(Fecha_Inicial, lookat:=xlWhole, LookIn:=xlValues, MatchCase:=True)
+'
+'    If Not (res Is Nothing) Then
+'        m_rowIni = res.Row - 2
+'    End If
+'    Set rg_res = Me.RangoResultados
+'    Set res = rg_res.Find(Fecha_Final, lookat:=xlWhole, LookIn:=xlValues, MatchCase:=True)
+'    If Not (res Is Nothing) Then
+'        m_rowFin = res.Row - 2
+'    End If
+    m_rowFin = GetRowFechaMenorOIgual(Fecha_Final)
     
     If IsEmpty(m_rowIni) _
     Or IsEmpty(m_rowFin) Then
@@ -336,27 +529,28 @@ Public Function Resultados_Fechas(ByVal Fecha_Inicial As Date, ByVal Fecha_Final
         " Error en el rango de fechas(" & Fecha_Inicial & " - " & _
                   Fecha_Final & ")  , no encontradas"
     End If
+    
+    Set rg_res = Me.RangoResultados
     Columnas = rg_res.Columns.Count
     m_filas = rg_res.Rows.Count
     m_filas = (m_rowFin - m_rowIni + 1)
     Set m_rgResult = rg_res.Offset(m_rowIni, 0).Resize(m_filas, Columnas)
-    
-'    DestacarRango rg_res, xlNone
-'    DestacarRango m_rgResult, 15
+    '
+    '
+    '
     Set Resultados_Fechas = m_rgResult
 
    On Error GoTo 0
    Exit Function
 
 Resultados_Fechas_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   If ErrNumber <> 100 Then
-    '   Audita el error
-    Call HandleException(ErrNumber, ErrDescription, ErrSource, "BdDatos.Resultados_Fechas")
-    '   Lanza el error
-   End If
-   Err.Raise ErrNumber, "BdDatos.Resultados_Fechas", ErrDescription
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    If ErrNumber <> 100 Then
+        Call HandleException(ErrNumber, ErrDescription, ErrSource, _
+                            "BdDatos.Resultados_Fechas")
+    End If
+    Err.Raise ErrNumber, "BdDatos.Resultados_Fechas", ErrDescription
 End Function
 '---------------------------------------------------------------------------------------
 ' Procedure : PrimerResultado
@@ -475,7 +669,7 @@ Public Function GetRegistroFecha(datFecha As Date) As Integer
         '
         '   busca en el rango la fecha
         '
-        Set m_vRes = m_rgRes.Find(datFecha, LookAt:=xlWhole, LookIn:=xlValues, MatchCase:=True)
+        Set m_vRes = m_rgRes.Find(datFecha, lookat:=xlWhole, LookIn:=xlValues, MatchCase:=True)
         '
         '   Si la encuentra sale del bucle
         '
@@ -537,7 +731,6 @@ Public Function GetSimulacionFecha(datRegistro As Integer) As Date
     Dim m_iReg          As Integer
     Dim m_dtFecha       As Date
     Dim m_DiaSem        As Integer
-'    Dim i               As Integer
     
     m_dtFecha = Me.UltimoResultado
     m_iReg = Me.UltimoRegistro
@@ -553,3 +746,4 @@ Public Function GetSimulacionFecha(datRegistro As Integer) As Date
     GetSimulacionFecha = m_dtFecha
 End Function
 
+ ' *===========(EOF): BdDatos.cls

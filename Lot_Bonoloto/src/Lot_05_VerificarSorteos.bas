@@ -181,7 +181,6 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
         ActiveCell.Offset(i, 13).Value = "'" & oSorteo.Combinacion.FormulaTerminaciones
         ActiveCell.Offset(i, 14).Value = "'" & oSorteo.Combinacion.FormulaConsecutivos
         ActiveCell.Offset(i, 15).Value = oSorteo.Combinacion.Suma
-        ActiveCell.Offset(i, 16).Value = oSorteo.Combinacion.Producto
                 
         i = i + 1                           ' Incrementa la Fila
     Next rgFila

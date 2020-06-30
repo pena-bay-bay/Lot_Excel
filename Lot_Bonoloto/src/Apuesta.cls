@@ -114,7 +114,7 @@ Public Property Get Coste(datJuego As Juego) As Double
         m_dCoste = NumeroApuestas * 1
     Case Bonoloto
         m_dCoste = NumeroApuestas * 0.5
-    Case gordoPrimitiva
+    Case GordoPrimitiva
         m_dCoste = NumeroApuestas * 1.5
     Case Euromillones
        m_dCoste = NumeroApuestas * 2

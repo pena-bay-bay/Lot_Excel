@@ -681,6 +681,11 @@ Private Sub SugerenciaTest()
         Debug.Print " La sugerencia no es valida "
     End If
     PrintSugerencia mObj
+    '
+    '   UnitTest 6. Ordenar Combinación
+    '
+    mObj.Sort (True)
+    PrintSugerencia mObj
     
     On Error GoTo 0
 SugerenciaTest__CleanExit:
