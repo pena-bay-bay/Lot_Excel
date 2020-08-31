@@ -84,8 +84,9 @@ Public Sub CalcularStdAcum()
             '
             '   Obtenemos la estadistica para la fecha
             '
-            Set rgDatos = mDB.Resultados_Fechas(oParMuestra.FechaInicial, _
-                                                oParMuestra.FechaFinal)
+'            Set rgDatos = mDB.Resultados_Fechas(oParMuestra.FechaInicial, _
+'                                                oParMuestra.FechaFinal)
+            Set rgDatos = mDB.GetSorteosInFechas(oParMuestra.PeriodoDatos)
             '
             '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
             '
@@ -166,7 +167,7 @@ End Sub
 Private Sub DisMuestraFecha(datMuestra As Muestra, datSorteo As Sorteo)
     Dim i           As Integer
     Dim Num         As Integer
-    Dim oBola       As bola
+    Dim oBola       As Bola
     
   On Error GoTo DisMuestraFecha_Error
     

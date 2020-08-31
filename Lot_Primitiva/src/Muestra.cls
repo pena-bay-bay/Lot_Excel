@@ -19,11 +19,12 @@ Option Base 0
 
 Private mParametrosMuestra  As ParametrosMuestra        ' Parametros de la muestra
 Private m_col                   As Collection               ' Colección de bolas
-Private m_bol                   As bola                     ' Bola de trabajo
+Private m_bol                   As Bola                     ' Bola de trabajo
 Private mRegTotal               As Integer                  ' Total de registros
 Private mTotalNumeros           As Integer                  ' Total de números analizados
 Private m_Estrellas             As Collection               ' Colección de Estrellas
 Private m_Reintegros            As Collection               ' Colección de Reintegros
+Private mTipoBombo              As Integer                  ' Tipo de bombo al que se aplica la estadistica
 
 '---------------------------------------------------------------------------------------
 ' Procedimiento : Class_Initialize
@@ -36,9 +37,17 @@ Private Sub Class_Initialize()
     Set m_col = New Collection                              ' Se crea una nueva colección
     Set m_Estrellas = New Collection                        ' Se crea una colección de Estrellas
     Set mParametrosMuestra = New ParametrosMuestra      ' Se inicia la clase de parametros
-    Set m_bol = New bola                                    ' Se inicializa la Bola
+    Set m_bol = New Bola                                    ' Se inicializa la Bola
                                                             ' Se define la matriz de frecuencias
 '    Rango_Frecuencias = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100)
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto, LoteriaPrimitiva:
+            mTipoBombo = 1                                  ' Bombo de 49 bolas
+        Case gordoPrimitiva:
+            mTipoBombo = 2                                  ' Bombo de 54 bolas
+        Case Euromillones:
+            mTipoBombo = 3                                  ' Bombo de 50 bolas
+    End Select
 End Sub
 
 Private Sub Class_Terminate()
@@ -53,7 +62,7 @@ End Sub
 ' Autor         : Carlos Almela Baeza
 ' Objeto        :
 '---------------------------------------------------------------------------------------
-Public Sub Constructor(rg_muestra As Range, vNewJuego As Juego)
+Public Sub Constructor(rg_muestra As Range, Optional vNewMod As ModalidadJuego)
         Dim i               As Integer
         Dim mStrKey         As String
         Dim rgRow           As Range
@@ -61,6 +70,8 @@ Public Sub Constructor(rg_muestra As Range, vNewJuego As Juego)
         Dim objNum          As New Numero
         Dim nRegAnalisis    As Integer
         Dim oInfoJuego      As InfoSorteo
+        Dim mMin            As Integer
+        Dim mMax            As Integer
   On Error GoTo Constructor_Error
         '
         '   Borra la coleccion de Numeros
@@ -68,16 +79,38 @@ Public Sub Constructor(rg_muestra As Range, vNewJuego As Juego)
         If m_col.Count > 0 Then
             EliminarTodosElementos m_col
         End If
+        '
+        '   Asignamos el tipo de bombo exterior
+        '
+        If Not IsMissing(vNewMod) Then
+            mTipoBombo = vNewMod
+        End If
+        
         mRegTotal = 0
+        Select Case mTipoBombo
+            Case 1:
+                mMin = 1
+                mMax = 49
+            Case 2:
+                mMin = 1
+                mMax = 54
+            Case 3:
+                mMin = 1
+                mMax = 50
+            Case 4:
+                mMin = 1
+                mMax = 12
+            Case 5:
+                mMin = 0
+                mMax = 9
+        End Select
+            
         '
         '   Se crea la colección de bolas en vacio
-        '   TODO: En función del juego se crearán 49, 50, 54 y 10 estrellas o clave
         '
-        For i = 1 To 49
-            Set m_bol = New bola
-            With m_bol
-                .Constructor (i)
-            End With
+        For i = mMin To mMax
+            Set m_bol = New Bola
+            m_bol.Constructor (i)
             mStrKey = CStr(m_bol.Numero.Valor)
             m_col.Add m_bol, mStrKey
         Next i
@@ -85,52 +118,155 @@ Public Sub Constructor(rg_muestra As Range, vNewJuego As Juego)
         '   Se actualizan las bolas con la información de la muestra de sorteos
         '
         For Each rgRow In rg_muestra.Rows
+            '
+            '   Creamos el objeto Sorteo
+            '
             objSorteo.Constructor rgRow
-            '
-            '  para cada Numero en la combinación
-            '
-            For Each objNum In objSorteo.Combinacion.Numeros
-                '
-                '   Obtiene la clave del Numero
-                '
-                mStrKey = CStr(objNum.Valor)
-                '
-                '   Con la bola del Numero actualiza propiedades
-                '
-                With m_col.Item(mStrKey)
+            Select Case mTipoBombo
+                Case 1, 2, 3:
                     '
-                    '   Agrega Numero de registro
+                    '  para cada Numero en la combinación
                     '
-                    i = .colRegistros.Count
-                    If i = 0 Then
-                        Set .colRegistros = New Collection
-                        .colRegistros.Add objSorteo.Registro, CStr(i)
-                    Else
-                        .colRegistros.Add objSorteo.Registro, CStr(i), , i
-                    End If
+                    For Each objNum In objSorteo.Combinacion.Numeros
+                        '
+                        '   Obtiene la clave del Numero
+                        '
+                        mStrKey = CStr(objNum.Valor)
+                        '
+                        '   Con la bola del Numero actualiza propiedades
+                        '
+                        With m_col.Item(mStrKey)
+                            '
+                            '   Agrega Numero de registro
+                            '
+                            i = .colRegistros.Count
+                            If i = 0 Then
+                                Set .colRegistros = New Collection
+                                .colRegistros.Add objSorteo.Registro, CStr(i)
+                            Else
+                                .colRegistros.Add objSorteo.Registro, CStr(i), , i
+                            End If
+                            '
+                            '  Agrega fecha de aparicion
+                            '
+                            i = .colFechasAparicion.Count
+                            If i = 0 Then
+                                Set .colFechasAparicion = New Collection
+                                .colFechasAparicion.Add objSorteo.Fecha, CStr(i)
+                            Else
+                                .colFechasAparicion.Add objSorteo.Fecha, CStr(i), , i
+                            End If
+                            mRegTotal = mRegTotal + 1
+                        End With
+                    Next objNum
+                Case 4:
+                    Set objNum = New Numero
+                    objNum.Valor = objSorteo.EstrellaUno
                     '
-                    '  Agrega fecha de aparicion
+                    '   Obtiene la clave del Numero
                     '
-                    i = .colFechasAparicion.Count
-                    If i = 0 Then
-                        Set .colFechasAparicion = New Collection
-                        .colFechasAparicion.Add objSorteo.Fecha, CStr(i)
-                    Else
-                        .colFechasAparicion.Add objSorteo.Fecha, CStr(i), , i
-                    End If
-                    mRegTotal = mRegTotal + 1
-                End With
-            Next objNum
+                    mStrKey = CStr(objNum.Valor)
+                    '
+                    '   Con la bola del Numero actualiza propiedades
+                    '
+                    With m_col.Item(mStrKey)
+                        '
+                        '   Agrega Numero de registro
+                        '
+                        i = .colRegistros.Count
+                        If i = 0 Then
+                            Set .colRegistros = New Collection
+                            .colRegistros.Add objSorteo.Registro, CStr(i)
+                        Else
+                            .colRegistros.Add objSorteo.Registro, CStr(i), , i
+                        End If
+                        '
+                        '  Agrega fecha de aparicion
+                        '
+                        i = .colFechasAparicion.Count
+                        If i = 0 Then
+                            Set .colFechasAparicion = New Collection
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i)
+                        Else
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i), , i
+                        End If
+                        mRegTotal = mRegTotal + 1
+                    End With
+                    objNum.Valor = objSorteo.EstrellaDos
+                    '
+                    '   Obtiene la clave del Numero
+                    '
+                    mStrKey = CStr(objNum.Valor)
+                    '
+                    '   Con la bola del Numero actualiza propiedades
+                    '
+                    With m_col.Item(mStrKey)
+                        '
+                        '   Agrega Numero de registro
+                        '
+                        i = .colRegistros.Count
+                        If i = 0 Then
+                            Set .colRegistros = New Collection
+                            .colRegistros.Add objSorteo.Registro, CStr(i)
+                        Else
+                            .colRegistros.Add objSorteo.Registro, CStr(i), , i
+                        End If
+                        '
+                        '  Agrega fecha de aparicion
+                        '
+                        i = .colFechasAparicion.Count
+                        If i = 0 Then
+                            Set .colFechasAparicion = New Collection
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i)
+                        Else
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i), , i
+                        End If
+                        mRegTotal = mRegTotal + 1
+                    End With
+                
+                Case 5:
+                    Set objNum = New Numero
+                    objNum.Valor = objSorteo.Reintegro
+                    '
+                    '   Obtiene la clave del Numero
+                    '
+                    mStrKey = CStr(objNum.Valor)
+                    '
+                    '   Con la bola del Numero actualiza propiedades
+                    '
+                    With m_col.Item(mStrKey)
+                        '
+                        '   Agrega Numero de registro
+                        '
+                        i = .colRegistros.Count
+                        If i = 0 Then
+                            Set .colRegistros = New Collection
+                            .colRegistros.Add objSorteo.Registro, CStr(i)
+                        Else
+                            .colRegistros.Add objSorteo.Registro, CStr(i), , i
+                        End If
+                        '
+                        '  Agrega fecha de aparicion
+                        '
+                        i = .colFechasAparicion.Count
+                        If i = 0 Then
+                            Set .colFechasAparicion = New Collection
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i)
+                        Else
+                            .colFechasAparicion.Add objSorteo.Fecha, CStr(i), , i
+                        End If
+                        mRegTotal = mRegTotal + 1
+                    End With
+                End Select
         Next rgRow
         '
         '
         '
-        'nRegAnalisis = oInfoJuego.
         nRegAnalisis = mParametrosMuestra.ResgistroAnalisis
         '
         '  actualiza las estadisticas de todas las bolas
         '
-        For i = 1 To 49
+        For i = mMin To mMax
             mStrKey = CStr(i)
             m_col.Item(mStrKey).Actualizar (nRegAnalisis)
             m_col.Item(mStrKey).Total = mRegTotal
@@ -159,7 +295,6 @@ Constructor_Error:
     '   Lanza el Error
     Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
-
 
 '---------------------------------------------------------------------------------------
 ' Procedure : Asignar_colores
@@ -217,8 +352,8 @@ End Function
 ' Objeto        :
 '---------------------------------------------------------------------------------------
 '
-Public Function Get_Bola(Numero As Integer) As bola
-    Dim objResult As bola
+Public Function Get_Bola(Numero As Integer) As Bola
+    Dim objResult As Bola
     Dim strNumero As String
   On Error GoTo Get_Bola_Error
     strNumero = CStr(Numero)
@@ -249,7 +384,7 @@ End Function
 Public Property Get Matriz_Probabilidades() As Variant
     Dim m_aProb() As Double             'Matriz de probabilidades
     Dim i As Integer                    'Contador
-    Dim bola As bola                    'Bola
+    Dim Bola As Bola                    'Bola
    On Error GoTo Matriz_Probabilidades_Error
 
     'Redimensiona la matriz con los números de la colección
@@ -257,11 +392,11 @@ Public Property Get Matriz_Probabilidades() As Variant
     
     'Obtiene el dato de probabilidad para cada bola
     i = 0
-    For Each bola In m_col
-        m_aProb(i, 0) = bola.Numero.Valor
-        m_aProb(i, 1) = bola.Probabilidad
+    For Each Bola In m_col
+        m_aProb(i, 0) = Bola.Numero.Valor
+        m_aProb(i, 1) = Bola.Probabilidad
         i = i + 1
-    Next bola
+    Next Bola
     
     'Ordena una matriz de dos dimensiones por la 2 dimensión
     Ordenar2 m_aProb
@@ -319,16 +454,16 @@ End Property
 Public Property Get Matriz_Ausencias() As Variant
     Dim m_aProb() As Double
     Dim i As Integer
-    Dim bola As bola
+    Dim Bola As Bola
   On Error GoTo Matriz_Ausencias_Error
 
     ReDim m_aProb(m_col.Count, 1)
     i = 0
-    For Each bola In m_col
-        m_aProb(i, 0) = bola.Numero.Valor
-        m_aProb(i, 1) = bola.Ausencias
+    For Each Bola In m_col
+        m_aProb(i, 0) = Bola.Numero.Valor
+        m_aProb(i, 1) = Bola.Ausencias
         i = i + 1
-    Next bola
+    Next Bola
     
     Ordenar2 m_aProb
     
@@ -360,16 +495,16 @@ End Property
 Public Property Get Matriz_ProbTiempos() As Variant
         Dim m_aProb() As Double
         Dim i As Integer
-        Dim bola As bola
+        Dim Bola As Bola
   On Error GoTo Matriz_ProbTiempos_Error
 
         ReDim m_aProb(m_col.Count - 1, 1)
         i = 0
-        For Each bola In m_col
-            m_aProb(i, 0) = bola.Numero.Valor
-            m_aProb(i, 1) = bola.Prob_TiempoMedio
+        For Each Bola In m_col
+            m_aProb(i, 0) = Bola.Numero.Valor
+            m_aProb(i, 1) = Bola.Prob_TiempoMedio
             i = i + 1
-        Next bola
+        Next Bola
         Ordenar2 m_aProb
         Matriz_ProbTiempos = m_aProb
 
@@ -398,16 +533,16 @@ End Property
 Public Property Get Matriz_ProbFrecuencias() As Variant
         Dim m_aProb() As Double
         Dim i As Integer
-        Dim bola As bola
+        Dim Bola As Bola
   On Error GoTo Matriz_ProbFrecuencias_Error
 
         ReDim m_aProb(m_col.Count - 1, 1)
         i = 0
-        For Each bola In m_col
-            m_aProb(i, 0) = bola.Numero.Valor
-            m_aProb(i, 1) = bola.Prob_Frecuencia
+        For Each Bola In m_col
+            m_aProb(i, 0) = Bola.Numero.Valor
+            m_aProb(i, 1) = Bola.Prob_Frecuencia
             i = i + 1
-        Next bola
+        Next Bola
         
         Ordenar2 m_aProb
         
@@ -436,23 +571,23 @@ End Property
 Public Property Get Matriz_Decenas(Numero_Decena As Integer, tipo_prob As Integer) As Variant
     Dim m_aProb(10, 1) As Double
     Dim i As Integer
-    Dim bola As bola
+    Dim Bola As Bola
    On Error GoTo Matriz_Decenas_Error
     
     i = 0
-    For Each bola In m_col
-        If bola.Numero.Decena = Numero_Decena Then
-            m_aProb(i, 0) = bola.Numero.Valor
+    For Each Bola In m_col
+        If Bola.Numero.Decena = Numero_Decena Then
+            m_aProb(i, 0) = Bola.Numero.Valor
             If tipo_prob = 1 Then
-                m_aProb(i, 1) = bola.Prob_TiempoMedio
+                m_aProb(i, 1) = Bola.Prob_TiempoMedio
             ElseIf tipo_prob = 2 Then
-                m_aProb(i, 1) = bola.Prob_Frecuencia
+                m_aProb(i, 1) = Bola.Prob_Frecuencia
             Else
-                m_aProb(i, 1) = bola.Probabilidad
+                m_aProb(i, 1) = Bola.Probabilidad
             End If
             i = i + 1
         End If
-    Next bola
+    Next Bola
 
 '    Matriz_Decenas = m_vMatriz_Decenas
     Ordenar2 m_aProb
@@ -479,7 +614,7 @@ Public Property Get Orden_Decenas() As Variant
     Dim m_aProb(4, 1) As Integer
     Dim j As Integer
     Dim i As Integer
-    Dim objBola As bola
+    Dim objBola As Bola
     
   On Error GoTo Orden_Decenas_Error
 
@@ -516,20 +651,20 @@ End Property
 '
 Public Property Get Matriz_ParesImpares() As Variant
     Dim m_aProb(2, 1) As Variant
-    Dim bola As bola
+    Dim Bola As Bola
   On Error GoTo Matriz_ParesImpares_Error
 
     m_aProb(0, 0) = LT_PAR
     m_aProb(1, 0) = LT_IMPAR
     
-    For Each bola In m_col
-         If bola.Numero.Paridad = LT_PAR Then
-                m_aProb(0, 1) = m_aProb(0, 1) + bola.Apariciones
+    For Each Bola In m_col
+         If Bola.Numero.Paridad = LT_PAR Then
+                m_aProb(0, 1) = m_aProb(0, 1) + Bola.Apariciones
          End If
-         If bola.Numero.Paridad = LT_IMPAR Then
-                m_aProb(1, 1) = m_aProb(1, 1) + bola.Apariciones
+         If Bola.Numero.Paridad = LT_IMPAR Then
+                m_aProb(1, 1) = m_aProb(1, 1) + Bola.Apariciones
          End If
-    Next bola
+    Next Bola
 
     Ordenar2 m_aProb
     Matriz_ParesImpares = m_aProb
@@ -556,20 +691,20 @@ End Property
 '
 Public Property Get Matriz_AltosBajos() As Variant
     Dim m_aProb(2, 1) As Variant
-    Dim bola As bola
+    Dim Bola As Bola
   On Error GoTo Matriz_AltosBajos_Error
 
     m_aProb(0, 0) = LT_ALTO
     m_aProb(1, 0) = LT_BAJO
     
-    For Each bola In m_col
-         If bola.Numero.Peso = LT_ALTO Then
-                m_aProb(0, 1) = m_aProb(0, 1) + bola.Apariciones
+    For Each Bola In m_col
+         If Bola.Numero.Peso = LT_ALTO Then
+                m_aProb(0, 1) = m_aProb(0, 1) + Bola.Apariciones
          End If
-         If bola.Numero.Peso = LT_BAJO Then
-                m_aProb(1, 1) = m_aProb(1, 1) + bola.Apariciones
+         If Bola.Numero.Peso = LT_BAJO Then
+                m_aProb(1, 1) = m_aProb(1, 1) + Bola.Apariciones
          End If
-    Next bola
+    Next Bola
 
     Matriz_AltosBajos = m_aProb
 
@@ -596,17 +731,17 @@ End Property
 Public Property Get Matriz_Terminaciones(Terminacion As Integer) As Variant
     Dim m_aProb(5, 1) As Double
     Dim i As Integer
-    Dim bola As bola
+    Dim Bola As Bola
   On Error GoTo Matriz_Terminaciones_Error
 
     i = 0
-    For Each bola In m_col
-        If bola.Numero.Terminacion = Terminacion Then
-            m_aProb(i, 0) = bola.Numero.Valor
-            m_aProb(i, 1) = bola.Probabilidad
+    For Each Bola In m_col
+        If Bola.Numero.Terminacion = Terminacion Then
+            m_aProb(i, 0) = Bola.Numero.Valor
+            m_aProb(i, 1) = Bola.Probabilidad
             i = i + 1
         End If
-    Next bola
+    Next Bola
     Ordenar2 m_aProb
     Matriz_Terminaciones = m_aProb
 
@@ -699,7 +834,7 @@ Public Sub CalcularColores()
     Dim mColoresB As Variant
     Dim mColoresC As Variant
     Dim i As Integer
-    Dim mBola As bola
+    Dim mBola As Bola
   On Error GoTo CalcularColores_Error
     
     ReDim mMatrizValoresA(m_col.Count - 1, 0 To 1)
@@ -754,7 +889,7 @@ End Sub
 '
 Public Function GetMatrizBolas(vOrden As TipoOrdenacion, _
                                Optional datOrden As Boolean = True) As Variant
-    Dim bola        As bola                 ' Instancia Bola
+    Dim Bola        As Bola                 ' Instancia Bola
     Dim m_aProb()   As Variant              ' Matriz de datos
     Dim i           As Integer              ' índice
   On Error GoTo GetMatrizBolas_Error
@@ -766,45 +901,45 @@ Public Function GetMatrizBolas(vOrden As TipoOrdenacion, _
     '
     '   Para cada bola en la coleccion
     '
-    For Each bola In m_col
+    For Each Bola In m_col
         '
         '   Asignamos el valor a la coordenada 1 (0)
         '
-        m_aProb(i, 0) = bola.Numero.Valor
+        m_aProb(i, 0) = Bola.Numero.Valor
         '
         '   Seleccionamos el dato según el tipo
         '
         Select Case vOrden
             Case ordProbabilidad:
-                m_aProb(i, 1) = bola.Probabilidad
+                m_aProb(i, 1) = Bola.Probabilidad
 
             Case ordProbTiempoMedio
-                m_aProb(i, 1) = bola.Prob_TiempoMedio
+                m_aProb(i, 1) = Bola.Prob_TiempoMedio
 
             Case ordFrecuencia
-                m_aProb(i, 1) = bola.Prob_Frecuencia
+                m_aProb(i, 1) = Bola.Prob_Frecuencia
 
             Case ordAusencia
-                m_aProb(i, 1) = bola.Ausencias
+                m_aProb(i, 1) = Bola.Ausencias
 
             Case ordTiempoMedio
-                m_aProb(i, 1) = bola.Tiempo_Medio
+                m_aProb(i, 1) = Bola.Tiempo_Medio
 
             Case ordDesviacion
-                m_aProb(i, 1) = bola.Desviacion_Tm
+                m_aProb(i, 1) = Bola.Desviacion_Tm
 
             Case ordProximaFecha
-                m_aProb(i, 1) = bola.ProximaFecha
+                m_aProb(i, 1) = Bola.ProximaFecha
 
             Case ordModa
-                m_aProb(i, 1) = bola.Moda
+                m_aProb(i, 1) = Bola.Moda
 
        End Select
        '
        '    Incrementamos I
        '
         i = i + 1
-    Next bola
+    Next Bola
     '
     '   Ordenamos la matriz segun el criterio agregado
     '
@@ -838,7 +973,7 @@ Private Sub CalcularValorHomogeneo()
     Dim mTMArray        As Variant
     Dim mFrecArray      As Variant
     Dim i               As Integer
-    Dim mBola           As bola
+    Dim mBola           As Bola
     Dim mMuProb         As Double
     Dim mMuTm           As Double
     Dim mMuFrec         As Double

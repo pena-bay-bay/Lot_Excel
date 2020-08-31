@@ -8,9 +8,9 @@ Attribute VB_Name = "Lot_Constantes"
 '---------------------------------------------------------------------------------------
 Option Explicit
 '// Variables de versión de la librería
-Public Const lotVersion = "2020.03"
-Public Const lotFeVersion = "mar, 26/05/2020 18:23"
-Public Const NOMBRE_APLICACION = "Loteria Primitiva"
+Public Const lotVersion = "2020.04"
+Public Const lotFeVersion = "sáb, 29/08/2020 20:49"
+Public Const NOMBRE_APLICACION = "Primitiva"
 
 '// Variables relacionadas con el bombo
 Public Const lotVacio = 1       '
@@ -63,7 +63,7 @@ Public Const ESTADO_INICIAL = 0
 Public Const BOTON_CERRAR = 1
 Public Const EJECUTAR = 5
 Public Const BORRAR = 7
-Public Const COLOREAR_NumeroS = 2
+Public Const COLOREAR_NUMEROS = 2
 Public Const COLOREAR_UNAFECHA = 3
 Public Const COLOREAR_CARACTERISTICAS = 4
 Public Const SIMULAR_METODOS = 6
@@ -311,3 +311,34 @@ End Enum
 
 Public Const MinDate = #1/1/1900#
 Public Const MaxDate = #12/31/2999#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

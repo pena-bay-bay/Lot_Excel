@@ -17,7 +17,7 @@ Attribute VB_Exposed = True
 ' *     Propósito  : Clase que almacena el valor de un parámetro de  proceso
 ' *
 ' *============================================================================*
-'   TODO: Controlar el tipo de variable con excepciones
+'   #TODO: Controlar el tipo de variable con excepciones
 '
 Option Explicit
 Option Base 0

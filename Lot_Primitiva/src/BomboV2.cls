@@ -27,7 +27,7 @@ Private mColSel        As Collection  ' Colección de Bolas extraidas del bómbo
 Private mSituacion     As Integer     ' Situación del Bombo: 1-Vacio, 2-lleno, 3-Cargado
 Private mTipoBombo     As Integer     ' Tipo de Bombo: 1-Principal, 2-Secundario
 Private mTipoGiros     As Integer     ' Tipo de Giro: 1-Por tiempo, 2-Por giros
-Private mBola          As bola        ' Bola
+Private mBola          As Bola        ' Bola
 Private mMaxBolas      As Integer     ' numero mínimo del juego
 Private mMinBolas      As Integer     ' numero máximo del juego
 Private i              As Integer     ' contador genérico
@@ -324,7 +324,7 @@ Public Sub Cargar()
             '
             '   Creamos la bola
             '
-            Set mBola = New bola
+            Set mBola = New Bola
             '
             '   asignamos el número
             '

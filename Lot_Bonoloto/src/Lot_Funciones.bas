@@ -158,14 +158,14 @@ End Function
 '
 '
 '
-Public Function GetRegistroFecha(datFecha As Date, Optional datJuego As Juego = PrimitivaBonoloto)
+Public Function GetRegistroFecha(datFecha As Date, Optional datJuego As Juego = JUEGO_DEFECTO) As Sorteo
     Dim mRes            As Sorteo
     Dim maxRegistro     As Integer
     Dim maxFecha        As Date
     Dim mIDifDias       As Integer
     Dim iDiaSem         As Integer
     Dim mDB             As BdDatos
-    
+    Dim mFila           As Range
     
     Set mDB = New BdDatos
     
@@ -173,7 +173,8 @@ Public Function GetRegistroFecha(datFecha As Date, Optional datJuego As Juego = 
     maxRegistro = mDB.UltimoRegistro
     
     If (datFecha < maxFecha) Then
-        mRes = mDB.Get_Resultado(datFecha)
+        Set mFila = mDB.GetSorteoByFecha(datFecha)
+        mRes.Constructor mFila
         GetRegistroFecha = mRes
     Else
         mIDifDias = datFecha - maxFecha
@@ -189,7 +190,7 @@ Public Function GetRegistroFecha(datFecha As Date, Optional datJuego As Juego = 
     ' M, V
     Case Juego.Euromillones
     ' D
-    Case Juego.GordoPrimitiva
+    Case Juego.gordoPrimitiva
     
     End Select
 

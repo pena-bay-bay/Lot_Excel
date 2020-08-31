@@ -26,7 +26,8 @@ Indice:
 	13.- Funciones
 	14.- Operaciones con rangos
 
-    Obtener la hora actual: ? format(Now(),"ddd, dd/MMM/yyyy hh:mm:ss",vbMonday)
+    Obtener la hora actual:  ? format(Now(),"ddd, dd/MMM/yyyy hh:mm:ss",vbMonday)
+	
     
 01.- Documentación del Código
     
@@ -183,9 +184,9 @@ Indice:
 		Puedes usar la sentencia "On Error" para especificar que pasa cuando ocurre un error:
 			On Error Resume Next - devuelve el control a la siguiente sentencia en la que sucedio el error		  
 			On Error Resume LineLabel - Devuelve el control a la linea especificada en la etiqueta
-			On Error Resume [0] - Returns control to the statement at which the error occurred (statement is re-run)
-			On Error Goto LineLabel - Execution jumps to the line label when an error occurs
-			On Error Goto 0 - Resets the Err object and resets the Err.Number to zero.
+			On Error Resume [0] - Devuelve el control a la sentencia en la que se ha producido el error (la sentencia se re-ejecuta)
+			On Error Goto LineLabel - La ejecución salta a la linea de la etiqueta cuando el error ocurre
+			On Error Goto 0 - Resetea el objeto Err y resetea el Err.Number a cero.
 	Resume
 		The Resume statement can be used to resume execution after an error handling routine has finished.
 		If the error occurred in the same procedure as the error handler, execution resumes with the statement that caused the error.
@@ -194,6 +195,7 @@ Indice:
 		Be careful when using the "On Error Resume Next". This will sometimes ignore errors that shouldn't be ignored.
 		Specifies that if a run-time error occurs in the line immediately following this statement, then execution continues to the next line.
 		This causes execution to continue with the statement immediately following the statement that caused the run-time error or with the statement immediately following the most recent call out of the procedure containing the On Error Resume Next statement.
+		
 	Changing at RunTime (Access only)
 		The error trapping option can be viewed and modified using the Application.GetOption and Application.SetOption methods
 
@@ -1374,6 +1376,8 @@ Indice:
 			CVar(expression)
 		Otras funciones
 			Array
+				Devuelve un tipo Variant que contiene una matriz.
+				--
 				Dim A As Variant, B As Long, i As Long
 				A = Array(10, 20, 30)  ' A is a three element list by default indexed 0 to 2
 				B = A(2)               ' B is now 30
@@ -1384,6 +1388,8 @@ Indice:
 				Next i
 				
 			CallByName
+				Ejecuta un método de un objeto, o bien establece o devuelve una propiedad de un objeto.
+				--
 				Option Explicit
 
 				Private Sub Form_Load()
@@ -1399,6 +1405,8 @@ Indice:
 				End Sub
 				
 			Choose
+				Selecciona y devuelve un valor de una lista de argumentos.
+				--
 				Function GetChoice(Ind As Integer)
 					GetChoice = Choose(Ind, "Speedy", "United", "Federal")
 				End Function
@@ -1406,9 +1414,56 @@ Indice:
 			Command
 			CreateObject
 			CurDir
+				Devuelve una Variant (String) que representa la ruta de acceso actual.
+				
+				' Assume current path on C drive is "C:\WINDOWS\SYSTEM" (on Microsoft Windows).
+				' Assume current path on D drive is "D:\EXCEL".
+				' Assume C is the current drive.
+				Dim MyPath
+				MyPath = CurDir    ' Returns "C:\WINDOWS\SYSTEM".
+				MyPath = CurDir("C")    ' Returns "C:\WINDOWS\SYSTEM".
+				MyPath = CurDir("D")    ' Returns "D:\EXCEL".
+			
 			Date
-			DateAdd
+				Devuelve un Variant (Date) que contiene la fecha actual del sistema.
+				--
+				Dim MyDate
+				MyDate = Date    ' MyDate contains the current system date.
+
+			DateAdd	
+				Devuelve un valor Variant (Date) que contiene una fecha a la que se ha agregado un intervalo de tiempo especificado.
+				El argumento intervalo tiene los siguientes valores:
+				Configuración	Descripción
+				yyyy			Año
+				q				Trimestre
+				m				Mes
+				y				Día del año
+				d				Día
+				w				Día de la semana
+				ww				Semana
+				h				Hora
+				n				Minuto
+				s				Segundo
+				--
+				Dim FirstDate As Date    ' Declare variables.
+				Dim IntervalType As String
+				Dim Number As Integer
+				Dim Msg As String
+				IntervalType = "m"    ' "m" specifies months as interval.
+				FirstDate = InputBox("Enter a date")
+				Number = InputBox("Enter number of months to add")
+				Msg = "New date: " & DateAdd(IntervalType, Number, FirstDate)
+				MsgBox Msg
+
 			DateDiff
+				Devuelve un valor Variant (Long) que especifica el número de intervalos de tiempo entre dos fechas especificadas.
+				--
+				Dim TheDate As Date    ' Declare variables.
+				Dim Msg
+				TheDate = InputBox("Enter a date")
+				Msg = "Days from today: " & DateDiff("d", Now, TheDate)
+				MsgBox Msg
+
 			DatePart
 			DateSerial
 			DateValue

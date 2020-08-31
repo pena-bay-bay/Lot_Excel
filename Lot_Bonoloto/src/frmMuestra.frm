@@ -27,7 +27,7 @@ Option Explicit
 Option Base 0
     
 Private m_objParMuestra             As ParametrosMuestra  ' Parametros de la Muestra
-Private DB                          As New BdDatos        ' Base de datos
+Private Db                          As New BdDatos        ' Base de datos
 Dim m_ini_DataBase                  As Date               ' Fecha inicial de la base de datos
 Dim m_fin_DataBase                  As Date               ' Fecha final de la base de datos
 '
@@ -58,9 +58,9 @@ Private Sub UserForm_Initialize()
    
     Set m_objParMuestra = New ParametrosMuestra
     m_dtFecha = Date                            ' Toma la fecha de hoy
-    m_ini_DataBase = DB.PrimerResultado         ' Obtiene la menor de las fechas de la
+    m_ini_DataBase = Db.PrimerResultado         ' Obtiene la menor de las fechas de la
                                                 ' base de datos
-    m_fin_DataBase = DB.UltimoResultado         ' Obtiene la mayor de las fechas de la
+    m_fin_DataBase = Db.UltimoResultado         ' Obtiene la mayor de las fechas de la
                                                 ' base de datos
                                                 ' Formatea y asigna la fecha inicial
     '
@@ -75,7 +75,7 @@ Private Sub UserForm_Initialize()
     txtFechaAnalisis.Text = Format(m_dtFecha, "dd/mm/yyyy")
     '
     ' Indicamos por defecto que el intervalo seran de 40 registros o 5 semanas
-    ' TODO: guardar la ultima seleccion en una tabla de parametros y recuperarla
+    ' #TODO: guardar la ultima seleccion en una tabla de parametros y recuperarla
     '
     txtNumReg.Text = Format(40, "00")
     txtNumRang.Text = Format(5, "00")

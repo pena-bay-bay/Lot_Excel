@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "bolas"
+Attribute VB_Name = "Bolas"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -69,7 +69,7 @@ End Property
 ' * @object     Añade una bola a la colección
 ' * @string     Clave de indexación hash
 ' **/
-Public Sub Add(m_bola As bola)
+Public Sub Add(m_bola As Bola)
      m_col.Add m_bola
 End Sub
 
@@ -83,7 +83,7 @@ Public Sub Remove(vntIndexKey As Variant)
 End Sub
 
 
-Public Function Item(vntIndexKey As Variant) As bola
+Public Function Item(vntIndexKey As Variant) As Bola
     Set Item = m_col.Item(vntIndexKey)
 End Function
 
@@ -118,7 +118,7 @@ End Property
 
 Public Property Get Sum_Prob() As Double
     Dim m_sum As Double
-    Dim m_bola As bola
+    Dim m_bola As Bola
     m_sum = 0
     For Each m_bola In m_col
         m_sum = m_sum + m_bola.Probabilidad

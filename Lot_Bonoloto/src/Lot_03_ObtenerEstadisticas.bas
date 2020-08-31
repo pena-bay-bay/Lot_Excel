@@ -67,8 +67,7 @@ Public Sub btn_Obtener_Estadisticas()
     '
     '   obtiene el rango con los datos comprendido entre las dos fechas
     '
-    Set m_objRg = m_objBd.Resultados_Fechas(m_objParMuestra.FechaInicial, _
-                                         m_objParMuestra.FechaFinal)
+    Set m_objRg = m_objBd.GetSorteosInFechas(m_objParMuestra.PeriodoDatos)
     '
     '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
     '
@@ -111,7 +110,7 @@ End Sub
 Public Sub Pintar_Muestra(ByRef objMuestra As Muestra)
     Dim m_objPar            As ParametrosMuestra
     Dim i                   As Integer
-    Dim m_objBola           As bola
+    Dim m_objBola           As Bola
     Dim mSort               As Sorteo
     Dim mEngSort            As SorteoEngine
     

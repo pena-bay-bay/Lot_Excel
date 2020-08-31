@@ -362,7 +362,7 @@ End Function
 Public Function ToString() As String
     Dim mStr As String
   On Error GoTo ToString_Error
-    '   TODO: Expresar el objeto en función del Tipo de muestra
+    '   #TODO: Expresar el objeto en función del Tipo de muestra
     '   'Muestra por dias: (fechaAnalisis) (periodo) (d dias)
     '   'Muestra por sorteos: (fechaAnalisis) (periodo) (n Sorteo)
     ' Muestra: (FechaAnalisis) [FechaDesde..FechaHasta] (n Sorteos)
@@ -400,7 +400,7 @@ Private Sub SetDatos()
             If mPeriodo.FechaFinal = MaxDate Then
                 mPeriodo.FechaFinal = mInfoSorteo.GetAnteriorSorteo(mFechaAnalisis)
             End If
-            mPeriodo.FechaInicial = mDatos.GetFecha(mPeriodo.FechaFinal, mNumeroSorteos)
+            mPeriodo.FechaInicial = mInfoSorteo.SubstractDiasSorteo(mPeriodo.FechaFinal, mNumeroSorteos)
         End If
     ElseIf mFechaAnalisis <> 0 And mDiasAnalisis <> 0 Then
         If mPeriodo.FechaFinal = MaxDate Then
@@ -447,3 +447,11 @@ SetDatos_Error:
     Err.Raise ErrNumber, "ParametrosMuestra.SetDatos", ErrDescription
 End Sub
 '' *===========(EOF): ParametrosMuestra.cls
+
+Public Property Get PeriodoDatos() As Periodo
+    Set PeriodoDatos = mPeriodo
+End Property
+
+Public Property Set PeriodoDatos(ByVal vNewValue As Periodo)
+    Set mPeriodo = vNewValue
+End Property

@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "numero"
+Attribute VB_Name = "Numero"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -48,7 +48,7 @@ Private Const MSG_NUMERONOASIGNADO = "Número no asignado."
 Private Sub Class_Initialize()
     mError = 0
     mValor = -1
-    mOrden = 1
+    mOrden = -1
     mJuego = JUEGO_DEFECTO
 End Sub
 
@@ -79,7 +79,7 @@ Public Property Get Peso() As String
     Select Case mJuego
         Case Bonoloto, LoteriaPrimitiva: mMedium = 25
         Case Euromillones: mMedium = 26
-        Case GordoPrimitiva: mMedium = 28
+        Case gordoPrimitiva: mMedium = 28
     End Select
     
     If mValor = -1 Then

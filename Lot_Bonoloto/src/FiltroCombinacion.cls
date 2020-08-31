@@ -456,7 +456,7 @@ Public Function GetValoresFiltros(datSugerencias As Integer) As Variant
             End Select
         
         Case tfSuma:
-            ' TODO: Analizar datSugerencias para adecuar a los rangos de suma
+            ' #TODO: Analizar datSugerencias para adecuar a los rangos de suma
             For i = 0 To 300 Step 50
                 j = i + 50 - 1
                 mFilt = CStr(i) & ".." & CStr(j)

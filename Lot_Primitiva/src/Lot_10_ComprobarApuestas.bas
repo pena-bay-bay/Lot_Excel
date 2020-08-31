@@ -7,8 +7,11 @@ Attribute VB_Name = "Lot_10_ComprobarApuestas"
 '---------------------------------------------------------------------------------------
 Option Explicit
 
-Private DB                     As New BdDatos           'Objeto Base de Datos
+Private Db                     As New BdDatos           'Objeto Base de Datos
 Private mInfo                  As InfoSorteo            'Información de sorteos
+
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : btn_ComprobarApuestas
@@ -23,9 +26,13 @@ Public Sub btn_ComprobarApuestas()
     
   On Error GoTo btn_ComprobarApuestas_Error
     '
+    '   Desactiva la presentación
+    '
+    CALCULOOFF
+    '
     '  Focalizar la hoja de salida
     '
-    DB.Ir_A_Hoja "MisApuestas"
+    Ir_A_Hoja "MisApuestas"
     '
     '  Definir el formulario
     '
@@ -50,8 +57,6 @@ Public Sub btn_ComprobarApuestas()
                 ofrmPeriodo.Tag = BOTON_CERRAR
             
             Case EJECUTAR
-            
-                Application.ScreenUpdating = False
                 '
                 '  Definir Parametros del proceso
                 '
@@ -72,8 +77,6 @@ Public Sub btn_ComprobarApuestas()
                 ' Comprobar las apuestas para cada sorteo
                 '
                 ProcesoComprobarApuestas oParamCU
-                '
-                Application.ScreenUpdating = True
                 Set oParamCU = Nothing
         End Select
     Loop
@@ -85,15 +88,22 @@ Public Sub btn_ComprobarApuestas()
     '  Se elimina de la memoria los parametros del proceso
     '
     Set oParamCU = Nothing
-   On Error GoTo 0
-   Exit Sub
+    '
+    '  Activa la presentación
+    '
+    CALCULOON
+   
+  On Error GoTo 0
+    Exit Sub
 btn_ComprobarApuestas_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   Call HandleException(ErrNumber, ErrDescription, "Lot_ComprobarApuestas.btn_ComprobarApuestas")
-   Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   Call Trace("CERRAR")
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "Lot_ComprobarApuestas.btn_ComprobarApuestas")
+    Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
+    Call Trace("CERRAR")
 End Sub
+
+
 
 
 
@@ -182,6 +192,7 @@ End Sub
 
 
 
+
 '---------------------------------------------------------------------------------------
 ' Procedure : PonCabecera
 ' Author    : CHARLY
@@ -254,6 +265,8 @@ End Sub
 
 
 
+
+
 '---------------------------------------------------------------------------------------
 ' Procedure : GetSorteos
 ' Author    : Charly
@@ -273,9 +286,7 @@ Private Sub GetSorteos(oParametros As ParametrosComprobarApuestas)
     sKey = 0
     
     On Error Resume Next
-    Set rgSorteos = DB.Resultados_Fechas(oParametros.IntervaloFechas.FechaInicial, _
-                                         oParametros.IntervaloFechas.FechaFinal)
-    
+    Set rgSorteos = Db.GetSorteosInFechas(oParametros.IntervaloFechas)
     If rgSorteos Is Nothing _
     Or Err.Number = 100 Then
         Exit Sub
@@ -312,6 +323,9 @@ GetSorteos_Error:
     Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
 
+
+
+
 '---------------------------------------------------------------------------------------
 ' Procedure : VerApuestasSorteos
 ' Author    : CHARLY
@@ -320,17 +334,18 @@ End Sub
 '---------------------------------------------------------------------------------------
 '
 Private Sub VerApuestasSorteos(oApuesta As Apuesta, oParam As ParametrosComprobarApuestas)
-    Dim oCUComprobar    As CU_ComprobarApuesta
     Dim oEstdstk        As EstadisticasApuesta
     Dim oSorteo         As Sorteo
-    Dim oPremio         As Premio
+    Dim oPremio         As Variant
     Dim sKey            As String
-
+    Dim oCheckBoleto    As ComprobarBoletos ' Comprobador de apuestas
+    Dim sCategoriaPrm   As String
+    
    On Error GoTo VerApuestasSorteos_Error
     '
     '
     '
-    Set oCUComprobar = New CU_ComprobarApuesta
+    Set oCheckBoleto = New ComprobarBoletos
     '
     '
     '
@@ -348,32 +363,35 @@ Private Sub VerApuestasSorteos(oApuesta As Apuesta, oParam As ParametrosComproba
         '
         '   Si la apuesta está vigente
         '
-        If (oApuesta.FechaAlta <= oSorteo.Fecha And _
+        If (oApuesta.Fecha <= oSorteo.Fecha And _
             oSorteo.Fecha <= oApuesta.FechaFinVigencia) Or _
             (oParam.TipoComparacion = 0) Then
             '
-            '  Creamos el premio
-            '
-            Set oPremio = New Premio
-            '
-            '  Enfrentamos apuesta a sorteo
-            '
-            Set oCUComprobar.MyApuesta = oApuesta
-            Set oCUComprobar.Sorteo = oSorteo
-            '
-            ' Obtenemos el premio de la apuesta
-            '
-            Set oPremio = oCUComprobar.GetPremio
             '
             '
+            oPremio = ""
             '
-            If oPremio.BolasAcertadas > 0 Then
+            '   Pasamos el sorteo
+            '
+            Set oCheckBoleto.Sorteo = oSorteo
+            '
+            '   Comprobamos la apuesta
+            '
+            sCategoriaPrm = oCheckBoleto.ComprobarApuesta(oApuesta, True)
+            '
+            '   apuesta premiada
+            '
+            If oCheckBoleto.BolasAcertadas > 0 Then
                 '
                 ' Construimos la clave de la coleccion con
                 ' el id de la apuesta y la fecha del sorteo
                 '
                 sKey = Format(oSorteo.Fecha, "yyyy-MM-dd")
-                oPremio.key = sKey
+                If oCheckBoleto.CatPremioApuesta <> Ninguna Then
+                    oPremio = oCheckBoleto.CategoriaPremioTxt
+                Else
+                    oPremio = CStr(oCheckBoleto.BolasAcertadas)
+                End If
                 '
                 ' Se agrega a la colección
                 '
@@ -382,17 +400,14 @@ Private Sub VerApuestasSorteos(oApuesta As Apuesta, oParam As ParametrosComproba
                 '  acumulamos a la estadistica de la apuesta
                 '
                 With oEstdstk
-                    .Costes = .Costes + oApuesta.Coste(oSorteo.Juego)
+                    .Costes = .Costes + oApuesta.Coste
                     .DiasAciertos = .DiasAciertos + 1
-                    .ImportePremios = .ImportePremios + oPremio.GetPremioEsperado
-                    .Puntuacion = .Puntuacion + CalPuntuacion(oPremio.BolasAcertadas)
+                    .ImportePremios = .ImportePremios + oCheckBoleto.ImporteApuesta
+                    .Puntuacion = .Puntuacion + CalPuntuacion(oCheckBoleto.BolasAcertadas)
                 End With
             Else
-                oEstdstk.Costes = oEstdstk.Costes + oApuesta.Coste(oSorteo.Juego)
+                oEstdstk.Costes = oEstdstk.Costes + oApuesta.Coste
             End If
-            '
-            ' Se borra el premio
-            Set oPremio = Nothing
         End If
     Next oSorteo
     '
@@ -410,9 +425,11 @@ VerApuestasSorteos_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
     Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.VerApuestasSorteos", ErrSource)
-    '   Lanza el error
     Err.Raise ErrNumber, "Lot_01_ComprobarApuestas.VerApuestasSorteos", ErrDescription
 End Sub
+
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : VisualizaResultado
@@ -422,7 +439,7 @@ End Sub
 '---------------------------------------------------------------------------------------
 '
 Private Sub VisualizaResultado(datRow As Long, oParam As ParametrosComprobarApuestas)
-    Dim oPremio         As Premio
+    Dim oPremio         As Variant
     Dim oEstd           As EstadisticasApuesta
     Dim mFecha          As Date
     Dim xCol            As Long
@@ -432,7 +449,7 @@ Private Sub VisualizaResultado(datRow As Long, oParam As ParametrosComprobarApue
     '
     '
     '
-    Set oPremio = New Premio
+    oPremio = ""
     '
     '
     '
@@ -442,7 +459,10 @@ Private Sub VisualizaResultado(datRow As Long, oParam As ParametrosComprobarApue
     '
     For mFecha = oParam.IntervaloFechas.FechaInicial _
     To oParam.IntervaloFechas.FechaFinal
-        If (Weekday(mFecha) <> 1) Then      ' Si no es Domingo
+        '
+        '   Si es fecha de sorteo
+        '
+        If mInfo.EsFechaSorteo(mFecha) Then
             '
             '
             '
@@ -452,7 +472,7 @@ Private Sub VisualizaResultado(datRow As Long, oParam As ParametrosComprobarApue
             ' en la coleccion de aciertos
             '
             On Error Resume Next
-            Set oPremio = oParam.ColAciertos.Item(sKey)
+            oPremio = oParam.ColAciertos.Item(sKey)
             '
             ' Si lo encontramos Err = 0 sino Err = 5
             '
@@ -461,17 +481,14 @@ Private Sub VisualizaResultado(datRow As Long, oParam As ParametrosComprobarApue
                 ' Volvemos a activar el controlador de error
                 '
                 On Error GoTo VisualizaResultado_Error
-                '
-                ' Si tenemos un premio coloreamos la celda
-                '
-                If oPremio.CategoriaPremio <> Ninguna Then
-                    Cells(datRow, xCol).Value = oPremio.LiteralCategoriaPremio
-                    Cells(datRow, xCol).Interior.ColorIndex = COLOR_VERDE_CLARO
+                If IsNumeric(oPremio) Then
+                    Cells(datRow, xCol).Value = oPremio
                 Else
                     '
-                    ' si no lo tenemos ponemos las bolas acertadas
+                    ' Si tenemos un premio coloreamos la celda
                     '
-                     Cells(datRow, xCol).Value = oPremio.BolasAcertadas
+                    Cells(datRow, xCol).Value = oPremio
+                    Cells(datRow, xCol).Interior.ColorIndex = COLOR_VERDE_CLARO
                 End If
             End If
             '
@@ -509,9 +526,10 @@ VisualizaResultado_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
     Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.VisualizaResultado", ErrSource)
-    '   Lanza el error
     Err.Raise ErrNumber, "Lot_01_ComprobarApuestas.VisualizaResultado", ErrDescription
 End Sub
+
+
 '
 '  ****************************************************************************************************
 '                   FUNCIONES
@@ -556,8 +574,8 @@ Private Function GetApuesta(datFila As Range) As Apuesta
         '   Segun su posición en la columna se asigna a una propiedad
         Select Case i
             Case 1: objResult.EntidadNegocio.Id = CInt(mValor)
-            Case 2: objResult.FechaAlta = CDate(mValor)
-            Case 3: objResult.FechaFinVigencia = mInfo.AddDiasSorteo(objResult.FechaAlta, CInt(mValor))
+            Case 2: objResult.Fecha = CDate(mValor)
+            Case 3: objResult.FechaFinVigencia = mInfo.AddDiasSorteo(objResult.Fecha, CInt(mValor))
             Case 4: objResult.Metodo = mValor
             Case 5 To 15
                 If IsNumeric(mValor) And _
@@ -578,11 +596,11 @@ Private Function GetApuesta(datFila As Range) As Apuesta
 GetApuesta_Error:
      Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.GetApuesta")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Function
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : CalPuntuacion
@@ -594,7 +612,7 @@ End Function
 Public Function CalPuntuacion(datAciertos As Integer) As Integer
     Dim iResult As Integer
 '
-'TODO: Agregar la categoria del premio y puntuar diferente
+'#TODO: Agregar la categoria del premio y puntuar diferente
 '
    On Error GoTo CalPuntuacion_Error
     iResult = 0
@@ -616,10 +634,7 @@ Public Function CalPuntuacion(datAciertos As Integer) As Integer
 CalPuntuacion_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Lot_01_ComprobarApuestas.CalPuntuacion")
-   '   Lanza el Error
    Err.Raise ErrNumber, ErrSource, ErrDescription
- 
 End Function
 

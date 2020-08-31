@@ -184,7 +184,7 @@ Public Function ToString() As String
         sResult = "Sugerencia: ($1-$2) $3 , $4"
         sResult = Replace(sResult, "$1", mModJuego)
         sResult = Replace(sResult, "$2", Format(Parametros.FechaAnalisis, "dd/mm/yyyy"))
-        sResult = Replace(sResult, "$3", mCombinacion.TextoOrdenado)
+        sResult = Replace(sResult, "$3", mCombinacion.ToString(True))
         sResult = Replace(sResult, "$4", Metodo.ToString)
         ToString = sResult
     Else
@@ -206,7 +206,7 @@ Public Sub Sort(Optional datAscendente As Boolean)
     If IsMissing(datAscendente) Then
         datAscendente = True
     End If
-    mText = mCombinacion.TextoOrdenado
+    mText = mCombinacion.ToString(True)
     mComb.Texto = mText
     Set mCombinacion = mComb
     

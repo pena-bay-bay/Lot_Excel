@@ -10,7 +10,7 @@ Option Explicit
 Option Base 0
 
 '*-----------------| OBJETOS |-----------------------------+
-Private DB                      As New BdDatos          'Objeto Base de Datos
+Private Db                      As BdDatos          'Objeto Base de Datos
 Private m_array                 As Variant
 Private m_valor                 As Integer
 Private m_rgFila                As Range
@@ -31,6 +31,7 @@ Private ColFin                  As Integer
 Public Sub btn_Colorear()
     
   On Error GoTo btn_Colorear_Error
+    Set Db = New BdDatos
     '
     ' Nos colocamos en la página de resultados
     '
@@ -38,7 +39,7 @@ Public Sub btn_Colorear()
     '
     '   obtiene el rango de Resultados  e inicializa el color
     '
-    Set m_rgDatos = DB.RangoResultados
+    Set m_rgDatos = Db.RangoResultados
     '
     '   Función colorear un rango
     '
@@ -75,7 +76,10 @@ Public Sub btn_Colorear()
         
         End Select
     Loop
-
+    '
+    '
+    '
+    Set Db = Nothing
 btn_Colorear_CleanExit:
     On Error GoTo 0
     Exit Sub
@@ -95,20 +99,23 @@ End Sub
 '---------------------------------------------------------------------------------------
 '
 Private Sub cmd_color_fecha(vNewData As Date)
-
+    Dim oFila As Range
    On Error GoTo cmd_color_fecha_error
     
     'obtiene el resultado de la fecha
-     Set oSorteo = DB.Get_Resultado(vNewData)
-     If oSorteo Is Nothing Then
+    Set oFila = Db.GetSorteoByFecha(vNewData)
+    If oFila Is Nothing Then
         Err.Raise 100, "Lot_02_Colorear.cmd_color_fecha", "No existe sorteo para esta fecha"
         Exit Sub
-     End If
-     m_array = oSorteo.Combinacion.GetArray
+    End If
+    Set oSorteo = New Sorteo
+    oSorteo.Constructor oFila
+    
+    m_array = oSorteo.Combinacion.GetArray
      
     'obtiene el rango de datos
     'y lo colorea de blanco
-    Set m_rgDatos = DB.RangoResultados
+    Set m_rgDatos = Db.RangoResultados
     ColoreaCelda m_rgDatos, xlColorIndexNone
    
     
@@ -116,7 +123,7 @@ Private Sub cmd_color_fecha(vNewData As Date)
         Case Bonoloto, LoteriaPrimitiva:
             ColIni = 6
             ColFin = 12
-        Case GordoPrimitiva:
+        Case gordoPrimitiva:
             ColIni = 7
             ColFin = 11
         Case Euromillones:
@@ -201,14 +208,14 @@ Private Sub cmd_color_combinacion(vNewData As Apuesta)
 
       
     'obtiene el rango de datos
-    Set m_rgDatos = DB.RangoResultados
+    Set m_rgDatos = Db.RangoResultados
     ColoreaCelda m_rgDatos, xlColorIndexNone
     
     Select Case JUEGO_DEFECTO
         Case Bonoloto, LoteriaPrimitiva:
             ColIni = 6
             ColFin = 12
-        Case GordoPrimitiva:
+        Case gordoPrimitiva:
             ColIni = 7
             ColFin = 11
         Case Euromillones:
@@ -228,7 +235,7 @@ Private Sub cmd_color_combinacion(vNewData As Apuesta)
             color = -1
             'Obtenemos el número de la celda
             m_num.Valor = m_rgFila.Cells(1, i).Value
-            If (m_num.Valor > 0 And m_num.Valor < 50) Then
+            If (m_num.Valor > 0 And m_num.Valor < 55) Then
                 'Comprueba el valor con los Numeros de la combinacion
                 If vNewData.Combinacion.Contiene(m_num.Valor) Then
                     h = m_num.Terminacion
@@ -286,14 +293,14 @@ Private Sub cmd_color_caracteristicas(vNewData As Integer)
     '
     '   Elimina los colores de los resultados
     '
-    Set m_rgDatos = DB.RangoResultados
+    Set m_rgDatos = Db.RangoResultados
     ColoreaCelda m_rgDatos, xlColorIndexNone
     
     Select Case JUEGO_DEFECTO
         Case Bonoloto, LoteriaPrimitiva:
             ColIni = 6
             ColFin = 12
-        Case GordoPrimitiva:
+        Case gordoPrimitiva:
             ColIni = 7
             ColFin = 11
         Case Euromillones:
@@ -488,7 +495,7 @@ Private Function get_color_continuo(vDataNum As Numero, vDataCol As Combinacion)
         Case 3: get_color_continuo = COLOR_ANARANJADO
     End Select
     '
-    '   TODO: Trasladar la rutina a Combinación para ejecutarla una sola vez
+    '   #TODO: Trasladar la rutina a Combinación para ejecutarla una sola vez
     '         y color del Numero consecutivo al Numero
     '
     On Error GoTo 0

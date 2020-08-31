@@ -169,7 +169,7 @@ End Function
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Public Function Parse(datRecordset As Recordset) As Variant
+Public Function Parse(datRecordset As Range) As Variant
 
     Dim vResult As Variant
 

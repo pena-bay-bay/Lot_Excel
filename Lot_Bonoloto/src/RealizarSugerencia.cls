@@ -133,7 +133,7 @@ Private Sub getMtdAleatorio()
         '   Si hay filtros comprobamos si es válido
         '
         If mSetFiltros Then
-            Debug.Print "Ciclo:", mNCiclos, mSuge.Combinacion.TextoOrdenado
+            Debug.Print "Ciclo:", mNCiclos, mSuge.Combinacion.ToString(True)
             If mFilters.Evaluar(mSuge.Combinacion) Then
                 mNCiclos = mMaxCiclos
             Else
@@ -500,7 +500,7 @@ Private Sub getMtdEstadCombi()
         Loop
     End If
     '
-    '   TODO: incluir filtros en la selección de la sugerencia
+    '   #TODO: incluir filtros en la selección de la sugerencia
     '
     
   On Error GoTo 0
@@ -647,8 +647,10 @@ Private Sub CalcularMuestra(datParam As ParametrosMuestra)
     '
     '   obtiene el rango con los datos comprendido entre las dos fechas
     '
-    Set mRg = mBd.Resultados_Fechas(datParam.FechaInicial, _
-                                    datParam.FechaFinal)
+'    Set mRg = mBd.Resultados_Fechas(datParam.FechaInicial, _
+'                                    datParam.FechaFinal)
+    Set mRg = mBd.GetSorteosInFechas(datParam.PeriodoDatos)
+                                    
     '
     '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
     '

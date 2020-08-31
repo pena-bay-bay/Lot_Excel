@@ -152,7 +152,7 @@ Private Sub cmd_CalculaTodosProb(obj_muestra As Muestra)
         Case Bonoloto, LoteriaPrimitiva:
             iMin = 1
             iMax = 49
-        Case GordoPrimitiva:
+        Case gordoPrimitiva:
             iMin = 1
             iMax = 54
         Case Euromillones
@@ -212,7 +212,7 @@ End Sub
 '
 Private Sub cmd_CalculaUnNumero(obj_muestra As Muestra, obj_N As Integer, obj_rango As Range)
     Dim objPar              As ParametrosMuestra
-    Dim oBola               As New bola
+    Dim oBola               As New Bola
     
   On Error GoTo cmd_CalculaUnNumero_Error
     '
@@ -348,7 +348,7 @@ End Sub
 '
 Private Sub cmd_CalculaCombinacion(obj_muestra As Muestra, obj_Combinacion As Combinacion)
     Dim objPar              As ParametrosMuestra
-    Dim oBola               As New bola
+    Dim oBola               As New Bola
     Dim oNum                As New Numero
     
   On Error GoTo cmd_CalculaCombinacion_Error
@@ -493,7 +493,7 @@ End Sub
 ' *     Asunto     :
 ' *============================================================================*
 '
-Private Sub PrintBola(oCelda As Range, oBola As bola, oPar As ParametrosMuestra)
+Private Sub PrintBola(oCelda As Range, oBola As Bola, oPar As ParametrosMuestra)
     
   On Error GoTo PrintBola_Error
     
@@ -562,7 +562,7 @@ End Sub
 ' *============================================================================*
 '
 Private Sub PrintFechas(oCelda As Range, _
-                        oBola As bola, _
+                        oBola As Bola, _
                         oPar As ParametrosMuestra)
     Dim xFila           As Integer
     Dim xCol            As Integer
@@ -649,7 +649,7 @@ End Sub
 ' *============================================================================*
 '
 Private Sub PrintFrecuencias(oCelda As Range, _
-                             oBola As bola, _
+                             oBola As Bola, _
                              oPar As ParametrosMuestra)
     Dim m_frec          As Variant
     Dim xFila           As Integer

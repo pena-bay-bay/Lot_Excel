@@ -7,177 +7,258 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-'---------------------------------------------------------------------------------------
-' Module    : Premios
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   : Colección de Premios de un sorteo
-' Version   : 1.0
-'---------------------------------------------------------------------------------------
+' *============================================================================*
+' *
+' *     Fichero    : Premios.cls
+' *
+' *     Autor      : Carlos Almela Baeza
+' *     Creación   : do., 06/abr/2014 00:00:00
+' *     Modificado : mi., 15/jul/2020 17:30:01
+' *     Versión    : 1.1
+' *     Propósito  : Representa la colección de premios de un sorteo
+' *
+' *============================================================================*
 Option Explicit
 Option Base 0
 '
-'  Variables privadas
-'
+'--- Variables Privadas -------------------------------------------------------*
 Private m_iIdSorteo As Integer
 Private m_eJuego As Juego
+Private mCol As Collection
 
-'---------------------------------------------------------------------------------------
+'--- Constantes ---------------------------------------------------------------*
+Private Const LT_PREMIOSDEFBONOLOTO As String = _
+              "1,0,450000;2,0,100000;3,0,1000;4,0,30;5,0,4;15,0,0.5"
+Private Const LT_PREMIOSDEFPRIMITIVA As String = _
+              "14,0,10000000;1,0,1000000;2,0,75000;3,0,3000;4,0,85;5,0,8;15,0,1"
+Private Const LT_PREMIOSDEFGORDO As String = _
+              "1,0,1000000;2,0,200000;3,0,3000;4,0,250;5,0,50;6,0,20;7,0,8;" & _
+              "8,0,3;15,0,1.5"
+Private Const LT_PREMIOSDEFEUROMILLONES As String = _
+              "1,0,1000000,0;2,0,250000,0;3,0,60000,0;4,0,2000,0;5,0,150,0;" & _
+              "6,0,100,0;7,0,30,0;8,0,12,0;9,0,12,0;10,0,12,0;11,0,6,0;12,0" & _
+              ",6,0;13,0,4,0"
+              
+'--- Mensajes -----------------------------------------------------------------*
+'--- Errores ------------------------------------------------------------------*
+'--- Propiedades --------------------------------------------------------------*
+'------------------------------------------------------------------------------*
 ' Procedure : IdSorteo
 ' Author    : CHARLY
 ' Date      : 06/04/2014
 ' Purpose   :
-'---------------------------------------------------------------------------------------
+'------------------------------------------------------------------------------*
 '
 Public Property Get IdSorteo() As Integer
-
-   On Error GoTo IdSorteo_Error
-
     IdSorteo = m_iIdSorteo
-
-   On Error GoTo 0
-   Exit Property
-
-IdSorteo_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.IdSorteo")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
 
-'---------------------------------------------------------------------------------------
-' Procedure : IdSorteo
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Property Let IdSorteo(ByVal iIdSorteo As Integer)
-
-   On Error GoTo IdSorteo_Error
-
-    m_iIdSorteo = iIdSorteo
-
-   On Error GoTo 0
-   Exit Property
-
-IdSorteo_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.IdSorteo")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+Public Property Let IdSorteo(ByVal vNewValue As Integer)
+    m_iIdSorteo = vNewValue
 End Property
 
-'---------------------------------------------------------------------------------------
+
+'------------------------------------------------------------------------------*
 ' Procedure : Juego
 ' Author    : CHARLY
 ' Date      : 06/04/2014
 ' Purpose   :
-'---------------------------------------------------------------------------------------
+'------------------------------------------------------------------------------*
 '
 Public Property Get Juego() As Juego
-
-   On Error GoTo Juego_Error
-
     Juego = m_eJuego
-
-   On Error GoTo 0
-   Exit Property
-
-Juego_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.Juego")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
 
-'---------------------------------------------------------------------------------------
-' Procedure : Juego
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Property Let Juego(ByVal eJuego As Juego)
-
-   On Error GoTo Juego_Error
-
-    m_eJuego = eJuego
-
-   On Error GoTo 0
-   Exit Property
-
-Juego_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.Juego")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+Public Property Let Juego(ByVal vNewValue As Juego)
+    If vNewValue <> m_eJuego Then
+        m_eJuego = vNewValue
+        SetPremiosDefecto
+    Else
+        m_eJuego = vNewValue
+    End If
 End Property
 
-'---------------------------------------------------------------------------------------
-' Procedure : Add
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
+Public Property Get Count() As Integer
+    Count = mCol.Count
+End Property
+'------------------------------------------------------------------------------*
+' Procedimiento  : Items
+' Fecha          : do., 10/feb/2019 09:54:46
+' Propósito      : Devolver la colección interna
+' Retorno        : Colección de Objetos
+'------------------------------------------------------------------------------*
+Public Property Get Items() As Collection
+    Set Items = mCol
+End Property
+
+Public Property Let Items(ByVal vNewValue As Collection)
+    Set mCol = vNewValue
+End Property
+
+'--- Métodos Privados ---------------------------------------------------------*
+Private Sub Class_Initialize()
+    Set mCol = New Collection
+    m_eJuego = JUEGO_DEFECTO
+    SetPremiosDefecto
+End Sub
+
+Private Sub Class_Terminate()
+    Set mCol = Nothing
+End Sub
+
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : SetPremiosDefecto
+' Fecha          : mi., 15/jul/2020 17:33:15
+' Propósito      : Establece una colección de premios por defecto
+'------------------------------------------------------------------------------*
 '
-Public Function Add() As Premio2
+Private Sub SetPremiosDefecto()
+ On Error GoTo SetPremiosDefecto_Error
+    '
+    '   Seleccionamos los premios y categorias según el juego
+    '
+    Select Case m_eJuego
+        Case Bonoloto: Parse LT_PREMIOSDEFBONOLOTO
+        Case LoteriaPrimitiva: Parse LT_PREMIOSDEFPRIMITIVA
+        Case gordoPrimitiva: Parse LT_PREMIOSDEFGORDO
+        Case Euromillones: Parse LT_PREMIOSDEFEUROMILLONES
+    End Select
+    
+  On Error GoTo 0
+    Exit Sub
+SetPremiosDefecto_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "Premios.SetPremiosDefecto", ErrSource)
+    Err.Raise ErrNumber, "Premios.SetPremiosDefecto", ErrDescription
+End Sub
 
-    Dim objResult As Premio2
 
 
-   On Error GoTo Add_Error
+'--- Métodos Públicos ---------------------------------------------------------*
 
-    Set Add = objResult
-    Set objResult = Nothing
+'------------------------------------------------------------------------------*
+' Procedimiento  : Parse
+' Fecha          : mi., 15/jul/2020 17:33:15
+' Propósito      : Interpreta la información de los premios de cadena
+'                  a colección
+' Parámetros     : Cadena de caracteres con los valores de los premios
+'------------------------------------------------------------------------------*
+'
+Public Sub Parse(vNewValue As String)
+    Dim mVar As Variant
+    Dim i    As Integer
+    Dim oPrm As Premio
+    
+ On Error GoTo Parse_Error
+    '
+    '   Inicializamos colección
+    '
+    Set mCol = New Collection
+    '
+    '   obtenemos las tuplas de premios
+    '
+    mVar = Split(vNewValue, ";")
+    
+    For i = 0 To UBound(mVar)
+        '
+        '   Creamos un premio
+        '
+        Set oPrm = New Premio
+        '
+        '   asignamos Id
+        '
+        oPrm.Id = i
+        oPrm.Juego = m_eJuego
+        oPrm.UnPack CStr(mVar(i))
+        '
+        '   agregamos a la colección
+        '
+        mCol.Add oPrm, Str(oPrm.CategoriaPremio)
+    Next i
+  
+  
+  On Error GoTo 0
+    Exit Sub
+Parse_Error:
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "Premios.Parse", ErrSource)
+    Err.Raise ErrNumber, "Premios.Parse", ErrDescription
+End Sub
 
-   On Error GoTo 0
+
+
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : ToString
+' Fecha          : mi., 15/jul/2020 18:47:20
+' Propósito      : Componer los premios de la colección en una cadena
+' Parámetros     : Cadena de caracteres con los valores de los premios
+'------------------------------------------------------------------------------*
+'
+Public Function ToString() As String
+    Dim mStr As String
+    Dim mPrm As Premio
+ On Error GoTo ToString_Error
+    '
+    '   Inicializamos la cadena
+    '
+    mStr = ""
+    '
+    '   Recorremos la colección
+    '
+    For Each mPrm In mCol
+        mStr = mStr & mPrm.Pack & ";"
+    Next mPrm
+    
+    mStr = Left(mStr, Len(mStr) - 1)
+    ToString = mStr
+    
+ On Error GoTo 0
    Exit Function
 
-Add_Error:
+ToString_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.Add")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+   Call HandleException(ErrNumber, ErrDescription, "Premios.ToString")
+   Err.Raise ErrNumber, "Premios.ToString", ErrDescription
 End Function
 
-'---------------------------------------------------------------------------------------
-' Procedure : Delete
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
+
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : GetPremioByCategoria
+' Fecha          : mi., 15/jul/2020 18:49:52
+' Propósito      : Obtiene el premio de una categoria
+' Parámetros     :
+'------------------------------------------------------------------------------*
 '
-Public Function Delete() As Boolean
-
-    Dim bResult As Boolean
-
-
-   On Error GoTo Delete_Error
-
-    Delete = bResult
-
-   On Error GoTo 0
+Public Function GetPremioByCategoria(vNewValue As CategoriaPremio) As Premio
+    Dim mPrm As Premio
+    
+  On Error GoTo GetPremioByCategoria_Error
+    '
+    ' Creamos la variable
+    '
+    Set mPrm = New Premio
+    Set mPrm = mCol.Item(Str(vNewValue))
+    
+    Set GetPremioByCategoria = mPrm
+    Set mPrm = Nothing
+    
+ On Error GoTo 0
    Exit Function
 
-Delete_Error:
+GetPremioByCategoria_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.Delete")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+   Call HandleException(ErrNumber, ErrDescription, "Premios.GetPremioByCategoria")
+   Err.Raise ErrNumber, "Premios.GetPremioByCategoria", ErrDescription
 End Function
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : Item
@@ -186,15 +267,27 @@ End Function
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Public Function Item() As Premio2
+Public Function Item(vNewValue As Integer) As Premio
+    Dim mPrm As Premio
 
-    Dim objResult As Premio2
-
-
-   On Error GoTo Item_Error
-
-    Set Item = objResult
-    Set objResult = Nothing
+  On Error GoTo Item_Error
+    '
+    '   Comprobamos el indice de la colección
+    '
+    If vNewValue < 1 Or vNewValue > mCol.Count Then
+        Set Item = Nothing
+        Exit Function
+    End If
+    '
+    '   Creamos el objeto
+    '
+    Set mPrm = New Premio
+    Set mPrm = mCol.Item(vNewValue)
+    '
+    '   devolvemos el objeto
+    '
+    Set Item = mPrm
+    Set mPrm = Nothing
 
    On Error GoTo 0
    Exit Function
@@ -202,214 +295,12 @@ Public Function Item() As Premio2
 Item_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Premios.Item")
-   '   Lanza el Error
-   'Err.Raise ErrNumber, ErrSource, ErrDescription
-   '   Informa del error
-   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   'Call Trace("CERRAR")
-
-
+   Err.Raise ErrNumber, ErrSource, ErrDescription
 End Function
 
-'---------------------------------------------------------------------------------------
-' Procedure : Load
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Function Load() As Variant
-
-    Dim vResult As Variant
 
 
-   On Error GoTo Load_Error
-
-    Load = vResult
-
-   On Error GoTo 0
-   Exit Function
-
-Load_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.Load")
-   '   Lanza el Error
-   'Err.Raise ErrNumber, ErrSource, ErrDescription
-   '   Informa del error
-   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   'Call Trace("CERRAR")
-
-
-End Function
-
-'---------------------------------------------------------------------------------------
-' Procedure : Update
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Function Update() As Boolean
-
-    Dim bResult As Boolean
-
-
-   On Error GoTo Update_Error
-
-    Update = bResult
-
-   On Error GoTo 0
-   Exit Function
-
-Update_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.Update")
-   '   Lanza el Error
-   'Err.Raise ErrNumber, ErrSource, ErrDescription
-   '   Informa del error
-   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   'Call Trace("CERRAR")
-
-
-End Function
-
-'---------------------------------------------------------------------------------------
-' Procedure : Store
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Function Store() As Variant
-
-    Dim vResult As Variant
-
-
-   On Error GoTo Store_Error
-
-    Store = vResult
-
-   On Error GoTo 0
-   Exit Function
-
-Store_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.Store")
-   '   Lanza el Error
-   'Err.Raise ErrNumber, ErrSource, ErrDescription
-   '   Informa del error
-   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   'Call Trace("CERRAR")
-
-
-End Function
-
-'---------------------------------------------------------------------------------------
-' Procedure : Remove
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Function Remove() As Boolean
-
-    Dim bResult As Boolean
-
-
-   On Error GoTo Remove_Error
-
-    Remove = bResult
-
-   On Error GoTo 0
-   Exit Function
-
-Remove_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.Remove")
-   '   Lanza el Error
-   'Err.Raise ErrNumber, ErrSource, ErrDescription
-   '   Informa del error
-   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   'Call Trace("CERRAR")
-
-
-End Function
-
-'---------------------------------------------------------------------------------------
-' Procedure : MarkForDelete
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Function MarkForDelete() As Boolean
-
-    Dim bResult As Boolean
-
-
-   On Error GoTo MarkForDelete_Error
-
-    MarkForDelete = bResult
-
-   On Error GoTo 0
-   Exit Function
-
-MarkForDelete_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.MarkForDelete")
-   '   Lanza el Error
-   'Err.Raise ErrNumber, ErrSource, ErrDescription
-   '   Informa del error
-   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   'Call Trace("CERRAR")
-
-
-End Function
-
-'---------------------------------------------------------------------------------------
-' Procedure : Undelete
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Function Undelete() As Integer
-
-    Dim iResult As Integer
-
-
-   On Error GoTo Undelete_Error
-
-    Undelete = iResult
-
-   On Error GoTo 0
-   Exit Function
-
-Undelete_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.Undelete")
-   '   Lanza el Error
-   'Err.Raise ErrNumber, ErrSource, ErrDescription
-   '   Informa del error
-   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   'Call Trace("CERRAR")
-
-
-End Function
 
 '---------------------------------------------------------------------------------------
 ' Procedure : IndexOf
@@ -418,62 +309,43 @@ End Function
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Public Function IndexOf() As Premio2
-
-    Dim objResult As Premio2
-
-
-   On Error GoTo IndexOf_Error
-
-    Set IndexOf = objResult
-    Set objResult = Nothing
-
-   On Error GoTo 0
+Public Function IndexOf(vNewValue As Premio) As Integer
+    Dim i As Integer
+    Dim mPrem As Premio
+    
+  On Error GoTo IndexOf_Error
+    '
+    '   Inicializamos la función
+    '
+    IndexOf = -1
+    '
+    '   Comprobamos si nos pasan un objeto
+    '
+    If vNewValue Is Nothing Then
+        Exit Function
+    End If
+    '
+    '   Verificamos la categoria del premio
+    '
+    i = 1
+    For Each mPrem In mCol
+        If mPrem.CategoriaPremio = vNewValue.CategoriaPremio Then
+            IndexOf = i
+            Exit For
+        Else
+            i = i + 1
+        End If
+    Next mPrem
+  
+  On Error GoTo 0
    Exit Function
 
 IndexOf_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, "Premios.IndexOf")
-   '   Lanza el Error
-   'Err.Raise ErrNumber, ErrSource, ErrDescription
-   '   Informa del error
-   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   'Call Trace("CERRAR")
-
-
+   Err.Raise ErrNumber, ErrSource, ErrDescription
 End Function
 
-'---------------------------------------------------------------------------------------
-' Procedure : Conteins
-' Author    : CHARLY
-' Date      : 06/04/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Function Conteins() As Boolean
+' *===========(EOF): Premios.cls
 
-    Dim bResult As Boolean
-
-
-   On Error GoTo Conteins_Error
-
-    Conteins = bResult
-
-   On Error GoTo 0
-   Exit Function
-
-Conteins_Error:
-   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premios.Conteins")
-   '   Lanza el Error
-   'Err.Raise ErrNumber, ErrSource, ErrDescription
-   '   Informa del error
-   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   'Call Trace("CERRAR")
-
-
-End Function

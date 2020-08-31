@@ -449,7 +449,7 @@ Public Function Save() As Boolean
     '
     '   Buscamos el Id del registro
     '
-    Set rngFind = mrngIds.Find(What:=Metodo.Id, LookIn:=xlValues, LookAt:=xlWhole)
+    Set rngFind = mrngIds.Find(What:=Metodo.Id, LookIn:=xlValues, lookat:=xlWhole)
     If Not rngFind Is Nothing Then
         Me.Metodo.EntidadNegocio.FechaModificacion = Date
         With mwsData
@@ -506,7 +506,7 @@ Public Function Del(ByVal datId As Integer) As Boolean
     '
     '   Buscamos el registro
     '
-    Set rngFind = mrngIds.Find(What:=datId, LookIn:=xlValues, LookAt:=xlWhole)
+    Set rngFind = mrngIds.Find(What:=datId, LookIn:=xlValues, lookat:=xlWhole)
     '
     '   Si lo encontramos borramos
     '
@@ -582,7 +582,7 @@ Public Function GetRecord(datId As Integer) As Boolean
     '
     '   Buscamos el registro
     '
-    Set rngFind = mrngIds.Find(What:=datId, LookIn:=xlValues, LookAt:=xlWhole)
+    Set rngFind = mrngIds.Find(What:=datId, LookIn:=xlValues, lookat:=xlWhole)
     '
     '   Si lo encontramos cargamos el Objeto
     '
@@ -678,7 +678,7 @@ Public Function GetNext(ByVal intId As Integer) As Boolean
     '
     '   Buscamos el Id y si lo encontramos calculamos la siguiente fila
     '
-    Set rngFind = mrngIds.Find(What:=intId, LookIn:=xlValues, LookAt:=xlWhole)
+    Set rngFind = mrngIds.Find(What:=intId, LookIn:=xlValues, lookat:=xlWhole)
     If Not rngFind Is Nothing Then
         '
         '   Comprobamos si es el último registro
@@ -719,7 +719,7 @@ Public Function GetPrev(ByVal intId As Integer) As Boolean
     '
     '   Buscamos el registro suministrado
     '
-    Set rngFind = mrngIds.Find(What:=intId, LookIn:=xlValues, LookAt:=xlWhole)
+    Set rngFind = mrngIds.Find(What:=intId, LookIn:=xlValues, lookat:=xlWhole)
     If Not rngFind Is Nothing Then
         '
         '   Comprobamos si es el primer registro

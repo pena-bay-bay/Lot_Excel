@@ -171,7 +171,7 @@ Public Sub Add(datFiltro As FiltroCombinacion)
     '
         If ExistenElem(mCol, mKey) Then
             '
-            '   TODO: comprobar que no existe el valor seleccionado
+            '   #TODO: comprobar que no existe el valor seleccionado
             '
             Set mFlt = mCol.Item(mKey)
             mFlt.AddFilterValue datFiltro.FilterValue

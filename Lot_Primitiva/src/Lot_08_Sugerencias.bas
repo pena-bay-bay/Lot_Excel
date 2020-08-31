@@ -259,7 +259,7 @@ End Sub
 ' Propósito      : Configura la hoja para la información de Salida del proceso
 '------------------------------------------------------------------------------*
 Private Sub DisLiterales(datSorteo As Sorteo, datFechaAnalisis As Date)
-    Dim C As Integer
+    Dim c As Integer
     Dim n As Integer
     Dim mVar As Variant
     
@@ -296,17 +296,17 @@ Private Sub DisLiterales(datSorteo As Sorteo, datFechaAnalisis As Date)
     If Not (datSorteo Is Nothing) Then
         Range("D2").Activate
         ActiveCell.Offset(1, 0).Value = "Combinación:"
-        C = datSorteo.Complementario
+        c = datSorteo.Complementario
         For i = 1 To datSorteo.Combinacion.Count
             n = datSorteo.Combinacion.Numeros(i).Valor
-            If n <> C Then
+            If n <> c Then
                 ActiveCell.Offset(0, i).Value = "N" & i
                 ActiveCell.Offset(1, i).Value = n
                 ActiveCell.Offset(1, i).Interior.ColorIndex = COLOR_VERDE
             End If
         Next i
         ActiveCell.Offset(0, i - 1).Value = "C"
-        ActiveCell.Offset(1, i - 1).Value = C
+        ActiveCell.Offset(1, i - 1).Value = c
         ActiveCell.Offset(1, i - 1).Interior.ColorIndex = COLOR_AMARILLO
     End If
     '
@@ -468,6 +468,13 @@ Private Sub DisSugerencia(datSuge As Sugerencia, _
         .TintAndShade = 0.799981688894314
         .PatternTintAndShade = 0
     End With
+    '
+    '   Ordenamos la Suge
+    '
+    datSuge.Sort
+    '
+    '
+    '
     If Not (datSorteo Is Nothing) Then
         '
         '   Bucle combinación

@@ -13,9 +13,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-
-
 '--------------------------------------------------------------------------------------*
 ' Module    : frmCalTiempoMedio.frm
 ' DateTime  : 10/02/2018 00:23
@@ -680,8 +677,9 @@ Private Sub CalMuestra()
     '
     '   obtiene el rango con los datos comprendido entre las dos fechas
     '
-    Set oRange = mDB.Resultados_Fechas(mParMuestra.FechaInicial, _
-                                       mParMuestra.FechaFinal)
+'    Set oRange = mDB.Resultados_Fechas(mParMuestra.FechaInicial, _
+'                                       mParMuestra.FechaFinal)
+    Set oRange = mDB.GetSorteosInFechas(mParMuestra.PeriodoDatos)
     '
     '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
     '
@@ -689,7 +687,14 @@ Private Sub CalMuestra()
     '
     '   Calcula las bolas para este rango
     '
-    mMuestra.Constructor oRange, JUEGO_DEFECTO
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto, LoteriaPrimitiva:
+             mMuestra.Constructor oRange, LP_LB_6_49
+        Case gordoPrimitiva:
+             mMuestra.Constructor oRange, GP_5_54
+        Case Euromillones
+             mMuestra.Constructor oRange, EU_5_50
+    End Select
   
 On Error GoTo 0
    Exit Sub

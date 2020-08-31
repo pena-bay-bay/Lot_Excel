@@ -8,8 +8,8 @@ Attribute VB_Name = "Lot_Constantes"
 '---------------------------------------------------------------------------------------
 Option Explicit
 '// Variables de versión de la librería
-Public Const lotVersion = "2020.03"
-Public Const lotFeVersion = "mar, 26/05/2020 17:25"
+Public Const lotVersion = "2020.04"
+Public Const lotFeVersion = "sáb, 29/08/2020 20:43"
 Public Const NOMBRE_APLICACION = "Bonoloto"
 
 '// Variables relacionadas con el bombo
@@ -163,7 +163,7 @@ Public Const NOMBRE_CATEGORIASPREMIOS As String = "Primera;Segunda;Tercera;Cuart
 Public Enum Juego
     LoteriaPrimitiva = 1
     Bonoloto = 2
-    GordoPrimitiva = 3
+    gordoPrimitiva = 3
     Euromillones = 4
     PrimitivaBonoloto = 5
 End Enum

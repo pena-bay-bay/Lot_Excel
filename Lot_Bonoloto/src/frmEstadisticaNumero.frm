@@ -679,8 +679,9 @@ Private Sub CalMuestra()
     '
     '   obtiene el rango con los datos comprendido entre las dos fechas
     '
-    Set oRange = mDB.Resultados_Fechas(mParMuestra.FechaInicial, _
-                                       mParMuestra.FechaFinal)
+'    Set oRange = mDB.Resultados_Fechas(mParMuestra.FechaInicial, _
+'                                       mParMuestra.FechaFinal)
+    Set oRange = mDB.GetSorteosInFechas(mParMuestra.PeriodoDatos)
     '
     '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
     '
@@ -691,7 +692,7 @@ Private Sub CalMuestra()
     Select Case JUEGO_DEFECTO
         Case Bonoloto, LoteriaPrimitiva:
              mMuestra.Constructor oRange, LP_LB_6_49
-        Case GordoPrimitiva:
+        Case gordoPrimitiva:
              mMuestra.Constructor oRange, GP_5_54
         Case Euromillones
              mMuestra.Constructor oRange, EU_5_50

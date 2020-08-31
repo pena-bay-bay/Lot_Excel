@@ -293,7 +293,11 @@ Public Property Get Dias() As Integer
     If m_dtFecha_Inicial = 0 Then
         Dias = 1
     Else
-        Dias = m_dtFecha_Final - m_dtFecha_Inicial + 1
+        If m_iTipo_Fecha = ctSinDefinir Then
+            Dias = 0
+        Else
+            Dias = m_dtFecha_Final - m_dtFecha_Inicial + 1
+        End If
     End If
 End Property
 

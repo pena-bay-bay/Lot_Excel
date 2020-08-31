@@ -23,8 +23,10 @@ Dim oCombinacion        As Combinacion          ' Conjunto de números
 Dim oSorteoEngine       As SorteoEngine         ' Motor de sorteos
 Dim iCol                As Integer              ' Coordenada de columnas
 Dim iRow                As Integer              ' Coordenada de Filas
-Dim N                   As Integer              ' Entero
+Dim n                   As Integer              ' Entero
 Dim rgCelda             As Range                ' Celda activa
+Dim iMin                As Integer              ' valor minimo
+Dim iMax                As Integer              ' valor maximo
 
 '---------------------------------------------------------------------------------------
 ' Procedimiento : btn_Prob_TiemposMedios
@@ -143,10 +145,24 @@ Private Sub cmd_CalculaTodosProb(obj_muestra As Muestra)
     '   En negrita
     '
     ActiveCell.Font.Bold = True
+        '
     '
-    '   Para los 49 Numeros
     '
-    For N = 1 To 49
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto, LoteriaPrimitiva:
+            iMin = 1
+            iMax = 49
+        Case gordoPrimitiva:
+            iMin = 1
+            iMax = 54
+        Case Euromillones
+            iMin = 1
+            iMax = 50
+    End Select
+    '
+    '
+    '
+    For n = iMin To iMax
         '
         '   Posiciona el cursor en la celda correspondiente
         '
@@ -154,20 +170,20 @@ Private Sub cmd_CalculaTodosProb(obj_muestra As Muestra)
         '
         '   Dibuja la información del Numero N
         '
-        cmd_CalculaUnNumero obj_muestra, N, rgCelda
+        cmd_CalculaUnNumero obj_muestra, n, rgCelda
         '
         '   Recalcula coordenadas para el siguiente número
         '         x = x + 15
         '         y = y + 100
         '   cada 10 Numeros x = 1
         '
-        If (N Mod 10) = 0 Then
+        If (n Mod 10) = 0 Then
             iCol = 1
             iRow = iRow + 100
         Else
             iCol = iCol + 15
         End If
-    Next N
+    Next n
     
     Cells.Select                                ' Selecciona todas las celdas de la hoja
     Cells.EntireColumn.AutoFit                  ' Autoajusta el tamaño de las columnas
@@ -196,7 +212,7 @@ End Sub
 '
 Private Sub cmd_CalculaUnNumero(obj_muestra As Muestra, obj_N As Integer, obj_rango As Range)
     Dim objPar              As ParametrosMuestra
-    Dim oBola               As New bola
+    Dim oBola               As New Bola
     
   On Error GoTo cmd_CalculaUnNumero_Error
     '
@@ -281,11 +297,11 @@ On Error GoTo cmd_NumerosSorteo_Error
     '
     '   Bucle de selección de cada Numero del sorteo
     '
-    For N = 1 To oSorteo.Combinacion.Count
+    For n = 1 To oSorteo.Combinacion.Count
         '
         '   Obtenemos el Numero iesimo
         '
-        Set oNumero = oSorteo.Combinacion.Numeros(N)
+        Set oNumero = oSorteo.Combinacion.Numeros(n)
         '
         '   Para el valor del Numero
         '
@@ -301,13 +317,13 @@ On Error GoTo cmd_NumerosSorteo_Error
         '
         '   Calculamos coordenada siguiente Numero
         '
-        If (N Mod 2) = 0 Then
+        If (n Mod 2) = 0 Then
             iCol = 1
             iRow = iRow + 120
         Else
             iCol = iCol + 15
         End If
-    Next N
+    Next n
 
 cmd_NumerosSorteo_CleanExit:
    On Error GoTo 0
@@ -332,14 +348,14 @@ End Sub
 '
 Private Sub cmd_CalculaCombinacion(obj_muestra As Muestra, obj_Combinacion As Combinacion)
     Dim objPar              As ParametrosMuestra
-    Dim oBola               As New bola
+    Dim oBola               As New Bola
     Dim oNum                As New Numero
     
   On Error GoTo cmd_CalculaCombinacion_Error
     '
     '   inicializa coordenadas x=1, y=1
     '
-    iCol = 1:    iRow = 1:  N = 0
+    iCol = 1:    iRow = 1:  n = 0
     '
     '   Borra la hoja de salida
     '
@@ -367,7 +383,7 @@ Private Sub cmd_CalculaCombinacion(obj_muestra As Muestra, obj_Combinacion As Co
         '
         '   nesima bola
         '
-        N = N + 1
+        n = n + 1
         '
         '   posicion
         '
@@ -379,7 +395,7 @@ Private Sub cmd_CalculaCombinacion(obj_muestra As Muestra, obj_Combinacion As Co
         '
         '   Calculamos coordenada siguiente Numero
         '
-        If (N Mod 2) = 0 Then
+        If (n Mod 2) = 0 Then
             iCol = 1
             iRow = iRow + 120
         Else
@@ -477,7 +493,7 @@ End Sub
 ' *     Asunto     :
 ' *============================================================================*
 '
-Private Sub PrintBola(oCelda As Range, oBola As bola, oPar As ParametrosMuestra)
+Private Sub PrintBola(oCelda As Range, oBola As Bola, oPar As ParametrosMuestra)
     
   On Error GoTo PrintBola_Error
     
@@ -546,7 +562,7 @@ End Sub
 ' *============================================================================*
 '
 Private Sub PrintFechas(oCelda As Range, _
-                        oBola As bola, _
+                        oBola As Bola, _
                         oPar As ParametrosMuestra)
     Dim xFila           As Integer
     Dim xCol            As Integer
@@ -633,7 +649,7 @@ End Sub
 ' *============================================================================*
 '
 Private Sub PrintFrecuencias(oCelda As Range, _
-                             oBola As bola, _
+                             oBola As Bola, _
                              oPar As ParametrosMuestra)
     Dim m_frec          As Variant
     Dim xFila           As Integer

@@ -77,15 +77,19 @@ Public Property Let Texto(ByVal sTexto As String)
     '
     For i = 0 To UBound(mMatriz)
         Set mNum = New Numero
-        mNum.Valor = CInt(mMatriz(i))
-        Add mNum
+        'If CInt(mMatriz(i)) > 0 Then
+        If IsNumeric(mMatriz(i)) Then
+            mNum.Valor = CInt(mMatriz(i))
+            mNum.Orden = i + 1
+            Add mNum
+        End If
     Next i
-    
+        
    On Error GoTo 0
    Exit Property
 
 Texto_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
    Call HandleException(ErrNumber, ErrDescription, "Combinacion.Texto")
    Err.Raise ErrNumber, ErrSource, ErrDescription
@@ -224,7 +228,7 @@ Public Property Get FormulaDecenas() As String
         m_contadores(m_decena, 1) = m_sum
     Next mNum
         
-    Ordenar2 m_contadores
+    Ordenar2 m_contadores, , False
         
     FormulaDecenas = m_contadores(0, 1)
     For x = 1 To UBound(m_contadores, 1)
@@ -263,7 +267,7 @@ Public Property Get FormulaTerminaciones() As String
         m_contadores(m_terminacion, 1) = m_sum
     Next m_num
         
-    Ordenar2 m_contadores
+    Ordenar2 m_contadores, , False
         
     FormulaTerminaciones = m_contadores(0, 1)
     For x = 1 To UBound(m_contadores, 1)
@@ -399,7 +403,7 @@ Public Property Get FormulaSeptenas() As String
         m_contadores(m_septena, 1) = m_sum
     Next mNum
         
-    Ordenar2 m_contadores
+    Ordenar2 m_contadores, , False
         
     FormulaSeptenas = m_contadores(0, 1)
     For x = 1 To UBound(m_contadores, 1)
@@ -438,8 +442,11 @@ Public Sub Add(oNum As Numero)
     Dim strKey  As String
   On Error GoTo Add_Error
   
-    strKey = oNum.ToString
-    
+    'strKey = oNum.ToString
+    strKey = CStr(oNum.Valor)
+    If oNum.Orden <= 0 Then
+        oNum.Orden = mCol.Count + 1
+    End If
     If mCol.Count <> 0 Then
         mCol.Add oNum, strKey, , mCol.Count
     Else
@@ -487,7 +494,9 @@ Public Function Contiene(Numero As Integer) As Boolean
     Dim prueba      As Variant      ' Resultado de la operación
   On Error Resume Next              ' Desactivamos el error
   
-    strKey = Format(Numero, "00")   ' Convertimos el entero en string
+    'strKey = Format(Numero, "00")  ' Convertimos el entero en string
+                                    ' (clave de la colección)
+    strKey = CStr(Numero)           ' Convertimos el entero en string
                                     ' (clave de la colección)
     prueba = mCol.Item(strKey)      ' Intentamos obtener el elemento de
                                     ' la colección con clave strKey

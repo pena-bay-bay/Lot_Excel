@@ -13,7 +13,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
 '---------------------------------------------------------------------------------------
 ' Module    : frmSelPeriodo
 ' Author    : Charly
@@ -56,32 +55,10 @@ Private Const MSG_VALFEFINMENORFEINICIAL    As String = "* La fecha de fin es in
 '---------------------------------------------------------------------------------------
 '
 Public Property Get RangoFechas() As Periodo
-
-  On Error GoTo RangoFechas_Error
-
     Set RangoFechas = m_objRangoFechas
-
-   On Error GoTo 0
-   Exit Property
-
-RangoFechas_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.RangoFechas")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
 
-'---------------------------------------------------------------------------------------
-' Procedure : RangoFechas
-' Author    : Charly
-' Date      : 04/04/2012
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
 Public Property Set RangoFechas(objRangoFechas As Periodo)
-
   On Error GoTo RangoFechas_Error
 
     Set m_objRangoFechas = objRangoFechas
@@ -93,17 +70,18 @@ Public Property Set RangoFechas(objRangoFechas As Periodo)
     If Err.Number <> 0 Then
         cboPerMuestra.ListIndex = -1
     End If
-   On Error GoTo 0
-   Exit Property
-
+   
+  On Error GoTo 0
+    Exit Property
 RangoFechas_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.RangoFechas")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.RangoFechas")
+    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Property
+
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : UserForm_Initialize
@@ -122,8 +100,8 @@ Private Sub UserForm_Initialize()
     '
     m_varFechasDefinidas = Array(ctHoy, ctAyer, ctUltimaSemana, _
                            ctUltimaQuincena, ctUltimoMes, ctUltimoTrimestre, _
-                           ctLoQueVadeSemana, ctLoQueVadeMes, ctLoQueVadeTrimestre, _
-                           ctPersonalizadas)
+                           ctUltimoAño, ctLoQueVadeSemana, ctLoQueVadeMes, _
+                           ctLoQueVadeTrimestre, ctLoQueVadeAño, ctPersonalizadas)
     '
     '   Carga el combo de las fechas
     '
@@ -175,13 +153,13 @@ Private Sub VisualizaControles()
    Exit Sub
 
 VisualizaControles_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.VisualizaControles")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.VisualizaControles")
+    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : cboPerMuestra_Change
@@ -205,13 +183,14 @@ Private Sub cboPerMuestra_Change()
    Exit Sub
 
 cboPerMuestra_Change_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.cboPerMuestra_Change")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.cboPerMuestra_Change")
+    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
+
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : cmdAceptar_Click
@@ -289,13 +268,13 @@ Private Function IsValid() As Boolean
    Exit Function
 
 IsValid_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.IsValid")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.IsValid")
+    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Function
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : MensajeValidacion
@@ -343,14 +322,13 @@ Private Function MensajeValidacion() As String
    Exit Function
 
 MensajeValidacion_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.MensajeValidacion")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
-
+    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+    Call HandleException(ErrNumber, ErrDescription, "frmSelPeriodo.MensajeValidacion")
+    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Function
+
+
 
 
 Public Property Get Periodo() As Periodo
