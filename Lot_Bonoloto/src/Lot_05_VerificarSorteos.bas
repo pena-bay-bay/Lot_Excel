@@ -142,7 +142,17 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
     '
     Set oMuestra = New Muestra
     Set oMuestra.ParametrosMuestra = oParMuestra
-    oMuestra.Constructor rgDatos, JUEGO_DEFECTO
+    Select Case JUEGO_DEFECTO
+        Case LoteriaPrimitiva, Bonoloto:
+            oMuestra.Constructor rgDatos, ModalidadJuego.LP_LB_6_49
+        
+        Case GordoPrimitiva:
+            oMuestra.Constructor rgDatos, ModalidadJuego.GP_5_54
+        
+        Case Euromillones:
+            oMuestra.Constructor rgDatos, ModalidadJuego.EU_5_50
+            
+    End Select
     '
     '   Comprueba que las fechas sean de sorteo
     '

@@ -299,7 +299,7 @@ Public Sub Cargar()
                 mMaxBolas = 12
             End If
         
-        Case gordoPrimitiva
+        Case GordoPrimitiva
             If mTipoBombo = 1 Then
                 mMinBolas = 1
                 mMaxBolas = 54

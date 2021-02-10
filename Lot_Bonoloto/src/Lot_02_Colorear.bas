@@ -123,7 +123,7 @@ Private Sub cmd_color_fecha(vNewData As Date)
         Case Bonoloto, LoteriaPrimitiva:
             ColIni = 6
             ColFin = 12
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             ColIni = 7
             ColFin = 11
         Case Euromillones:
@@ -144,20 +144,45 @@ Private Sub cmd_color_fecha(vNewData As Date)
             Else
                 m_valor = 0
             End If
-            Select Case m_valor
-                Case m_array(0): color = COLOR_TERMINACION8
-                Case m_array(1): color = COLOR_TERMINACION1
-                Case m_array(2): color = COLOR_TERMINACION2
-                Case m_array(3): color = COLOR_TERMINACION3
-                Case m_array(4): color = COLOR_TERMINACION4
-                Case m_array(5): color = COLOR_TERMINACION5
-                Case oSorteo.Complementario: color = COLOR_TERMINACION6
-            End Select
-            If color > 0 Then
-                    ColoreaCelda m_rgFila.Cells(1, i), color
+            If JUEGO_DEFECTO = Bonoloto Or JUEGO_DEFECTO = LoteriaPrimitiva Then
+                Select Case m_valor
+                    Case m_array(0): color = COLOR_TERMINACION8
+                    Case m_array(1): color = COLOR_TERMINACION1
+                    Case m_array(2): color = COLOR_TERMINACION2
+                    Case m_array(3): color = COLOR_TERMINACION3
+                    Case m_array(4): color = COLOR_TERMINACION4
+                    Case m_array(5): color = COLOR_TERMINACION5
+                    Case oSorteo.Complementario: color = COLOR_TERMINACION6
+                End Select
+            Else
+                Select Case m_valor
+                    Case m_array(0): color = COLOR_TERMINACION8
+                    Case m_array(1): color = COLOR_TERMINACION1
+                    Case m_array(2): color = COLOR_TERMINACION2
+                    Case m_array(3): color = COLOR_TERMINACION3
+                    Case m_array(4): color = COLOR_TERMINACION4
+                End Select
             End If
-            
+            If color > 0 Then
+                ColoreaCelda m_rgFila.Cells(1, i), color
+            End If
         Next i
+        '
+        '   Colorear Reintegro
+        '
+        If JUEGO_DEFECTO = GordoPrimitiva Then
+            i = 12
+            color = 0
+            If (IsNumeric(m_rgFila.Cells(1, i).Value)) Then
+                m_valor = m_rgFila.Cells(1, i).Value
+            Else
+                m_valor = 0
+            End If
+            If m_valor = oSorteo.Reintegro Then
+                color = COLOR_TERMINACION9
+                ColoreaCelda m_rgFila.Cells(1, i), color
+            End If
+        End If
         '
         '   Colorear estrellas
         '
@@ -215,7 +240,7 @@ Private Sub cmd_color_combinacion(vNewData As Apuesta)
         Case Bonoloto, LoteriaPrimitiva:
             ColIni = 6
             ColFin = 12
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             ColIni = 7
             ColFin = 11
         Case Euromillones:
@@ -300,7 +325,7 @@ Private Sub cmd_color_caracteristicas(vNewData As Integer)
         Case Bonoloto, LoteriaPrimitiva:
             ColIni = 6
             ColFin = 12
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             ColIni = 7
             ColFin = 11
         Case Euromillones:

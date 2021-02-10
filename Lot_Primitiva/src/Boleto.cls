@@ -21,6 +21,8 @@ Attribute VB_Exposed = True
 Option Explicit
 Option Base 0
 
+' #TODO: Incluir un metodo para evaluar el contenido del boleto y las apuestas
+'        IsValid
 '--- Variables Privadas -------------------------------------------------------*
 Private m_iId As Integer
 Private m_iSemana As Integer
@@ -284,7 +286,7 @@ Public Sub Constructor(Fila As Range)
             m_sNotas = .Cells(1, 16).Value
         End With
         
-    Case gordoPrimitiva:
+    Case GordoPrimitiva:
         With Fila
             m_iId = .Cells(1, 1).Value
             m_sJuego = .Cells(1, 2).Value
@@ -328,7 +330,7 @@ Public Sub Constructor(Fila As Range)
     Select Case m_sJuego
         Case "BL":          Juego = Bonoloto
         Case "LP":          Juego = LoteriaPrimitiva
-        Case "GP":          Juego = gordoPrimitiva
+        Case "GP":          Juego = GordoPrimitiva
         Case "EU":          Juego = Euromillones
     End Select
     
@@ -394,10 +396,18 @@ Public Sub SetApuestas()
         Call HandleException(999, "Error, Boleto (" & CStr(m_iId) & ") sin apuestas. Fecha:" & Format(Me.FechaValidez, "dd/MM/yyyy"), _
         "Boleto.SetApuestas", "Boleto.SetApuestas")
     End If
-    
-  
-  
-  
+    '
+    '   Si hay una apuesta y es múltiple el boleto es multiple y las apuest
+    '
+    If Apuestas.Count = 1 Then
+        If oApt.EsMultiple Then
+            m_bMultiple = True
+            m_iNumeroApuestas = oApt.NumeroApuestas
+        End If
+    Else
+        m_iNumeroApuestas = Apuestas.Count
+    End If
+
   
   On Error GoTo 0
     Exit Sub

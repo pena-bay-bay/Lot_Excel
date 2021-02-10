@@ -1,0 +1,399 @@
+'------------------------------------------------------------------------------*
+'	File : Notas_GeneradorPullSugerencias.txt
+'	Date : 16/12/2020 00:22
+'	Owner: Carlos Almela Baeza
+'	Subject: Documentación completa de un requisito completo. 
+'   Fases: Definición de requisito, Análisis de Requisito, diseño de interfaz 
+'          de usuario, modelado de estructuras, modelado de procesos, desarrollo
+'          de componentes, testing e implementación, censo de componentes.
+'------------------------------------------------------------------------------*
+
+
+A.- Requisito "Generar Pull de Apuestas óptimas"
+	Trabajar con una colección de números de un determinado juego, y a partir de
+	estos números generaremos todas las combinaciones posibles tomando n números,
+	en principio 6 pero pueden ser más o menos número, por ejemplo 7 u 8.
+	
+	Después de generar todas las combinaciones se configurarán una serie de 
+	filtros para que eliminemos las combinaciones que no se	ajusten a los 
+	patrones de combinación definidos.
+	
+	Una vez filtradas las combinaciones se enfrentan a un subconjunto de sorteos
+	del juego para determinar una puntuación de cada combinación, basada en los 
+	numeros acertados y premios obtenidos con el subconjunto de sorteos. Después 
+	de evaluar todas las combinaciones seleccionadas se seleccionan aquellas que 
+	obtengan cierta puntuación para reducir el número de combinaciones que 
+	serán apostadas en el ciclo.
+	
+	Despues de la selección de apuestas mejor valoradas con el subconjunto de 
+	sorteos se comprueba el resultado enfrentando estas combinaciones al resultado
+	del sorteo para el que se evaluan (este sorteo es el siguiente al del 
+	subconjunto	de sorteos).
+	
+	Finalmente obtenemos una estadistica de las combinaciones seleccionadas para
+	el juego y se evaluará el coste frente a los importes obtenidos.
+	
+	El ciclo de generación de pull sería:
+		1.- Seleccion de subconjunto de números. 
+		2.- Generación de combinaciones posibles.
+		3.- Filtrado de combinaciones para reducción.
+		4.- Evaluación de combinaciones reducidas.
+		5.- Selección de combinaciones mejor valoradas.
+		6.- Comprobación de combinaciones valoradas.
+	
+'------------------------------------------------------------------------------*
+B.- Análisis de requisitos.	
+
+	B.1	El primer requisito es generar todas las combinaciones posibles con un 
+		subconjunto de numeros entre 1 y 54 (según el juego) tomados de 5 en 5, 
+		de 6 en 6, o con otras combinaciones no mayores a 11 numeros (5..11)
+		
+	B.2	El segundo requisito es aplicar uno o varios filtros de selección a las
+		combinaciones generadas de manera que si no se cumplen los patrones de
+		filtrado 
+	
+	B.3 Naturaleza de los filtros
+	B.4 Evaluación de combinaciones
+	B.5 
+
+
+
+'------------------------------------------------------------------------------*
+C.- Diseño de interfaz de usuario
+Vistas: 
+	1.- Fase001 (Worksheet) colección de números del sorteo.
+	2.- Fase002 (Worksheet) Lista de combinaciones posibles.
+	3.- Fase003 (Worksheet) Configurador de filtros
+	4.- Fase004 (Worksheet) Lista de combinaciones filtradas.
+	5.- Fase005 (Worksheet) Lista de sorteos para evaluar.
+	6.- Fase006 (Worksheet) Lista de combinaciones evaluadas.
+	7.- Fase007 (Worksheet) Sorteo para comprobar.
+	8.- Fase008 (Worksheet) Lista de combinaciones comprobadas.
+
+
+1.- Fase001 
+  Objetivo:
+		Capturar los numeros definidos en el área de entrada, verificarlos 
+		para el juego definido y generar todas las combinaciones posibles.
+			
+  Variables:
+		1. Juego: (string) { Bonoloto, Loteria Primitiva, Gordo Primitiva, 
+							 Euromillones}
+		2. Números de sugerencia: (entero entre 5 y 11) segun el juego
+		3. Total Numeros: Entero (suma de numeros candidatos para la sugerencia)
+		4. Total Combinaciones: Entero (cálculo de las combinaciones de 
+			M números tomados de n en n) 
+			 = FACT(TotalNumeros)/
+			  (FACT(TotalNumeros-Numeros Sugerencia)*FACT(Numeros Sugerencia))
+		5. Generadas: (entero) Combinaciones generadas
+		6. Numeros: (matriz de enteros desde 1 a 54) según el juego
+		7. Estrellas: (matriz de enteros entre 1 y 12) 
+  Procesos:
+	1. [Generar] -->Sub GenerarCombinaciones()
+
+2.- Fase002.
+	  Objetivo: 
+		Lista de combinaciones posibles.
+	  
+	  Variables:
+		N: Id de la combicion
+		Combinacion: Formula de numeros 
+		Paridad: Formula de paridad de la combinación (pares/impares)
+		Peso: Fórmula de peso de la combicion (bajos/altos) (1..25/26..49)
+		Consecutivos: Formula de números consecutivos
+		Decenas: Formula de numeros de cada decena (1..10, 11..20, 21..30, 31..40, 41..49)	
+		Septenas: Formula de numeros de cada septena (1..7, 8..14, 15..21, 22..35, 36..42, 43..49)		
+		Suma: Suma de todos los numeros, incluido el complementario	
+		Terminaciones: Formula de terminación de los numeros de la combicion (0..9) 
+
+3.- Fase003
+	  Objetivo:
+			Filtrar todas las combinaciones según los filtros indicados en la 
+			colección de filtros
+	  Variables:
+		1.- Numero de sugerencias: (entero entre 5 y 11) segun el juego
+		2.- Tipo de Filtro: Selector de tipo de filtro {Paridad, Peso, Consecutivos, 
+			Decenas, Septenas, Suma, Terminaciones}
+		3.- Valor del filtro: Fórmula de combicion segun el filtro y el número de 
+			sugerencias
+		4.- Lista de filtros: matriz de formulas con los filtros seleccionados
+			La lista atiende a sentencias OR para filtros del mismo tipo y AND para
+			filtros de distinto tipo
+
+	  Procesos:
+		1.- [Filtrar] 			--> Sub FiltrarCombinaciones()
+		2.- [Agregar Filtro] 	--> Sub AgregarFiltro
+		3.- [Borrar Filtros] 	--> Sub BorrarFiltros
+	  
+4.- Fase004
+	  Objetivo
+			Lista de combinaciones filtradas
+	  
+	  Variables:
+		N: Id de la combicion
+		Combinacion: Formula de numeros 
+		Paridad: Formula de paridad de la combinación (pares/impares)
+		Peso: Fórmula de peso de la combicion (bajos/altos) (1..25/26..49)
+		Consecutivos: Formula de números consecutivos
+		Decenas: Formula de numeros de cada decena (1..10, 11..20, 21..30, 31..40, 41..49)	
+		Septenas: Formula de numeros de cada septena (1..7, 8..14, 15..21, 22..35, 36..42, 43..49)		
+		Suma: Suma de todos los numeros, incluido el complementario	
+		Terminaciones: Formula de terminación de los numeros de la combicion (0..9) 
+
+5.- Fase005
+	  Objetivo:
+			Evaluar las combinaciones filtradas contra un subconjunto de sorteos ya celebrados
+			para seleccionar aquellas combinaciones que en conjunto tienen más aciertos o premios 
+			en el subconjunto de sorteos. La puntuacion está en proporción primero al numero  de
+			numeros acertados y despues en función del premio conseguido, de forma que la combinación
+			que mas numeros acierte con el subconjunto de sorteos tendrá una mayor puntuacion que 
+			aquellas que no acierte con ninguno (ejemplo si una combinación acierta un numero en todos 
+			y cada uno de los sorteos de muestra, tendrá una puntuación superios a aquella que no 
+			acierte ninguno de los numeros en la muestra de sorteos -- puntuación = 0)
+	  Variables:
+		1.- Lista de sorteos para evaluar.
+			Datos del sorteo:
+				N: Id del sorteo	
+				Sorteo: Numero de sorteo en el año	
+				Fecha: Fecha del sorteo	
+				Dia: Dia de la semana	
+				Sem: Semana del año	
+				N1: Bola aparecida en primer lugar	
+				N2: Bola aparecida en segundo lugar	
+				N3: Bola aparecida en tercer lugar	
+				N4: Bola aparecida en cuarto lugar	
+				N5: Bola aparecida en quinto lugar	
+				N6: Bola aparecida en sexto lugar	
+				C: Bola aparecida como complementario
+				R: Bola aparecida como reintegro del boleto
+				Ord: Indicador de ordenación de salida de las bolas	
+				Premios: Lista de importe de los premios segun las categorias
+
+	  Procesos:
+		1.- [Evaluar] --> Sub EvaluarCombinaciones()
+
+
+
+	
+'------------------------------------------------------------------------------*
+D. Modelado de estructuras.
+	1.- frmProgreso (Clase)
+	  Propiedades:
+		- lblFase			(Label)		Etiqueta de la fase
+		- lblPorcentaje     (Label)		Etiqueta del porcentaje
+		- lblTiempos		(Label)		Etiqueta del tiempo empleado
+		- imgBarraGris		(Image)		Barra de progreso 
+		- imgBarraFondo     (Image)		Fondo de la barra de progreso 
+		- cmdClose			(CommandButton) Boton de cierre del formulario
+		- m_dbPorcentaje	(Double)  	Porcentaje del proceso
+		- m_iMaximo			(Long)	  	Numero máximo de Items del proceso
+		- m_iValor        	(Long)	  	Valor actual del Item del proceso	
+		- m_longMax       	(Double)	Tamaño de la barra de progreso
+		- m_sLabel        	(String)	área temporal de la etiqueta
+		- m_slblFase      	(String)	área temporal del literal de la fase
+		- m_sFase           (String)	Literal de la fase
+		- m_slblTiempo    	(String)	área temporal del literal del tiempo 
+		- m_dInicio       	(Date)		Fecha y hora del inicio del proceso
+		- m_dFin          	(Date)		Fecha y hora del final del proceso
+		- m_dDuracion     	(Date)		Duración del proceso	
+		- FRM_HEIGHT_MIN 	(Integer = 110) Altura Mínima del formulario
+		- FRM_HEIGHT_MAX 	(Integer = 140)	Altura Máxima del formulario
+		+ Maximo			(Long)		Total de Items del proceso
+		+ Valor				(Long)		Current Item del proceso
+		+ Fase				(String)	Literal de la fase 
+	  Metodos:
+		- CalPorcentaje()			Calculo del porcentaje del proceso
+		- SetGraficos()				Redibujar barra de progreso y porcentaje
+		- cmdClose_Click()			Evento del boton de cierre
+		- UserForm_Initialize()		Evento de inicialización del formulario
+		+ DisProceso()				Proceso de visualización del tiempo total
+	
+	2.-CU_GenerarPullCombinaciones.bas (Modulo)
+	  Variables:
+		- GenCtrl 			(GenPullCombinacionesController) Controlador del proceso
+		+ NOMBRES_TIPOS_FILTRO (String) Nombres de los tipos de filtro
+		+ TipoFiltro		(Enum) 	Lista de los tipos de filtro
+		
+	  Rutinas:
+		+ AgregarFiltro()			Agrega un filtro a la lista de filtros
+		+ BorrarFiltros()			Borra el listado de filtros para la generación
+		+ ComprobarCombinaciones()  Comprueba las combinaciones seleccionadas 
+									con el sorteo resultantes
+		+ EvaluarCombinaciones()	Evalua las combinaciones filtradas con los 
+									sorteos definido y asignarles una puntuacion
+		+ FiltrarCombinaciones()	Aplica los filtros de a las combinaciones 
+									generadas
+		+ GenerarCombinaciones()	Genera todas las combinaciones posibles 
+									con un subconjunto de números.
+		+ GenerarFiltros() 			Generar todas las combinaciones de filtro 
+									posibles para un tipo de filtro 
+	3.- Lot_Constantes.bas (Modulo)
+	4.- Lot_ErrorHandling.bas (Modulo)
+	5.- Lot_Funciones.bas (Modulo)
+	6.- Test_GenerarPullCombinaciones.bas (Modulo) 
+	  Rutinas:
+		- FrmProgresoTesting()		Testing del formulario de progreso
+		- GenPullCombinacionesViewTesting() Testing del objeto 
+									GenPullCombinacionesView
+		- Print_GenPullCombinacionesView() Impresión de propiedades del objeto	
+									GenPullCombinacionesView
+									
+									
+'------------------------------------------------------------------------------*
+E. Modelado de Procesos
+	
+	
+		Vista		-- Controlador   -- Modelo
+
+'------------------------------------------------------------------------------*
+F. Desarrollo de componentes
+
+	+---- Clase GenPullCombinacionesView --------+
+	+-Propiedades--------------------------------+
+	| +NumSugerencias (Int)	                     |
+	| +RangoSalida (Range)	                     | 	
+	| +RangoSalidaFiltros (Range)	             | 	
+	| +RangoSalidaEvaluadas  (Range)	         | 	
+	| +RangoSalidaComprobacion (Range)			 |
+	| +TotalNumeros (Int)	                     |
+	| +TotalCombinaciones (Long)	             |
+	| +TotalFiltros(Long)						 |
+	| +CombinacionesGeneradas (Long)	         |
+	| +CombinacionesFiltradas (Long)	         |
+	| +CombinacionesEvaluadas (Long)	         |
+	| +TipoFiltro (String)	                     |
+	| +ValorFiltro (String)	                     |
+	| +RegistrosComprobados (Long)      		 |
+	| +RegistrosPremiados (Long)		     	 |
+	| +TotalCoste (Currency)					 |
+	| +TotalImporte (Currency)					 |
+	|                                            |
+	+-Metodos------------------------------------+
+	| +ClearSalidaFiltros()                      |
+	| +ClearSalidaEvaluacion()                   |
+	| +GetParametrosProceso() (Model)            |
+	| +ClearSalida()	                     	 |
+	| +ClearSalidaComprobacion()                 |
+	| +AgregarFiltro()	                     	 |
+	| -GetFiltros()(Variant) 					 |
+	| -GetNumeros()(Variant) 					 |
+	| +GetSorteos()(Variant) 					 |
+	| +GetCombinacionGanadora()(Variant)         |
+	| +BorrarFiltros()	                     	 |
+	| +SetFiltros()	                     		 |
+	|                                            |
+	+--------------------------------------------+
+	
+	
+	
+	+---- Clase GenPullCombinacionesController --+
+	+-Propiedades--------------------------------+
+	| -mModel(GenPullCombinacionesModel)		 |
+	| -mView(GenPullCombinacionesView) 			 |	
+	+-Metodos------------------------------------+
+	| +GenerarCombinaciones()	                 |
+	| +GenerarFiltros()	                     	 |
+	| +AgregarFiltro()	                     	 |
+	| +BorrarFiltros()	                     	 |
+	| +FiltrarCombinaciones()	                 |
+	| +EvaluarCombinaciones()	                 |
+	| +ComprobarCombinaciones()					 |
+	+--------------------------------------------+
+	
+	
+	+---- Clase GenPullCombinacionesModel -------+
+	+-Propiedades--------------------------------+
+	| +MatrizNumeros (Variant)					 |	
+	| +TotRegComprobados (Long)					 |
+	| +TotRegPremiados (Long)					 |
+	| +TotCoste (Currency)						 |
+	| +TotImportePremios(Currency)				 |	
+	| +NumerosSugerencia (integer)				 |
+	| +TotalNumerosCombinar	(integer)			 |
+	| +TotalCombinaciones (Long)				 |
+	| +Filtros (Variant)				 		 |
+	| +Sorteos (Variant)				 		 |
+	| +CombinacionGanadora (Variant)			 |
+	| +FaseProceso (String)					 	 |
+	|							 				 |
+	+-Metodos------------------------------------+
+	| -SetNumerosToColleccion()					 |	 
+	| -SetFiltrosToColleccion()					 |	 
+	| -SetSorteosToCollection()					 |	 
+	| -SetCmbnGndrToSorteo()					 |	 
+	| -IncrementarMatriz()					     |	 
+	| +GetFiltrosOf() (Variant)					 |	 
+	| +IsValid()								 |	 
+	| +GetMessage()								 |	
+	| +GenerarCombinaciones()	                 |
+	| +FiltrarCombinaciones()	                 |
+	| +EvaluarCombinaciones()	                 |
+	| +ComprobarCombinaciones()					 |
+	+--------------------------------------------+
+	
+	+---- Sugerencia ----------------------------+
+	+-Propiedades--------------------------------+
+	| +Entidad (EntidadNegocio)					 |
+	| +Metodo (String)							 |
+	| +Parametros (String)						 |
+	| +Modalidad (ModalidadJuego)				 |
+	| +Modalidad (ModalidadJuego)				 |
+	| +Combinacion (Combinacion)				 |
+	| +Estrellas (Combinacion)				 	 |
+	| +Reintegro (Integer)						 |
+	| +Coste (Currency)							 |
+	+-Metodos------------------------------------+
+	| +IsValid() (Boolean)						 |
+	| +GetMensaje() (String)					 |
+	| +ToString() (String)						 |
+	| +Sort()									 |
+	+--------------------------------------------+
+
+
+
+	+---- ComprobarSugerencia -------------------+	
+	+-Propiedades--------------------------------+
+	| + 
+	+-Metodos------------------------------------+
+	+--------------------------------------------+
+	
+	
+'------------------------------------------------------------------------------*
+G. Testing e implementación.
+
+	La implementación se realiza en el libro "CU_GeneradorPullSugerencias.xlsm"
+	definiendo la interfaz de usuario en las hojas del libro y la lógica de 
+	negocio en 
+	
+'------------------------------------------------------------------------------*
+H. Censo de componentes
+	Formularios
+		1. frmProgreso.frm
+		
+	Modulos
+		1. CU_GenerarPullCombinaciones.bas 
+		2. Lot_Constantes.bas
+		3. Lot_ErrorHandling.bas
+		4. Lot_Funciones.bas
+		5. Test_GenerarPullCombinaciones.bas
+		
+	Clases
+		1. Numeros
+		2. Combinacion
+		3. FiltroCombinacion
+		4. FiltrosCombinacion
+		5. GenPullCombinacionesController
+		6. GenPullCombinacionesView
+		7. GenPullCombinacionesModel
+		8. Sorteo
+		9. Sorteos
+		10. Sugerencia
+		11. EntidadNegocio
+		12. Hoja5
+		13. Premio
+		14. Premios
+  
+  
+  
+'------------------------------------------------------------------------------*
+'	EOF  : Notas_GeneradorPullSugerencias.txt

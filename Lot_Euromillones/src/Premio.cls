@@ -9,516 +9,417 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 ' *============================================================================*
 ' *
-' *     Fichero    : Premio
+' *     Fichero    : Premio.cls
 ' *
 ' *     Autor      : Carlos Almela Baeza
-' *     Creación   : dom, 12/04/2009 22:47
-' *     Versión    : 1.0
-' *     Propósito  :
-' *
+' *     Creación   : do., 06/abr/2014 00:00:00
+' *     Modificado : ma., 14/jul/2020 18:49:45
+' *     Versión    : 1.1
+' *     Propósito  : Representa la clase datos de un premio de un sorteo
 ' *
 ' *============================================================================*
 Option Explicit
 Option Base 0
-Public key As String
-Public BolasAcertadas As Integer
-Public ComplementarioAcertado As Boolean
-Public ClaveAcertada As Boolean
-Public NumeroEstrellasAcertadas As Integer
-Public FechaSorteo As Date
-Public ModalidadJuego As Juego
-Public Pronosticos As Integer
-Private m_eNumerosAcertados As TiposAciertos
-'
-'
-'
-Private TablaMultiples(5) As Variant 'Coordenadas Aciertos / apuestas Premio ver Boleto
-Private ImportesPremiosBL As Variant
-Private ImportesPremiosLP As Variant
-Private ImportesPremiosEU As Variant
-Private ImportesPremiosGP As Variant
-Private m_eCategoriaPremio As CategoriaPremio
-Private m_sCategoriaPremio As String
+'---------------------------------------------------------------------------------------
+' Module    : Premio
+' Author    : CHARLY
+' Date      : 06/04/2014
+' Purpose   :
+'---------------------------------------------------------------------------------------
 
-' *============================================================================*
-' *     Procedure  : GetPremioEsperado
-' *     Fichero    : Premio
-' *     Autor      : Carlos Almela Baeza
-' *     Creacion   : dom, 12/04/2009
-' *     Asunto     :
-' *============================================================================*
 '
-Public Function GetPremioEsperado() As Currency
-    Dim i As Integer, j As Integer
-    Dim cResult As Currency
-    Dim vImportes As Variant, vVar As Variant
-  On Error GoTo GetPremioEsperado_Error
+' Propiedades Públicas
+'
+Public Id As Integer                        ' Identificador unico en la colección
+Public CategoriaPremio As CategoriaPremio   ' Codigo de caegoria de premio
+Public NumeroAcertantesEspaña As Long       ' Numero de acertantes
+Public NumeroAcertantesEuropa As Long       ' Numero de acertantes en europa
+Public Importe As Currency                  ' Importe del premio
+Public Juego As Juego                       ' Concurso
+'
+'  Variables privadas
+'
+Private m_sCategoriaTexto As String
+Private m_error As Integer
+
+'---------------------------------------------------------------------------------------
+' Procedure : CategoriaTexto
+' Author    : CHARLY
+' Date      : 06/04/2014
+' Purpose   :
+'---------------------------------------------------------------------------------------
+'
+Public Property Get CategoriaTexto() As String
+
+   On Error GoTo CategoriaTexto_Error
     '
-    '   Seleccionar la matriz de importes segun la modalidad del juego
+    '   Segun el juego interpretamos la categoría
     '
-    If ModalidadJuego = Bonoloto Then
-        vImportes = ImportesPremiosBL
-    Else
-        If ModalidadJuego = LoteriaPrimitiva Then
-            vImportes = ImportesPremiosLP
-        End If
-    End If
-    '
-    '
-    '
-    If Pronosticos <> 6 Then
+    Select Case Me.Juego
+        Case Bonoloto
+            Select Case Me.CategoriaPremio
+                Case Primera: m_sCategoriaTexto = "1ª (6 Aciertos)"
+                Case Segunda: m_sCategoriaTexto = "2ª (5 Aciertos + C)"
+                Case Tercera: m_sCategoriaTexto = "3ª (5 Aciertos)"
+                Case Cuarta: m_sCategoriaTexto = "4ª (4 Aciertos)"
+                Case Quinta: m_sCategoriaTexto = "5ª (3 Aciertos)"
+                Case Reintegro: m_sCategoriaTexto = "Reintegro"
+                Case Else: m_sCategoriaTexto = "Ninguna"
+            End Select
         
-        '
-        '   Se selecciona la matriz para juego multiples pronosticos
-        '
-        CargaTablaMultiples
-        '
-        '
-        '
-        For i = 0 To UBound(TablaMultiples)
-            vVar = TablaMultiples(i)
-            If (vVar(0) = Me.NumerosAcertados) Then
-                
-                For j = 1 To 5
-                    '  El acumulador de importes = Numero de apuestas por el precio de la apuesta
-                    cResult = cResult + (vVar(j) * vImportes(j - 1))
-                Next j
-            End If
-        Next i
-    Else
-        Select Case Me.CategoriaPremio
-            Case Especial, Primera: cResult = vImportes(0)
-            Case Segunda: cResult = vImportes(1)
-            Case Tercera: cResult = vImportes(2)
-            Case Cuarta: cResult = vImportes(3)
-            Case Quinta: cResult = vImportes(4)
-        End Select
-    End If
+        Case LoteriaPrimitiva
+            Select Case Me.CategoriaPremio
+                Case Especial: m_sCategoriaTexto = "Especial (6 Aciertos + R)"
+                Case Primera: m_sCategoriaTexto = "1ª (6 Aciertos)"
+                Case Segunda: m_sCategoriaTexto = "2ª (5 Aciertos + C)"
+                Case Tercera: m_sCategoriaTexto = "3ª (5 Aciertos)"
+                Case Cuarta: m_sCategoriaTexto = "4ª (4 Aciertos)"
+                Case Quinta: m_sCategoriaTexto = "5ª (3 Aciertos)"
+                Case Reintegro: m_sCategoriaTexto = "Reintegro"
+                Case Else: m_sCategoriaTexto = "Ninguna"
+            End Select
+            
+        Case Euromillones
+            Select Case Me.CategoriaPremio
+                Case Primera: m_sCategoriaTexto = "1ª 5 + 2"
+                Case Segunda: m_sCategoriaTexto = "2ª 5 + 1"
+                Case Tercera: m_sCategoriaTexto = "3ª 5 + 0"
+                Case Cuarta: m_sCategoriaTexto = "4ª 4 + 2"
+                Case Quinta: m_sCategoriaTexto = "5ª 4 + 1"
+                Case Sexta: m_sCategoriaTexto = "6ª 4 + 0"
+                Case Septima: m_sCategoriaTexto = "7ª 3 + 2"
+                Case Octava: m_sCategoriaTexto = "8ª 2 + 2"
+                Case Novena: m_sCategoriaTexto = "9ª 3 + 1"
+                Case Decima: m_sCategoriaTexto = "10ª 3 + 0"
+                Case Undecima: m_sCategoriaTexto = "11ª 1 + 2"
+                Case Duodecima: m_sCategoriaTexto = "12ª 2 + 1"
+                Case Trigesimotercera: m_sCategoriaTexto = "13ª 2 + 0"
+                Case Else: m_sCategoriaTexto = "Ninguna"
+            End Select
+         
+        Case GordoPrimitiva
+            Select Case Me.CategoriaPremio
+                Case Primera: m_sCategoriaTexto = "1ª (5 + 1)"
+                Case Segunda: m_sCategoriaTexto = "2ª (5 + 0)"
+                Case Tercera: m_sCategoriaTexto = "3ª (4 + 1)"
+                Case Cuarta: m_sCategoriaTexto = "4ª (4 + 0)"
+                Case Quinta: m_sCategoriaTexto = "5ª (3 + 1)"
+                Case Sexta: m_sCategoriaTexto = "6ª (3 + 0)"
+                Case Septima: m_sCategoriaTexto = "7ª (2 + 1)"
+                Case Octava: m_sCategoriaTexto = "8ª (2 + 0)"
+                Case Reintegro: m_sCategoriaTexto = "Reintegro"
+                Case Else: m_sCategoriaTexto = "Ninguna"
+            End Select
         
-    GetPremioEsperado = cResult
+        Case Else
+            m_sCategoriaTexto = "Ninguna"
+    End Select
+    
+    CategoriaTexto = m_sCategoriaTexto
+
+   On Error GoTo 0
+   Exit Property
+
+CategoriaTexto_Error:
+   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+   Call HandleException(ErrNumber, ErrDescription, "Premio.CategoriaTexto")
+   Err.Raise ErrNumber, ErrSource, ErrDescription
+End Property
+
+
+
+
+'---------------------------------------------------------------------------------------
+' Procedure : Class_Initialize
+' Author    : CHARLY
+' Date      : 06/04/2014
+' Purpose   :
+'---------------------------------------------------------------------------------------
+'
+Private Sub Class_Initialize()
+    Me.CategoriaPremio = Ninguna
+    Me.Importe = 0
+    Me.NumeroAcertantesEuropa = 0
+    Me.NumeroAcertantesEspaña = 0
+    Me.Juego = JUEGO_DEFECTO
+End Sub
+
+'---------------------------------------------------------------------------------------
+' Procedure : EsValido
+' Author    : CHARLY
+' Date      : 06/04/2014
+' Purpose   :
+'---------------------------------------------------------------------------------------
+'
+Public Function EsValido() As Boolean
+    Dim bResult As Boolean
+
+   On Error GoTo EsValido_Error
+    m_error = 0
+    
+    If Me.CategoriaPremio = Ninguna Then
+        m_error = m_error + 1
+    End If
+    
+    If Me.Juego = 0 Then
+        m_error = m_error + 2
+    End If
+    
+    If m_error > 0 Then
+        bResult = False
+    Else
+        bResult = True
+    End If
+    
+    EsValido = bResult
 
    On Error GoTo 0
    Exit Function
 
-GetPremioEsperado_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+EsValido_Error:
+   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premio.GetPremioEsperado")
-   '   Lanza el Error
+   Call HandleException(ErrNumber, ErrDescription, "Premio.EsValido")
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Function
 
+
+
+
 '---------------------------------------------------------------------------------------
-' Procedure : CategoriaPremio
-' Author    : Charly
-' Date      : 24/11/2013
+' Procedure : ToString
+' Author    : CHARLY
+' Date      : 06/04/2014
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Public Property Get CategoriaPremio() As CategoriaPremio
-
-  On Error GoTo CategoriaPremio_Error
-    m_eCategoriaPremio = Ninguna
-    '
-    '   Seleccionar modalidad del juego
-    '
-    Select Case ModalidadJuego
-        Case Bonoloto
-            Select Case BolasAcertadas
-                Case 7:
-                    m_eCategoriaPremio = Primera
-                    NumerosAcertados = SeisAciertos
-                
-                Case 6:
-                    If ComplementarioAcertado Then
-                        m_eCategoriaPremio = Segunda
-                        NumerosAcertados = CincoAciertosMasC
-                    Else
-                        m_eCategoriaPremio = Primera
-                        NumerosAcertados = SeisAciertos
-                    End If
-
-                   
-                Case 5:
-                    If ComplementarioAcertado Then
-                        m_eCategoriaPremio = Cuarta
-                        NumerosAcertados = CuatroAciertos
-                    Else
-                        m_eCategoriaPremio = Tercera
-                        NumerosAcertados = CincoAciertos
-                    End If
-                
-                Case 4:
-                    If ComplementarioAcertado Then
-                        m_eCategoriaPremio = Quinta
-                        NumerosAcertados = TresAciertos
-                    Else
-                        m_eCategoriaPremio = Cuarta
-                        NumerosAcertados = CuatroAciertos
-                    End If
-                
-                Case 3:
-                    If ComplementarioAcertado Then
-                        m_eCategoriaPremio = Ninguna
-                        NumerosAcertados = TresAciertos
-                    Else
-                        m_eCategoriaPremio = Quinta
-                        NumerosAcertados = TresAciertos
-                    End If
-            End Select
-            
-        Case LoteriaPrimitiva
-            Select Case BolasAcertadas
-                Case 7:
-                    If ComplementarioAcertado Then
-                        m_eCategoriaPremio = Especial
-                        NumerosAcertados = SeisAciertosMasC
-                    Else
-                        m_eCategoriaPremio = Primera
-                        NumerosAcertados = SeisAciertos
-                    End If
-                    
-                Case 6:
-                    If ComplementarioAcertado Then
-                        m_eCategoriaPremio = Segunda
-                        NumerosAcertados = CincoAciertosMasC
-                    Else
-                        m_eCategoriaPremio = Primera
-                        NumerosAcertados = SeisAciertos
-                    End If
-
-                   
-                Case 5:
-                    If ComplementarioAcertado Then
-                        m_eCategoriaPremio = Cuarta
-                        NumerosAcertados = CuatroAciertos
-                    Else
-                        m_eCategoriaPremio = Tercera
-                        NumerosAcertados = CincoAciertos
-                    End If
-                
-                Case 4:
-                    If ComplementarioAcertado Then
-                        m_eCategoriaPremio = Quinta
-                        NumerosAcertados = TresAciertos
-                    Else
-                        m_eCategoriaPremio = Cuarta
-                        NumerosAcertados = CuatroAciertos
-                    End If
-                
-                Case 3:
-                    If ComplementarioAcertado Then
-                        m_eCategoriaPremio = Ninguna
-                        NumerosAcertados = TresAciertos
-                    Else
-                        m_eCategoriaPremio = Quinta
-                        NumerosAcertados = TresAciertos
-                    End If
-            End Select
-
-        Case gordoPrimitiva
-            Select Case BolasAcertadas
-                Case 5:
-                    If ClaveAcertada Then
-                        m_eCategoriaPremio = Primera
-                    Else
-                        m_eCategoriaPremio = Segunda
-                    End If
-                Case 4:
-                    If ClaveAcertada Then
-                        m_eCategoriaPremio = Tercera
-                    Else
-                        m_eCategoriaPremio = Cuarta
-                    End If
-                Case 3:
-                    If ClaveAcertada Then
-                        m_eCategoriaPremio = Quinta
-                    Else
-                        m_eCategoriaPremio = Sexta
-                    End If
-                Case 2:
-                    If ClaveAcertada Then
-                        m_eCategoriaPremio = Septima
-                    Else
-                        m_eCategoriaPremio = Octava
-                    End If
-            End Select
-            
-        Case Euromillones
-            Select Case BolasAcertadas
-            Case 5:
-                Select Case NumeroEstrellasAcertadas
-                    Case 2: m_eCategoriaPremio = Primera
-                    Case 1: m_eCategoriaPremio = Segunda
-                    Case Else: m_eCategoriaPremio = Tercera
-                End Select
-            Case 4:
-                Select Case NumeroEstrellasAcertadas
-                    Case 2: m_eCategoriaPremio = Cuarta
-                    Case 1: m_eCategoriaPremio = Quinta
-                    Case Else: m_eCategoriaPremio = Sexta
-                End Select
-            Case 3:
-                Select Case NumeroEstrellasAcertadas
-                    Case 2: m_eCategoriaPremio = Septima
-                    Case 1: m_eCategoriaPremio = Novena
-                    Case Else: m_eCategoriaPremio = Decima
-                End Select
-            Case 2:
-                Select Case NumeroEstrellasAcertadas
-                    Case 2: m_eCategoriaPremio = Octava
-                    Case 1: m_eCategoriaPremio = Duodecima
-                    Case Else: m_eCategoriaPremio = Trigesimotercera
-                End Select
-            Case 1:
-                Select Case NumeroEstrellasAcertadas
-                    Case 2: m_eCategoriaPremio = Undecima
-                End Select
-            End Select
-        Case Else
-            m_eCategoriaPremio = Ninguna
-    End Select
+Public Function ToString() As String
+    Dim sResult As String
+    Dim mVar As Variant
+    Dim sTexto As String
    
-    CategoriaPremio = m_eCategoriaPremio
+  On Error GoTo ToString_Error
+    If Me.EsValido Then
+        If Juego = Euromillones Then
+            sResult = "Juego: $0, Categoria: $1 = $2, Importe: $3 Euros, Acertantes: $4 Esp y $5 Eur"
+        Else
+            sResult = "Juego: $0, Categoria: $1 = $2, Importe: $3 Euros, Acertantes: $4"
+        End If
+        '
+        ' Juego
+        '
+        mVar = Split(NOMBRE_JUEGOS, ";")
+        sTexto = mVar(Me.Juego - 1)
+        sResult = Replace(sResult, "$0", sTexto)
+        '
+        ' Categoria
+        '
+        sResult = Replace(sResult, "$1", Me.CategoriaPremio)
+        sResult = Replace(sResult, "$2", Me.CategoriaTexto)
+        '
+        ' Importe
+        '
+        sResult = Replace(sResult, "$3", Str(Me.Importe))
+        sResult = Replace(sResult, "$4", Me.NumeroAcertantesEspaña)
+        sResult = Replace(sResult, "$5", Me.NumeroAcertantesEuropa)
+    Else
+        sResult = "#Premio no valido"
+    End If
+    
+    ToString = sResult
 
-   On Error GoTo 0
-   Exit Property
-
-CategoriaPremio_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+  On Error GoTo 0
+   Exit Function
+ToString_Error:
+   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premio.CategoriaPremio")
-   '   Lanza el Error
+   Call HandleException(ErrNumber, ErrDescription, "Premio.ToString")
    Err.Raise ErrNumber, ErrSource, ErrDescription
+End Function
 
-End Property
 
-' *============================================================================*
-' *     Procedure  : Class_Initialize
-' *     Fichero    : Premio
-' *     Autor      : Carlos Almela Baeza
-' *     Creacion   : dom, 12/04/2009
-' *     Asunto     :
-' *============================================================================*
+
+
+'---------------------------------------------------------------------------------------
+' Procedure : Parse
+' Author    : CHARLY
+' Date      : 18/05/2014
+' Purpose   :
+'---------------------------------------------------------------------------------------
 '
-Private Sub Class_Initialize()
-    '
-    '   Importes médios de la Bonoloto para las categorias 1ª, 2ª, 3ª, 4ª y 5ª
-    '
-    ImportesPremiosBL = Array(450000, 100000, 1000, 30, 4)
-    '
-    '   Importes médios de la Primitiva para las categorias 1ª, 2ª, 3ª, 4ª y 5ª
-    '
-    ImportesPremiosLP = Array(1000000, 75000, 3000, 85, 8)
-    BolasAcertadas = 0
-    ModalidadJuego = Bonoloto
-    ComplementarioAcertado = False
-    ClaveAcertada = False
-    NumeroEstrellasAcertadas = 0
-    Pronosticos = 0
-    key = "000000"
-End Sub
+Public Sub Parse(datTexto As String)
+    Dim vMatriz As Variant
+    Dim i As Integer
+    Dim j As Integer
+    Dim vDat As Variant
+    Dim mTexto As String
+   
+   On Error GoTo Parse_Error
 
-' *============================================================================*
-' *     Procedure  : CargaTablaMultiples
-' *     Fichero    : Premio
-' *     Autor      : Carlos Almela Baeza
-' *     Creacion   : dom, 12/04/2009
-' *     Asunto     :
-' *============================================================================*
-'
-Private Sub CargaTablaMultiples()
-    Dim vVar As Variant
+    If Len(datTexto) = 0 Then
+        Exit Sub
+    End If
     
-    Erase TablaMultiples
+    vMatriz = Split(datTexto, ",")
+
+    For i = 0 To UBound(vMatriz)
+        Select Case i
+        ' Juego: $0
+        Case Is = 0
+            vDat = Split(vMatriz(i), ":")
+            mTexto = vDat(1)
+            Me.Juego = getJuego(mTexto)
+            
+        ' Categoria: $1 = $2
+        Case Is = 1
+            vDat = Split(vMatriz(i), "=")
+            mTexto = vDat(0)
+            j = Len(mTexto) - InStr(1, mTexto, ":", 1)
+            Me.CategoriaPremio = Val(Right(mTexto, j))
+        
+        'Importe: $3 Euros
+        Case Is = 2
+            vDat = Split(Trim(vMatriz(i)), " ")
+            mTexto = vDat(1)
+            Me.Importe = Val(mTexto)
+            
+        'Acertantes: $4 y $5
+        Case Is = 3
+            vDat = Split(Trim(vMatriz(i)), " ")
+            mTexto = vDat(1)
+            Me.NumeroAcertantesEspaña = Val(mTexto)
+            If Juego = Euromillones Then
+                mTexto = vDat(4)
+                Me.NumeroAcertantesEuropa = Val(mTexto)
+            End If
+        End Select
+    Next i
     
-    Select Case Pronosticos
-        Case 5:
-            vVar = Array(CincoAciertos, 1, 1, 42, 0, 0): TablaMultiples(0) = vVar
-            vVar = Array(CuatroAciertosMasC, 0, 2, 0, 42, 0): TablaMultiples(1) = vVar
-            vVar = Array(CuatroAciertos, 0, 0, 2, 42, 0): TablaMultiples(2) = vVar
-            vVar = Array(TresAciertos, 0, 0, 0, 3, 41): TablaMultiples(3) = vVar
-            vVar = Array(DosAciertos, 0, 0, 0, 0, 4): TablaMultiples(4) = vVar
-            vVar = Array(Ninguna, 0, 0, 0, 0, 0): TablaMultiples(5) = vVar
-        
-        Case 6:
-            vVar = Array(SeisAciertosMasC, 1, 0, 0, 0, 0): TablaMultiples(0) = vVar
-            vVar = Array(SeisAciertos, 1, 0, 0, 0, 0): TablaMultiples(1) = vVar
-            vVar = Array(CincoAciertosMasC, 0, 1, 0, 0, 0): TablaMultiples(2) = vVar
-            vVar = Array(CincoAciertos, 0, 0, 1, 0, 0): TablaMultiples(3) = vVar
-            vVar = Array(CuatroAciertos, 0, 0, 0, 1, 0): TablaMultiples(4) = vVar
-            vVar = Array(TresAciertos, 0, 0, 0, 0, 1): TablaMultiples(5) = vVar
-        
-        Case 7:
-            vVar = Array(SeisAciertosMasC, 1, 6, 0, 0, 0): TablaMultiples(0) = vVar
-            vVar = Array(SeisAciertos, 1, 0, 6, 0, 0): TablaMultiples(1) = vVar
-            vVar = Array(CincoAciertosMasC, 0, 1, 1, 5, 0): TablaMultiples(2) = vVar
-            vVar = Array(CincoAciertos, 0, 0, 2, 5, 0): TablaMultiples(3) = vVar
-            vVar = Array(CuatroAciertos, 0, 0, 0, 3, 4): TablaMultiples(4) = vVar
-            vVar = Array(TresAciertos, 0, 0, 0, 0, 4): TablaMultiples(5) = vVar
-        
-        Case 8:
-            vVar = Array(SeisAciertosMasC, 1, 6, 6, 15, 0): TablaMultiples(0) = vVar
-            vVar = Array(SeisAciertos, 1, 0, 12, 15, 0): TablaMultiples(1) = vVar
-            vVar = Array(CincoAciertosMasC, 0, 1, 2, 15, 10): TablaMultiples(2) = vVar
-            vVar = Array(CincoAciertos, 0, 0, 3, 15, 10): TablaMultiples(3) = vVar
-            vVar = Array(CuatroAciertos, 0, 0, 0, 6, 16): TablaMultiples(4) = vVar
-            vVar = Array(TresAciertos, 0, 0, 0, 0, 10): TablaMultiples(5) = vVar
-            
-        Case 9:
-            vVar = Array(SeisAciertosMasC, 1, 6, 12, 45, 20): TablaMultiples(0) = vVar
-            vVar = Array(SeisAciertos, 1, 0, 18, 45, 20): TablaMultiples(1) = vVar
-            vVar = Array(CincoAciertosMasC, 0, 1, 3, 30, 40): TablaMultiples(2) = vVar
-            vVar = Array(CincoAciertos, 0, 0, 4, 30, 40): TablaMultiples(3) = vVar
-            vVar = Array(CuatroAciertos, 0, 0, 0, 10, 40): TablaMultiples(4) = vVar
-            vVar = Array(TresAciertos, 0, 0, 0, 0, 20): TablaMultiples(5) = vVar
-           
-        Case 10:
-            vVar = Array(SeisAciertosMasC, 1, 6, 18, 90, 80): TablaMultiples(0) = vVar
-            vVar = Array(SeisAciertos, 1, 0, 24, 90, 80): TablaMultiples(1) = vVar
-            vVar = Array(CincoAciertosMasC, 0, 1, 4, 50, 100): TablaMultiples(2) = vVar
-            vVar = Array(CincoAciertos, 0, 0, 5, 50, 100): TablaMultiples(3) = vVar
-            vVar = Array(CuatroAciertos, 0, 0, 0, 15, 80): TablaMultiples(4) = vVar
-            vVar = Array(TresAciertos, 0, 0, 0, 0, 35): TablaMultiples(5) = vVar
-                                                                                      
-                                                                                      
-        Case 11:
-            vVar = Array(SeisAciertosMasC, 1, 6, 24, 150, 200): TablaMultiples(0) = vVar
-            vVar = Array(SeisAciertos, 1, 0, 30, 150, 200): TablaMultiples(1) = vVar
-            vVar = Array(CincoAciertosMasC, 0, 1, 5, 75, 200): TablaMultiples(2) = vVar
-            vVar = Array(CincoAciertos, 0, 0, 6, 75, 200): TablaMultiples(3) = vVar
-            vVar = Array(CuatroAciertos, 0, 0, 0, 21, 140): TablaMultiples(4) = vVar
-            vVar = Array(TresAciertos, 0, 0, 0, 0, 56): TablaMultiples(5) = vVar
-            
-        Case Else
-            vVar = Array(SeisAciertosMasC, 0, 0, 0, 0, 0): TablaMultiples(0) = vVar
-            vVar = Array(SeisAciertos, 0, 0, 0, 0, 0): TablaMultiples(1) = vVar
-            vVar = Array(CincoAciertosMasC, 0, 0, 0, 0, 0): TablaMultiples(2) = vVar
-            vVar = Array(CincoAciertos, 0, 0, 0, 0, 0): TablaMultiples(3) = vVar
-            vVar = Array(CuatroAciertos, 0, 0, 0, 0, 0): TablaMultiples(4) = vVar
-            vVar = Array(TresAciertos, 0, 0, 0, 0, 0): TablaMultiples(5) = vVar
-    End Select
+  On Error GoTo 0
+   Exit Sub
+Parse_Error:
+   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+   Call HandleException(ErrNumber, ErrDescription, "Premio.Parse")
+   Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
 
 
+
 '---------------------------------------------------------------------------------------
-' Procedure : LiteralCategoriaPremio
+' Procedure : getJuego
 ' Author    : CHARLY
-' Date      : 09/03/2014
+' Date      : 18/05/2014
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
-Public Property Get LiteralCategoriaPremio() As String
-    Select Case m_eCategoriaPremio
-        Case Especial: m_sCategoriaPremio = " Ex"
-        Case Primera: m_sCategoriaPremio = " 1ª"
-        Case Segunda: m_sCategoriaPremio = " 2ª"
-        Case Tercera: m_sCategoriaPremio = " 3ª"
-        Case Cuarta: m_sCategoriaPremio = " 4ª"
-        Case Quinta: m_sCategoriaPremio = " 5ª"
-        Case Sexta: m_sCategoriaPremio = " 6ª"
-        Case Septima: m_sCategoriaPremio = " 7ª"
-        Case Octava: m_sCategoriaPremio = " 8ª"
-        Case Novena: m_sCategoriaPremio = " 9ª"
-        Case Decima: m_sCategoriaPremio = "10ª"
-        Case Undecima: m_sCategoriaPremio = "11ª"
-        Case Duodecima: m_sCategoriaPremio = "12ª"
-        Case Trigesimotercera: m_sCategoriaPremio = "13ª"
-    End Select
+Friend Function getJuego(datNombre As String) As Juego
+    Dim eResult As Juego
+    Dim mVar As Variant
+    Dim i As Integer
+   
+  On Error GoTo getJuego_Error
+    mVar = Split(NOMBRE_JUEGOS, ";")
+    For i = 0 To UBound(mVar)
+        If mVar(i) = Trim(datNombre) Then
+            eResult = i + 1
+            Exit For
+        End If
+    Next i
+    getJuego = eResult
+
+  On Error GoTo 0
+   Exit Function
+getJuego_Error:
+   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+   Call HandleException(ErrNumber, ErrDescription, "Premio.getJuego")
+   Err.Raise ErrNumber, ErrSource, ErrDescription
+End Function
+
+
+
+'------------------------------------------------------------------------------*
+' Función        : Pack
+' Fecha          : ma., 14/jul/2020 19:11:40
+' Propósito      : Estructura la información para guardar en una cadena
+' Retorno        : devuelve una cadena según el juego
+'                  "Categoria, acertantes, importe, acertantes Europa"
+'------------------------------------------------------------------------------*
+'
+Public Function Pack() As String
+    Dim mStr As String
     
-    LiteralCategoriaPremio = m_sCategoriaPremio
+  On Error GoTo Pack_Error
+    '
+    '   Segun el juego seleccionamos un patrón
+    '
+    Select Case Juego
+        Case Bonoloto:
+            mStr = "$1,$2,$3"
+        Case LoteriaPrimitiva:
+            mStr = "$1,$2,$3"
+        Case GordoPrimitiva:
+            mStr = "$1,$2,$3"
+        Case Euromillones:
+            mStr = "$1,$2,$3,$4"
+    End Select
+    mStr = Replace(mStr, "$1", CStr(CategoriaPremio))
+    mStr = Replace(mStr, "$2", CStr(NumeroAcertantesEspaña))
+    mStr = Replace(mStr, "$4", CStr(NumeroAcertantesEuropa))
+    mStr = Replace(mStr, "$3", Str(Importe))
 
-End Property
-
-'---------------------------------------------------------------------------------------
-' Procedure : NumerosAcertados
-' Author    : CHARLY
-' Date      : 09/03/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
-'
-Public Property Get NumerosAcertados() As TiposAciertos
-
-   On Error GoTo NumerosAcertados_Error
-
-    Select Case ModalidadJuego
-        Case LoteriaPrimitiva, Bonoloto
-            Select Case BolasAcertadas
-                Case 7:
-                    m_eNumerosAcertados = SeisAciertosMasC
-                    m_eNumerosAcertados = SeisAciertos
-                    
-                Case 6:
-                    If ComplementarioAcertado Then
-                        m_eNumerosAcertados = CincoAciertosMasC
-                    Else
-                        m_eNumerosAcertados = SeisAciertos
-                    End If
-
-                   
-                Case 5:
-                    If ComplementarioAcertado Then
-                        m_eNumerosAcertados = CuatroAciertosMasC
-                        m_eNumerosAcertados = CuatroAciertos
-                    Else
-                        m_eNumerosAcertados = CincoAciertos
-                    End If
-                
-                Case 4:
-                    If ComplementarioAcertado Then
-                        m_eNumerosAcertados = TresAciertos
-                    Else
-                        m_eNumerosAcertados = CuatroAciertos
-                    End If
-                
-                Case 3:
-                    If ComplementarioAcertado Then
-                        m_eNumerosAcertados = DosAciertos
-                    Else
-                        m_eNumerosAcertados = TresAciertos
-                    End If
-                Case 2: m_eNumerosAcertados = DosAciertos
-                Case 1: m_eNumerosAcertados = UnAcierto
-                Case Else: m_eNumerosAcertados = SinAciertos
-            End Select
-      End Select
-    NumerosAcertados = m_eNumerosAcertados
-
-   On Error GoTo 0
-   Exit Property
-
-NumerosAcertados_Error:
+    Pack = mStr
+  On Error GoTo 0
+   Exit Function
+Pack_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premio.NumerosAcertados")
-   '   Lanza el Error
+   Call HandleException(ErrNumber, ErrDescription, "Premio.Pack")
    Err.Raise ErrNumber, ErrSource, ErrDescription
-End Property
+End Function
 
-'---------------------------------------------------------------------------------------
-' Procedure : NumerosAcertados
-' Author    : CHARLY
-' Date      : 09/03/2014
-' Purpose   :
-'---------------------------------------------------------------------------------------
+
+
+'------------------------------------------------------------------------------*
+' Función        : UnPack
+' Fecha          : ma., 14/jul/2020 19:14:15
+' Propósito      : Realiza un parser de la información
+'------------------------------------------------------------------------------*
 '
-Public Property Let NumerosAcertados(ByVal eNumerosAcertados As TiposAciertos)
-
-   On Error GoTo NumerosAcertados_Error
-
-    m_eNumerosAcertados = eNumerosAcertados
-
-   On Error GoTo 0
-   Exit Property
-
-NumerosAcertados_Error:
+Public Sub UnPack(vNewValue As String)
+    Dim vMatriz As Variant
+    
+  On Error GoTo UnPack_Error
+    If Len(vNewValue) = 0 Then
+        Exit Sub
+    End If
+    '
+    '   Desempaquetamos la estructura
+    '
+    vMatriz = Split(vNewValue, ",")
+    '
+    '
+    Select Case Juego
+        Case Bonoloto, LoteriaPrimitiva, GordoPrimitiva:
+            Me.CategoriaPremio = Val(vMatriz(0))
+            Me.NumeroAcertantesEspaña = Val(vMatriz(1))
+            Me.Importe = Val(vMatriz(2))
+            
+        Case Euromillones:
+            Me.CategoriaPremio = Val(vMatriz(0))
+            Me.NumeroAcertantesEspaña = Val(vMatriz(1))
+            Me.Importe = Val(vMatriz(2))
+            Me.NumeroAcertantesEuropa = Val(vMatriz(3))
+    End Select
+  
+  On Error GoTo 0
+   Exit Sub
+UnPack_Error:
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Premio.NumerosAcertados")
-   '   Lanza el Error
+   Call HandleException(ErrNumber, ErrDescription, "Premio.UnPack")
    Err.Raise ErrNumber, ErrSource, ErrDescription
-End Property
+End Sub
+

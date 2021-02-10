@@ -259,7 +259,7 @@ End Sub
 ' Propósito      : Configura la hoja para la información de Salida del proceso
 '------------------------------------------------------------------------------*
 Private Sub DisLiterales(datSorteo As Sorteo, datFechaAnalisis As Date)
-    Dim C As Integer
+    Dim c As Integer
     Dim n As Integer
     Dim mVar As Variant
     
@@ -284,7 +284,7 @@ Private Sub DisLiterales(datSorteo As Sorteo, datFechaAnalisis As Date)
         ActiveCell.Offset(1, 0).Value = "Numero de Sorteo"
         ActiveCell.Offset(1, 1).Value = datSorteo.NumeroSorteo
         ActiveCell.Offset(2, 0).Value = "Concurso"
-        ActiveCell.Offset(2, 1).Value = IIf(datSorteo.Juego = bonoloto, "BL", "LP")
+        ActiveCell.Offset(2, 1).Value = IIf(datSorteo.Juego = Bonoloto, "BL", "LP")
         ActiveCell.Offset(3, 0).Value = "Dia"
         ActiveCell.Offset(3, 1).Value = datSorteo.Dia
         ActiveCell.Offset(4, 0).Value = "Semana"
@@ -296,18 +296,21 @@ Private Sub DisLiterales(datSorteo As Sorteo, datFechaAnalisis As Date)
     If Not (datSorteo Is Nothing) Then
         Range("D2").Activate
         ActiveCell.Offset(1, 0).Value = "Combinación:"
-        C = datSorteo.Complementario
+        c = datSorteo.Complementario
         For i = 1 To datSorteo.Combinacion.Count
             n = datSorteo.Combinacion.Numeros(i).Valor
-            If n <> C Then
+            If n <> c Then
                 ActiveCell.Offset(0, i).Value = "N" & i
                 ActiveCell.Offset(1, i).Value = n
                 ActiveCell.Offset(1, i).Interior.ColorIndex = COLOR_VERDE
             End If
         Next i
-        ActiveCell.Offset(0, i - 1).Value = "C"
-        ActiveCell.Offset(1, i - 1).Value = C
-        ActiveCell.Offset(1, i - 1).Interior.ColorIndex = COLOR_AMARILLO
+        If datSorteo.Juego = Bonoloto Or _
+        datSorteo.Juego = LoteriaPrimitiva Then
+            ActiveCell.Offset(0, i).Value = "C"
+            ActiveCell.Offset(1, i).Value = c
+            ActiveCell.Offset(1, i).Interior.ColorIndex = COLOR_AMARILLO
+        End If
     End If
     '
     '   Metodo
@@ -468,6 +471,13 @@ Private Sub DisSugerencia(datSuge As Sugerencia, _
         .TintAndShade = 0.799981688894314
         .PatternTintAndShade = 0
     End With
+    '
+    '   Ordenamos la Suge
+    '
+    datSuge.Sort
+    '
+    '
+    '
     If Not (datSorteo Is Nothing) Then
         '
         '   Bucle combinación

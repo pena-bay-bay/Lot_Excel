@@ -144,18 +144,18 @@ Public Sub Constructor(Fila As Range)
                 End If
             End With
         
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             With Fila
                 Me.Registro = .Cells(1, 1).Value
                 Me.NumeroSorteo = .Cells(1, 2).Value
                 Me.Fecha = CDate(.Cells(1, 3).Value)
-                m_bOrdenado = IIf(.Cells(1, 6).Value = "Si", True, False)
+                m_bOrdenado = IIf(.Cells(1, 12).Value = "Si", True, False)
                 For i = 0 To 4
-                    If IsNumeric(.Cells(1, 7 + i).Value) _
-                    And Not IsEmpty(.Cells(1, 7 + i).Value) Then
-                        If (.Cells(1, 7 + i).Value) <= 54 Then
+                    If IsNumeric(.Cells(1, 6 + i).Value) _
+                    And Not IsEmpty(.Cells(1, 6 + i).Value) Then
+                        If (.Cells(1, 6 + i).Value) <= 54 Then
                             Set m_num = New Numero
-                            m_num.Valor = .Cells(1, 7 + i).Value
+                            m_num.Valor = .Cells(1, 6 + i).Value
                             mStrKey = CStr(m_num.Valor)
                             If (mCol.Count <> 0) Then
                                 mCol.Add m_num, mStrKey, , mCol.Count
@@ -165,7 +165,7 @@ Public Sub Constructor(Fila As Range)
                         End If
                     End If
                 Next i
-                m_iReintegro = .Cells(1, 12).Value
+                m_iReintegro = .Cells(1, 11).Value
                 Set m_objCombinacion.Numeros = mCol
                 m_eTipoJuego = GP_5_54
                 m_eJuego = JUEGO_DEFECTO
@@ -969,7 +969,7 @@ Public Function ToString() As String
         sResult = Replace(sResult, "$7", Me.Estrellas.ToString(True))
         sResult = Replace(sResult, "$8", IIf(Me.Ordenado, LIT_ENORDEN, LIT_NOTENORDEN))
         
-    Case gordoPrimitiva
+    Case GordoPrimitiva
         sResult = Replace(LIT_JUEGO5_54, "$1", Me.Id)
         sResult = Replace(sResult, "$2", Me.NumeroSorteo)
         sResult = Replace(sResult, "$3", Me.Fecha)
@@ -1035,7 +1035,7 @@ Public Property Let Juego(ByVal eJuego As Juego)
     Select Case m_eJuego
         Case LoteriaPrimitiva: m_eTipoJuego = LP_LB_6_49
         Case Bonoloto: m_eTipoJuego = LP_LB_6_49
-        Case gordoPrimitiva: m_eTipoJuego = GP_5_54
+        Case GordoPrimitiva: m_eTipoJuego = GP_5_54
         Case Euromillones:: m_eTipoJuego = EU_5_50
         Case PrimitivaBonoloto:: m_eTipoJuego = LP_LB_6_49
     End Select

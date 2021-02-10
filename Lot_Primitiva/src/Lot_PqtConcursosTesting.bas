@@ -66,7 +66,7 @@ Private Sub PremioTest()
     '   Caso de pruebas 05: Premio valido GordoPrimitiva
     '
     Set mObj = New Premio
-    mObj.Juego = gordoPrimitiva
+    mObj.Juego = GordoPrimitiva
     mObj.UnPack "7,164441,3.00"
     PrintPremio mObj
     '
@@ -182,7 +182,7 @@ Private Sub PremiosTest()
     'Reintegro   322.686     1,50 €
 
     Set mObj = New Premios
-    mObj.Juego = gordoPrimitiva
+    mObj.Juego = GordoPrimitiva
     mObj.Parse "1,0,0;2,2,76010.48;3,31,891.62;4,162,199.05;5,1370,26.90;6,8563,13.99;7,20336,4.53;8,130650,3.00;15,322686,1.50"
     PrintPremios mObj
     '
@@ -290,7 +290,7 @@ Private Sub InfoSorteoTest()
         mFechaF = mInfo.GetProximoSorteo(mFechaI)
         Debug.Print "GetProximoSorteo(" & mFechaI & ", Bonoloto) => "; mFechaF
         Debug.Print "EsFechaSorteo (" & mFechaI & ", Bonoloto) => " & mInfo.EsFechaSorteo(mFechaI)
-        mInfo.Constructor gordoPrimitiva
+        mInfo.Constructor GordoPrimitiva
         mFechaF = mInfo.GetProximoSorteo(mFechaI)
         Debug.Print "GetProximoSorteo(" & mFechaI & ", GordoPrimitiva) => "; mFechaF
         mInfo.Constructor LoteriaPrimitiva
@@ -487,7 +487,7 @@ Public Sub SorteoTest()
     '
     Set mObj = New Sorteo
     With mObj
-        .Juego = gordoPrimitiva
+        .Juego = GordoPrimitiva
         .Dia = "D"
         .Texto = "28-38-44-33-5"
         .Reintegro = 4

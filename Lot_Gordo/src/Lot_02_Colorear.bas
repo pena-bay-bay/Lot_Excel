@@ -10,19 +10,16 @@ Option Explicit
 Option Base 0
 
 '*-----------------| OBJETOS |-----------------------------+
-Private DB                      As New BdDatos          'Objeto Base de Datos
+Private Db                      As BdDatos          'Objeto Base de Datos
 Private m_array                 As Variant
 Private m_valor                 As Integer
 Private m_rgFila                As Range
 Private m_rgDatos               As Range
 Private i                       As Integer
-Private m_res                   As Sorteo
+Private oSorteo                 As Sorteo
 Private color                   As Integer
 Private ColIni                  As Integer
 Private ColFin                  As Integer
-
-
-
 
 '---------------------------------------------------------------------------------------
 ' Procedure : cmd_Colorear
@@ -34,14 +31,15 @@ Private ColFin                  As Integer
 Public Sub btn_Colorear()
     
   On Error GoTo btn_Colorear_Error
+    Set Db = New BdDatos
     '
     ' Nos colocamos en la página de resultados
     '
-    DB.Ir_A_Hoja "Resultados"
+    Ir_A_Hoja "Resultados"
     '
     '   obtiene el rango de Resultados  e inicializa el color
     '
-    Set m_rgDatos = DB.RangoResultados
+    Set m_rgDatos = Db.RangoResultados
     '
     '   Función colorear un rango
     '
@@ -73,14 +71,17 @@ Public Sub btn_Colorear()
             Case COLOREAR_UNAFECHA
                 cmd_color_fecha frmRealizarColoreado.Fecha_Sorteo
             
-            Case COLOREAR_NumeroS
+            Case COLOREAR_NUMEROS
                 cmd_color_combinacion frmRealizarColoreado.TextCombinacion
         
         End Select
     Loop
-
+    '
+    '
+    '
+    Set Db = Nothing
 btn_Colorear_CleanExit:
-   On Error GoTo 0
+    On Error GoTo 0
     Exit Sub
 btn_Colorear_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
@@ -90,90 +91,122 @@ btn_Colorear_Error:
     Call Trace("CERRAR")
 End Sub
 
-
-
-
 '---------------------------------------------------------------------------------------
 ' Procedure : cmd_color_fecha
-' DateTime  : 17/06/2020 19:15
+' DateTime  : 12/jun/2007 23:42
 ' Author    : Carlos Almela Baeza
 ' Purpose   :
 '---------------------------------------------------------------------------------------
 '
 Private Sub cmd_color_fecha(vNewData As Date)
-    
+    Dim oFila As Range
    On Error GoTo cmd_color_fecha_error
     
     'obtiene el resultado de la fecha
-     Set m_res = DB.Get_Resultado(vNewData)
-     If m_res Is Nothing Then
+    Set oFila = Db.GetSorteoByFecha(vNewData)
+    If oFila Is Nothing Then
         Err.Raise 100, "Lot_02_Colorear.cmd_color_fecha", "No existe sorteo para esta fecha"
         Exit Sub
-     End If
-     
-     m_array = Split(m_res.Combinacion.TextoOrdenado, "-")
+    End If
+    Set oSorteo = New Sorteo
+    oSorteo.Constructor oFila
+    
+    m_array = oSorteo.Combinacion.GetArray
      
     'obtiene el rango de datos
     'y lo colorea de blanco
-    Set m_rgDatos = DB.RangoResultados
+    Set m_rgDatos = Db.RangoResultados
     ColoreaCelda m_rgDatos, xlColorIndexNone
+   
     
     Select Case JUEGO_DEFECTO
-        Case bonoloto, loteriaPrimitiva:
+        Case Bonoloto, LoteriaPrimitiva:
             ColIni = 6
             ColFin = 12
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             ColIni = 7
             ColFin = 11
         Case Euromillones:
             ColIni = 7
             ColFin = 11
     End Select
-    
+
     ' para cada fila(resultado) en el rango de Datos
     For Each m_rgFila In m_rgDatos.Rows
-             For i = ColIni To ColFin
+        
+        'Comprueba los Numeros que se encuentran
+        'entre las columnas E y K
+        'y colorea de anaranjado si lo encuentra
+         For i = ColIni To ColFin
+            color = 0
+            If (IsNumeric(m_rgFila.Cells(1, i).Value)) Then
+                m_valor = m_rgFila.Cells(1, i).Value
+            Else
+                m_valor = 0
+            End If
+            If JUEGO_DEFECTO = Bonoloto Or JUEGO_DEFECTO = LoteriaPrimitiva Then
+                Select Case m_valor
+                    Case m_array(0): color = COLOR_TERMINACION8
+                    Case m_array(1): color = COLOR_TERMINACION1
+                    Case m_array(2): color = COLOR_TERMINACION2
+                    Case m_array(3): color = COLOR_TERMINACION3
+                    Case m_array(4): color = COLOR_TERMINACION4
+                    Case m_array(5): color = COLOR_TERMINACION5
+                    Case oSorteo.Complementario: color = COLOR_TERMINACION6
+                End Select
+            Else
+                Select Case m_valor
+                    Case m_array(0): color = COLOR_TERMINACION8
+                    Case m_array(1): color = COLOR_TERMINACION1
+                    Case m_array(2): color = COLOR_TERMINACION2
+                    Case m_array(3): color = COLOR_TERMINACION3
+                    Case m_array(4): color = COLOR_TERMINACION4
+                End Select
+            End If
+            If color > 0 Then
+                ColoreaCelda m_rgFila.Cells(1, i), color
+            End If
+        Next i
+        '
+        '   Colorear Reintegro
+        '
+        If JUEGO_DEFECTO = GordoPrimitiva Then
+            i = 12
+            color = 0
+            If (IsNumeric(m_rgFila.Cells(1, i).Value)) Then
+                m_valor = m_rgFila.Cells(1, i).Value
+            Else
+                m_valor = 0
+            End If
+            If m_valor = oSorteo.Reintegro Then
+                color = COLOR_TERMINACION9
+                ColoreaCelda m_rgFila.Cells(1, i), color
+            End If
+        End If
+        '
+        '   Colorear estrellas
+        '
+        If JUEGO_DEFECTO = Euromillones Then
+            ColIni = 12
+            ColFin = 13
+            For i = ColIni To ColFin
                 color = 0
                 If (IsNumeric(m_rgFila.Cells(1, i).Value)) Then
                     m_valor = m_rgFila.Cells(1, i).Value
                 Else
                     m_valor = 0
                 End If
-                Select Case JUEGO_DEFECTO
-                    Case bonoloto, loteriaPrimitiva:
-                        Select Case m_valor
-                            Case CInt(m_array(0)): color = COLOR_TERMINACION8
-                            Case CInt(m_array(1)): color = COLOR_TERMINACION1
-                            Case CInt(m_array(2)): color = COLOR_TERMINACION2
-                            Case CInt(m_array(3)): color = COLOR_TERMINACION3
-                            Case CInt(m_array(4)): color = COLOR_TERMINACION4
-                            Case CInt(m_array(5)): color = COLOR_TERMINACION5
-                            Case m_res.Complementario: color = COLOR_TERMINACION6
-                        End Select
-                    Case gordoPrimitiva:
-                        Select Case m_valor
-                            Case CInt(m_array(0)): color = COLOR_TERMINACION8
-                            Case CInt(m_array(1)): color = COLOR_TERMINACION1
-                            Case CInt(m_array(2)): color = COLOR_TERMINACION2
-                            Case CInt(m_array(3)): color = COLOR_TERMINACION3
-                            Case CInt(m_array(4)): color = COLOR_TERMINACION4
-                        End Select
-                    Case Euromillones:
-                        Select Case m_valor
-                            Case CInt(m_array(0)): color = COLOR_TERMINACION8
-                            Case CInt(m_array(1)): color = COLOR_TERMINACION1
-                            Case CInt(m_array(2)): color = COLOR_TERMINACION2
-                            Case CInt(m_array(3)): color = COLOR_TERMINACION3
-                            Case CInt(m_array(4)): color = COLOR_TERMINACION4
-                        End Select
-                        ' TODO marcar Estrellas
+                Select Case m_valor
+                    Case oSorteo.EstrellaUno: color = COLOR_TERMINACION9
+                    Case oSorteo.EstrellaDos: color = COLOR_TERMINACION7
                 End Select
                 If color > 0 Then
                         ColoreaCelda m_rgFila.Cells(1, i), color
                 End If
             Next i
+        End If
     Next m_rgFila
-
+    
    On Error GoTo 0
    Exit Sub
 
@@ -184,9 +217,6 @@ cmd_color_fecha_error:
    Err.Raise ErrNumber, "Lot_02_Colorear.cmd_color_fecha", ErrDescription
 End Sub
 
-
-
-
 '---------------------------------------------------------------------------------------
 ' Procedure : cmd_color_combinacion
 ' DateTime  : 12/jun/2007 23:42
@@ -195,35 +225,35 @@ End Sub
 '---------------------------------------------------------------------------------------
 '
 Private Sub cmd_color_combinacion(vNewData As Apuesta)
-     Dim j As Integer
-     Dim h As Integer
-     Dim m_num As New Numero
+    Dim j As Integer
+    Dim h As Integer
+    Dim m_num As New Numero
     
    On Error GoTo cmd_color_combinacion_Error
 
       
     'obtiene el rango de datos
-    Set m_rgDatos = DB.RangoResultados
+    Set m_rgDatos = Db.RangoResultados
     ColoreaCelda m_rgDatos, xlColorIndexNone
     
     Select Case JUEGO_DEFECTO
-        Case bonoloto, loteriaPrimitiva:
+        Case Bonoloto, LoteriaPrimitiva:
             ColIni = 6
             ColFin = 12
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             ColIni = 7
             ColFin = 11
         Case Euromillones:
             ColIni = 7
             ColFin = 11
     End Select
-
     
     'Realizamos un bucle para todas las combinacionesxt h
      For Each m_rgFila In m_rgDatos.Rows
         ' Inicializar contador de Numeros encontrados
         j = 0
         'Comprueba los Numeros que se encuentran
+        'entre las columnas E y K
         'y colorea de anaranjado si lo encuentra
         For i = ColIni To ColFin
             ' Inicializamos el color del número
@@ -239,13 +269,13 @@ Private Sub cmd_color_combinacion(vNewData As Apuesta)
                             Case 0: color = COLOR_TERMINACION0
                             Case 1: color = COLOR_TERMINACION1
                             Case 2: color = COLOR_TERMINACION2
-                            Case 2: color = COLOR_TERMINACION3
-                            Case 3: color = COLOR_TERMINACION4
-                            Case 4: color = COLOR_TERMINACION5
-                            Case 5: color = COLOR_TERMINACION6
-                            Case 6: color = COLOR_TERMINACION7
-                            Case 7: color = COLOR_TERMINACION8
-                            Case 8: color = COLOR_TERMINACION9
+                            Case 3: color = COLOR_TERMINACION3
+                            Case 4: color = COLOR_TERMINACION4
+                            Case 5: color = COLOR_TERMINACION5
+                            Case 6: color = COLOR_TERMINACION6
+                            Case 7: color = COLOR_TERMINACION7
+                            Case 8: color = COLOR_TERMINACION8
+                            Case 9: color = COLOR_TERMINACION9
                         End Select
                         j = j + 1
                 End If
@@ -261,11 +291,16 @@ Private Sub cmd_color_combinacion(vNewData As Apuesta)
 
    On Error GoTo 0
    Exit Sub
+
 cmd_color_combinacion_Error:
+
    Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+   '   Audita el error
    Call HandleException(ErrNumber, ErrDescription, ErrSource, "Lot_02_Colorear.cmd_color_combinacion")
+   '   Lanza el error
    Err.Raise ErrNumber, "Lot_02_Colorear.cmd_color_combinacion", ErrDescription
+    
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -276,29 +311,28 @@ End Sub
 '---------------------------------------------------------------------------------------
 '
 Private Sub cmd_color_caracteristicas(vNewData As Integer)
-'    Dim m_rgFila            As Range
-'    Dim m_rgDatos           As Range
-     Dim oSorteo             As Sorteo
-'    Dim i                   As Integer
-     Dim m_num               As New Numero
-'    Dim color               As Integer
+    Dim oSorteo             As Sorteo
+    Dim m_num               As New Numero
    
    On Error GoTo cmd_color_caracteristicas_Error
-    'obtiene el rango de datos
-    Set m_rgDatos = DB.RangoResultados
+    '
+    '   Elimina los colores de los resultados
+    '
+    Set m_rgDatos = Db.RangoResultados
     ColoreaCelda m_rgDatos, xlColorIndexNone
     
     Select Case JUEGO_DEFECTO
-        Case bonoloto, loteriaPrimitiva:
+        Case Bonoloto, LoteriaPrimitiva:
             ColIni = 6
             ColFin = 12
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             ColIni = 7
             ColFin = 11
         Case Euromillones:
             ColIni = 7
             ColFin = 11
     End Select
+
     '
     '   Creamos el objeto Sorteo
     '
@@ -486,7 +520,7 @@ Private Function get_color_continuo(vDataNum As Numero, vDataCol As Combinacion)
         Case 3: get_color_continuo = COLOR_ANARANJADO
     End Select
     '
-    '   TODO: Trasladar la rutina a Combinación para ejecutarla una sola vez
+    '   #TODO: Trasladar la rutina a Combinación para ejecutarla una sola vez
     '         y color del Numero consecutivo al Numero
     '
     On Error GoTo 0

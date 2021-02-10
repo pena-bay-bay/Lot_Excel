@@ -86,7 +86,7 @@ Private Sub ParametrosMuestraTest()
     Set m_objParMuestra = New ParametrosMuestra
     With m_objParMuestra
         .TipoMuestra = True
-        .Juego = gordoPrimitiva
+        .Juego = GordoPrimitiva
         .FechaAnalisis = #4/16/2017#         'Domingo
         .FechaFinal = #4/9/2017#             'Domingo
         .NumeroSorteos = 10
@@ -107,7 +107,7 @@ Private Sub MuestraTest()
     Dim m_objRg             As Range        'rango de datos
     Dim m_objBd             As New BdDatos  'base de datos
      
-    m_objBd.Ir_A_Hoja ("Salida")
+    Ir_A_Hoja ("Salida")
     Set m_objParMuestra = New ParametrosMuestra
     Set m_objMuestra = New Muestra
     
@@ -121,14 +121,24 @@ Private Sub MuestraTest()
     '
     '   obtiene el rango con los datos comprendido entre las dos fechas
     '
-    Set m_objRg = m_objBd.Resultados_Fechas(m_objParMuestra.FechaInicial, _
-                                            m_objParMuestra.FechaFinal)
+'    Set m_objRg = m_objBd.Resultados_Fechas(m_objParMuestra.FechaInicial, _
+'                                            m_objParMuestra.FechaFinal)
+    Set m_objRg = m_objBd.GetSorteosInFechas(m_objParMuestra.PeriodoDatos)
     '
     '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
     '
     Set m_objMuestra.ParametrosMuestra = m_objParMuestra
-    m_objMuestra.Constructor m_objRg, JUEGO_DEFECTO
-
+    Select Case JUEGO_DEFECTO
+        Case LoteriaPrimitiva, Bonoloto:
+            m_objMuestra.Constructor m_objRg, ModalidadJuego.LP_LB_6_49
+        
+        Case GordoPrimitiva:
+            m_objMuestra.Constructor m_objRg, ModalidadJuego.GP_5_54
+        
+        Case Euromillones:
+            m_objMuestra.Constructor m_objRg, ModalidadJuego.EU_5_50
+            
+    End Select
     
     Pintar_Muestra m_objMuestra
 End Sub
@@ -340,7 +350,7 @@ Public Sub BomboTest()
     '
     Set obj = New BomboV2
     With obj
-        .Juego = gordoPrimitiva
+        .Juego = GordoPrimitiva
         .TipoBombo = 1
         .NumGiros = 50
         .TipoGiros = lotGiros
@@ -356,7 +366,7 @@ Public Sub BomboTest()
     '
     Set obj = New BomboV2
     With obj
-        .Juego = gordoPrimitiva
+        .Juego = GordoPrimitiva
         .TipoBombo = 2
         .NumGiros = 50
         .TipoGiros = lotGiros

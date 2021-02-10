@@ -184,7 +184,23 @@ Private Sub BoletoTest()
     Else
         Debug.Print ("Correcto fecha no existe: oFila is Nothing")
     End If
-    
+    '
+    '   Caso de prueba 04: Boleto existente con multiples apuestas
+    '
+    mFini = #10/31/2020#  ' Sábado
+    Set mFila = mDB.GetBoletoByFecha(mFini)
+    If Not (mFila Is Nothing) Then
+        mObj.Constructor mFila
+        mObj.Id = 251
+        mObj.SetApuestas
+        If mObj.FechaValidez = mFini Then
+            PrintBoleto mObj
+        Else
+            Debug.Print ("#Error en BoletoByFecha: " & mObj.FechaValidez)
+        End If
+    Else
+        Debug.Print ("Correcto fecha no existe: oFila is Nothing")
+    End If
   
   
   On Error GoTo 0
@@ -488,7 +504,7 @@ Private Sub ComprobarApuestaTest()
         End If
         PrintComprobarBoleto mObj
         '
-        '   Caso de pruebas 17: Comprobar apuesta multiple Euromillones 13ª 2+0
+        '   Caso de pruebas 17: Comprobar apuesta multiple (6+3) Euromillones 13ª 2+0
         '
         With mApt
             .Combinacion.Texto = "29-15-43-19-12-8"
@@ -497,7 +513,7 @@ Private Sub ComprobarApuestaTest()
             .Juego = Euromillones
         End With
         Debug.Print vbTab & "Apuesta 13ª: " & mObj.ComprobarApuesta(mApt, False)
-        If mObj.ImporteApuesta = 16 Then
+        If mObj.ImporteApuesta = 48.84 Then
             Debug.Print vbTab & "OK Prueba correcta "
         Else
             Debug.Print vbTab & " #Error, El importe distinto 16"
@@ -535,6 +551,72 @@ Private Sub ComprobarApuestaTest()
             Debug.Print vbTab & " #Error, El importe distinto 579605,48"
         End If
         PrintComprobarBoleto mObj
+    End If
+    '
+    '   Comprobación de GORDO PRIMITIVA
+    '
+    If JUEGO_DEFECTO = GordoPrimitiva Then
+        '
+        '   Caso de pruebas 20: Comprobar apuesta simple Gordo 8ª categoria 2+0
+        '
+        With mApt
+            .Combinacion.Texto = "43-30-42-14-5"
+            .Fecha = #7/19/2020#  '43-30-49-50-24  R-9
+            .Juego = GordoPrimitiva
+        End With
+        Debug.Print vbTab & "Apuesta 8ª: " & mObj.ComprobarApuesta(mApt, False)
+        If mObj.ImporteApuesta = 3 Then
+            Debug.Print vbTab & "OK Prueba correcta "
+        Else
+            Debug.Print vbTab & " #Error, El importe distinto 3"
+        End If
+        PrintComprobarBoleto mObj
+        '
+        '   Caso de pruebas 21: Comprobar apuesta simple Gordo 2ª categoria 5+0
+        '
+        With mApt
+            .Combinacion.Texto = "43-30-49-50-24"
+            .Fecha = #7/19/2020#  '43-30-49-50-24  R-9
+            .Juego = GordoPrimitiva
+        End With
+        Debug.Print vbTab & "Apuesta 2ª: " & mObj.ComprobarApuesta(mApt, False)
+        If mObj.ImporteApuesta = 0 Then
+            Debug.Print vbTab & "OK Prueba correcta " ' 1 de 2ª y 5 de 4ª
+        Else
+            Debug.Print vbTab & " #Error, El importe distinto 0"
+        End If
+        PrintComprobarBoleto mObj
+        '
+        '   Caso de pruebas 22: Comprobar apuesta multiple (8) Gordo 8ª 2+0
+        '
+        With mApt
+            .Combinacion.Texto = "43-30-42-14-5-15-54-20"
+            .Fecha = #7/19/2020#  '43-30-49-50-24  R-9
+            .Juego = GordoPrimitiva
+        End With
+        Debug.Print vbTab & "Apuesta 8ª: " & mObj.ComprobarApuesta(mApt, False)
+        If mObj.ImporteApuesta = 60 Then
+            Debug.Print vbTab & "OK Prueba correcta " ' 20 de 3(8ª)
+        Else
+            Debug.Print vbTab & " #Error, El importe distinto 60"
+        End If
+        PrintComprobarBoleto mObj
+        '
+        '   Caso de pruebas 23: Comprobar apuesta multiple(8) Gordo 2ª categoria 5+0
+        '
+        With mApt
+            .Combinacion.Texto = "43-30-49-50-24-15-54-20"
+            .Fecha = #7/19/2020#  '43-30-49-50-24  R-9
+            .Juego = GordoPrimitiva
+        End With
+        Debug.Print vbTab & "Apuesta 8ª: " & mObj.ComprobarApuesta(mApt, False)
+        If mObj.ImporteApuesta = 4461.45 Then
+            Debug.Print vbTab & "OK Prueba correcta " ' 1 de 2ª+ 15 de 4ª+ 30 de 6ª y 10 de 8ª
+        Else
+            Debug.Print vbTab & " #Error, El importe distinto 4.461,45"
+        End If
+        PrintComprobarBoleto mObj
+        
     End If
   
   On Error GoTo 0
@@ -609,8 +691,59 @@ Private Sub ComprobarBoletoTest()
     '
     '   Comprobación de GORDO de la Primitiva
     '
-    If JUEGO_DEFECTO = gordoPrimitiva Then
-    
+    If JUEGO_DEFECTO = GordoPrimitiva Then
+        '
+        '   Caso de pruebas 02: Boleto simple sin premios
+        '
+        fIni = #8/30/2020#  'Domingo 30/08/2020  5-35-9-37-46  R:3
+        Set Db = New BdDatos
+        Set oFila = Db.GetBoletoByFecha(fIni)
+        If Not (oFila Is Nothing) Then
+            Set mBlt = New Boleto
+            mBlt.Constructor oFila
+            mBlt.SetApuestas
+            If mBlt.FechaValidez = fIni Then
+                Debug.Print ("Resultado del Boleto: " & mObj.ComprobarBoleto(mBlt))
+                PrintComprobarBoleto mObj
+            Else
+                Debug.Print ("#Error en BoletoByFecha: " & mBlt.FechaValidez)
+            End If
+        Else
+            Debug.Print ("#Error en rango: oFila is Nothing")
+        End If
+        '
+        '   Caso de pruebas 03: Boleto multiple (8) sin premios
+        '
+        With mBlt
+            .Apuestas.Item(1).Combinacion.Texto = "5-18-26-29-34-41-49-20"
+            .Reintegro = 2
+        End With
+        Debug.Print ("Resultado del Boleto: " & mObj.ComprobarBoleto(mBlt))
+        PrintComprobarBoleto mObj
+        '
+        '   Caso de pruebas 04: Boleto Simple con premio
+        '
+        With mBlt
+            .Apuestas.Item(1).Combinacion.Texto = "5-35-26-29-34"
+            .Reintegro = 3
+        End With
+        Debug.Print ("Resultado del Boleto: " & mObj.ComprobarBoleto(mBlt))
+        PrintComprobarBoleto mObj
+        '
+        '   Caso de pruebas 05: Boleto Multiple(8) con premio (5ª 3+1
+        '
+        With mBlt
+            .Apuestas.Item(1).Combinacion.Texto = "5-35-9-29-34-41-49-20"
+            .Reintegro = 3
+            .NumeroApuestas = 56
+        End With
+        Debug.Print ("Resultado del Boleto: " & mObj.ComprobarBoleto(mBlt)) ' Premio 689,70
+        If mObj.ImporteBoleto = 689.7 Then
+            Debug.Print " OK Importe = 689,70 "
+        Else
+            Debug.Print " #Error el importe no es igual a 689,70"
+        End If
+        PrintComprobarBoleto mObj
     End If
     '
     '   Comprobación de Primitiva

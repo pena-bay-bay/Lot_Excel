@@ -348,7 +348,7 @@ Private Function getTiempoIntervalo(vRegInf As Integer, vOrdInf As Integer, _
     ' Calculamos tiempo de aparicion
     '
     Select Case Juego
-      Case loteriaPrimitiva, bonoloto
+      Case LoteriaPrimitiva, Bonoloto
            mTmAparicion = (vRegSup - vRegInf - 1) * 7 ' distancia entre registros * 7 Numeros
            mTmAparicion = mTmAparicion + (7 - vOrdInf) + vOrdSup
            
@@ -364,7 +364,7 @@ Private Function getTiempoIntervalo(vRegInf As Integer, vOrdInf As Integer, _
                 mTmAparicion = mTmAparicion + (2 - vOrdInf) + vOrdSup
            End If
            
-      Case gordoPrimitiva
+      Case GordoPrimitiva
            '
            ' Si la bola es un Numero o es Clave
            '

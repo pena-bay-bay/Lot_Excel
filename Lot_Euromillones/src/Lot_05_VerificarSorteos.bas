@@ -10,6 +10,8 @@ Attribute VB_Name = "Lot_05_VerificarSorteos"
 '
 Option Explicit
 Option Base 0
+
+
 '---------------------------------------------------------------------------------------
 ' Procedure : btn_VerificarSorteos
 ' Author    : CHARLY
@@ -21,6 +23,10 @@ Public Sub btn_VerificarSorteos()
     Dim oFrm        As frmSelPeriodo
   
    On Error GoTo btn_VerificarSorteos_Error
+    '
+    '   Desactiva la presentación
+    '
+    CALCULOOFF
     '
     '   Creamos el formulario del periodo de tiempo
     '
@@ -58,19 +64,24 @@ Public Sub btn_VerificarSorteos()
     '  Se elimina de la memoria el formulario
     '
     Set oFrm = Nothing
-            
-                
+    '
+    '
+    '
+    Ir_A_Hoja ("Salida")
+    '
+    '  Activa la presentación
+    '
+    CALCULOON
             
    On Error GoTo 0
-       Exit Sub
+    Exit Sub
             
 btn_VerificarSorteos_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
     Call HandleException(ErrNumber, ErrDescription, "Lot_02_VerificarSorteos.btn_VerificarSorteos", ErrSource)
-   '   Informa del error
-   Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-   Call Trace("CERRAR")
+    Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
+    Call Trace("CERRAR")
 End Sub
 
 
@@ -110,9 +121,10 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
     Set oInfo = New InfoSorteo
     With oParMuestra
         .Juego = JUEGO_DEFECTO
+        .TipoMuestra = True
         .FechaAnalisis = vNewValue.FechaInicial
         .FechaFinal = oInfo.GetAnteriorSorteo(vNewValue.FechaInicial)
-        .NumeroSorteos = 100
+        .NumeroSorteos = 90
     End With
     '
     '   Visualiza los valores del proceso
@@ -123,14 +135,24 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
     '
     '   obtiene el rango con los datos comprendido entre las dos fechas
     '
-    Set rgDatos = mDB.Resultados_Fechas(oParMuestra.FechaInicial, _
-                                        oParMuestra.FechaFinal)
+    Set rgDatos = mDB.GetSorteosInFechas(oParMuestra.PeriodoDatos)
+                                        
     '
     '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
     '
     Set oMuestra = New Muestra
     Set oMuestra.ParametrosMuestra = oParMuestra
-    oMuestra.Constructor rgDatos, JUEGO_DEFECTO
+    Select Case JUEGO_DEFECTO
+        Case LoteriaPrimitiva, Bonoloto:
+            oMuestra.Constructor rgDatos, ModalidadJuego.LP_LB_6_49
+        
+        Case GordoPrimitiva:
+            oMuestra.Constructor rgDatos, ModalidadJuego.GP_5_54
+        
+        Case Euromillones:
+            oMuestra.Constructor rgDatos, ModalidadJuego.EU_5_50
+            
+    End Select
     '
     '   Comprueba que las fechas sean de sorteo
     '
@@ -144,8 +166,7 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
     '
     '   obtiene el rango con los datos comprendido entre las dos fechas
     '
-    Set rgDatos = mDB.Resultados_Fechas(vNewValue.FechaInicial, vNewValue.FechaFinal)
-        
+    Set rgDatos = mDB.GetSorteosInFechas(vNewValue)
     'Nos posicionamos en la celda de inicio de escritura
     Range("D3").Activate                        'Se posiciona el cursor en la
                                                 'celda D3
@@ -160,10 +181,10 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
         '   Escribimos el resultado
         '
         ActiveCell.Offset(i, 0).Value = oSorteo.Fecha
-        ActiveCell.Offset(i, 1).Value = oSorteo.Dia
+        ActiveCell.Offset(i, 1).Value = oSorteo.Semana
             
         'Coloreamos la Combinación ganadora con la estadistica del muestreo
-        For j = 1 To 7
+        For j = 1 To 6
             Set oNum = oSorteo.Combinacion.Numeros(j)
             Set oBola = oMuestra.Get_Bola(oNum.Valor)
             With ActiveCell.Offset(i, j + 1)
@@ -172,6 +193,14 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
                 .Interior.ColorIndex = oBola.Color_Probabilidad
             End With
         Next j
+        oNum.Valor = oSorteo.Complementario
+        Set oBola = oMuestra.Get_Bola(oNum.Valor)
+        With ActiveCell.Offset(i, j + 1)
+            .Value = oNum.Valor
+            .NumberFormat = "00"
+            .Interior.ColorIndex = oBola.Color_Probabilidad
+        End With
+        
         '
         '   Escribimos caracteristicas del sorteo
         '
@@ -181,7 +210,6 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
         ActiveCell.Offset(i, 13).Value = "'" & oSorteo.Combinacion.FormulaTerminaciones
         ActiveCell.Offset(i, 14).Value = "'" & oSorteo.Combinacion.FormulaConsecutivos
         ActiveCell.Offset(i, 15).Value = oSorteo.Combinacion.Suma
-        ActiveCell.Offset(i, 16).Value = oSorteo.Combinacion.Producto
                 
         i = i + 1                           ' Incrementa la Fila
     Next rgFila
@@ -190,29 +218,13 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
     Cells.EntireColumn.AutoFit              'Autoajusta el tamaño de las columnas
     
     Range("A1").Activate                    'Se posiciona el cursor en la celda A1
-    'PonCabecera
-    '
-    '  Obtiene una coleccion de sorteos para el periodo
-    '  Obtiene los parametros de la muestra de evaluacion
-    '  Obtiene la muestra para estos parametros
-    '  Prepara la hoja de salida.
-    '        Borrado y literales
-    '  Para cada sorteo en la coleccion
-    '     pinta los Numeros y colorea segun la
-    '     pinta los datos de la combinación
-    '     agrega a la estadistica los datos de la combinación
-    '  siguiente sorteo
-    '  Pinta la estadistica de combinaciones
-    '       elemento n/total combinaciones
-           
    On Error GoTo 0
-       Exit Sub
+    Exit Sub
             
 VerificarSorteo_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
     Call HandleException(ErrNumber, ErrDescription, "Lot_02_VerificarSorteos.VerificarSorteo", ErrSource)
-    '   Lanza el error
     Err.Raise ErrNumber, "Lot_02_VerificarSorteos.VerificarSorteo", ErrDescription
 End Sub
 
@@ -243,7 +255,7 @@ Private Sub PonTextosCabecera()
 '*------------------------
     Range("D1").Activate
 '
-' TODO: visualizar segun tipo de juego
+' #TODO: visualizar segun tipo de juego
     ActiveCell.Value = "Resultados"
     ActiveCell.Offset(1, 0).Value = "Fecha"
     ActiveCell.Offset(1, 1).Value = "Sem"
@@ -278,10 +290,9 @@ Private Sub PonTextosCabecera()
     ActiveCell.Offset(1, 3).Value = "Terminaciones"
     ActiveCell.Offset(1, 4).Value = "Consecutivos"
     ActiveCell.Offset(1, 5).Value = "Suma"
-    ActiveCell.Offset(1, 6).Value = "Producto"
 
 '*-----------------------|
-    Range("N1:Y1").Select
+    Range("N1:S1").Select
     With Selection
         .HorizontalAlignment = xlCenter
         .VerticalAlignment = xlBottom

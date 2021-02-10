@@ -13,7 +13,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
 '---------------------------------------------------------------------------------------
 ' Modulo    : frmRealizarColoreado
 ' Creado    : 16/03/2007  21:54
@@ -58,7 +57,7 @@ Private Sub cmdEjecutar_Click()
                     str_mensaje = "No ha introducido ningún " + vbCrLf _
                     + "número válido para colorear."
                 Else
-                    Me.Tag = COLOREAR_NumeroS
+                    Me.Tag = COLOREAR_NUMEROS
                     bol_opcion_valida = True
                 End If
             Else

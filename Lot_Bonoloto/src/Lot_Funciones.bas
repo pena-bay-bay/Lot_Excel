@@ -190,7 +190,7 @@ Public Function GetRegistroFecha(datFecha As Date, Optional datJuego As Juego = 
     ' M, V
     Case Juego.Euromillones
     ' D
-    Case Juego.gordoPrimitiva
+    Case Juego.GordoPrimitiva
     
     End Select
 

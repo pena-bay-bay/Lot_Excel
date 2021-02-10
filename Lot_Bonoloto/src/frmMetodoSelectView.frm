@@ -455,9 +455,13 @@ Public Sub InitForm()
   On Error GoTo InitForm_Error
     '
     '   Inicializamos pronosticos a 6
-    '   #TODO: en función del juego seleccionar 5 para euromillon y el gordo
     '
-    mPronosticos = 6
+    If JUEGO_DEFECTO = Bonoloto Or _
+    JUEGO_DEFECTO = LoteriaPrimitiva Then
+        mPronosticos = 6
+    Else
+        mPronosticos = 5
+    End If
     '
     '   Cargamos el Combo de juegos
     '

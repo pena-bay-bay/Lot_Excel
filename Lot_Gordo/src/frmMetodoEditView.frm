@@ -185,6 +185,9 @@ End Sub
 ' Propósito      : configura el formulario según el método
 '------------------------------------------------------------------------------*
 Private Sub cboTipoProcedimiento_Change()
+
+    Init_Formulario
+    
     Select Case cboTipoProcedimiento.ListIndex
         Case mtdSinDefinir:
             fraMuestra.Enabled = False
@@ -412,7 +415,11 @@ Private Sub cmdSave_Click()
         .SentidoOrdenacion = chkSentido.Value
         .TipoMuestra = chkCriterioMuestra.Value
         If .TipoMuestra Then
-            .NumeroSorteos = CInt(txtDiasMuestra.Text)
+            If IsNumeric(txtDiasMuestra.Text) Then
+                .NumeroSorteos = CInt(txtDiasMuestra.Text)
+            Else
+                .NumeroSorteos = 0
+            End If
         Else
             Select Case cboRango.ListIndex
                 Case 1: .DiasAnalisis = CInt(txtDiasMuestra.Text) * 7
@@ -421,7 +428,11 @@ Private Sub cmdSave_Click()
                 Case 4: .DiasAnalisis = CInt(txtDiasMuestra.Text) * 180
                 Case 5: .DiasAnalisis = CInt(txtDiasMuestra.Text) * 365
                 Case Else:
-                     .DiasAnalisis = CInt(txtDiasMuestra.Text)
+                    If IsNumeric(txtDiasMuestra.Text) Then
+                        .DiasAnalisis = CInt(txtDiasMuestra.Text)
+                    Else
+                        .DiasAnalisis = 0
+                    End If
             End Select
         End If
         .Pronosticos = CInt(txtPronosticos.Text)
@@ -559,6 +570,27 @@ Refresh_Error:
     Call MsgBox(ErrDescription, vbCritical Or vbSystemModal, ThisWorkbook.Name)
 End Sub
 
+Private Sub Init_Formulario()
+    '
+    '   Establecemos parametros de estadistica
+    '
+    cboOrdenacion.ListIndex = ordSinDefinir
+    chkSentido.Value = True
+    cboAgrupacion.ListIndex = grpSinDefinir
+    '
+    '   Establecemos parametros de muestra
+    '
+    chkCriterioMuestra.Value = True
+    txtDiasMuestra.Text = Empty
+    cboRango.ListIndex = -1
+    '
+    '   Configuramos datos del filtro
+    '
+    txtPronosticos.Text = Empty
+    cboTipoFiltro.ListIndex = -1
+    cboValorFiltro.ListIndex = -1
+    lstFiltros.Clear
+End Sub
 ' *===========(EOF): frmMetodoEditView
 
 

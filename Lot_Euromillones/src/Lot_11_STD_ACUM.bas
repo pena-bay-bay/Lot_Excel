@@ -84,14 +84,23 @@ Public Sub CalcularStdAcum()
             '
             '   Obtenemos la estadistica para la fecha
             '
-            Set rgDatos = mDB.Resultados_Fechas(oParMuestra.FechaInicial, _
-                                                oParMuestra.FechaFinal)
+            Set rgDatos = mDB.GetSorteosInFechas(oParMuestra.PeriodoDatos)
             '
             '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
             '
             Set oMuestra = New Muestra
             Set oMuestra.ParametrosMuestra = oParMuestra
-            oMuestra.Constructor rgDatos, Bonoloto
+            Select Case JUEGO_DEFECTO
+                Case LoteriaPrimitiva, Bonoloto:
+                    oMuestra.Constructor rgDatos, ModalidadJuego.LP_LB_6_49
+                
+                Case GordoPrimitiva:
+                    oMuestra.Constructor rgDatos, ModalidadJuego.GP_5_54
+                
+                Case Euromillones:
+                    oMuestra.Constructor rgDatos, ModalidadJuego.EU_5_50
+                    
+            End Select
             '
             '   Obtenemos el sorteo de la fecha
             '

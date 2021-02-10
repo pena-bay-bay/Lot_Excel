@@ -162,37 +162,37 @@ GetDataSet_Error:
    Err.Raise ErrNumber, ErrSource, ErrDescription
 End Function
 
-''---------------------------------------------------------------------------------------
-'' Procedure : Parse
-'' Author    : Charly
-'' Date      : 11/06/2012
-'' Purpose   :
-''---------------------------------------------------------------------------------------
-''
-'Public Function Parse(datRecordset As Recordset) As Variant
+'---------------------------------------------------------------------------------------
+' Procedure : Parse
+' Author    : Charly
+' Date      : 11/06/2012
+' Purpose   :
+'---------------------------------------------------------------------------------------
 '
-'    Dim vResult As Variant
-'
-'
-'  On Error GoTo Parse_Error
-'
-'    Parse = vResult
-'
-'   On Error GoTo 0
-'   Exit Function
-'
-'Parse_Error:
-'     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-'   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-'   '   Audita el error
-'   Call HandleException(ErrNumber, ErrDescription, "BoletoEngine.Parse")
-'   '   Lanza el Error
-'   'Err.Raise ErrNumber, ErrSource, ErrDescription
-'   '   Informa del error
-'   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
-'   'Call Trace("CERRAR")
-'
-'End Function
+Public Function Parse(datRecordset As Range) As Variant
+
+    Dim vResult As Variant
+
+
+  On Error GoTo Parse_Error
+
+    Parse = vResult
+
+   On Error GoTo 0
+   Exit Function
+
+Parse_Error:
+     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
+   '   Audita el error
+   Call HandleException(ErrNumber, ErrDescription, "BoletoEngine.Parse")
+   '   Lanza el Error
+   'Err.Raise ErrNumber, ErrSource, ErrDescription
+   '   Informa del error
+   'Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
+   'Call Trace("CERRAR")
+
+End Function
 
 '---------------------------------------------------------------------------------------
 ' Procedure : DelBoleto

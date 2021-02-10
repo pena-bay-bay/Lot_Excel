@@ -9,7 +9,7 @@ Attribute VB_Name = "Lot_Constantes"
 Option Explicit
 '// Variables de versión de la librería
 Public Const lotVersion = "2020.01"
-Public Const lotFeVersion = "lun,22/06/2020 18:27"
+Public Const lotFeVersion = "lun,31/08/2020 18:48"
 Public Const NOMBRE_APLICACION = "Gordo de la Primitiva"
 
 '// Variables relacionadas con el bombo
@@ -63,7 +63,7 @@ Public Const ESTADO_INICIAL = 0
 Public Const BOTON_CERRAR = 1
 Public Const EJECUTAR = 5
 Public Const BORRAR = 7
-Public Const COLOREAR_NumeroS = 2
+Public Const COLOREAR_NUMEROS = 2
 Public Const COLOREAR_UNAFECHA = 3
 Public Const COLOREAR_CARACTERISTICAS = 4
 Public Const SIMULAR_METODOS = 6
@@ -161,16 +161,16 @@ Public Const NOMBRE_CATEGORIASPREMIOS As String = "Primera;Segunda;Tercera;Cuart
 '
 '
 Public Enum Juego
-    loteriaPrimitiva = 1
-    bonoloto = 2
-    gordoPrimitiva = 3
+    LoteriaPrimitiva = 1
+    Bonoloto = 2
+    GordoPrimitiva = 3
     Euromillones = 4
     PrimitivaBonoloto = 5
 End Enum
 '
 '
 '
-Public Const JUEGO_DEFECTO As Integer = gordoPrimitiva
+Public Const JUEGO_DEFECTO As Integer = GordoPrimitiva
 '
 '   Literales de las constantes
 '
@@ -184,6 +184,7 @@ Public Enum ModalidadJuego
     GP_5_54 = 2
     EU_5_50 = 3
     EU_2_12 = 4
+    RT_0_9 = 5
 End Enum
 '
 '

@@ -8,8 +8,8 @@ Attribute VB_Name = "Lot_Constantes"
 '---------------------------------------------------------------------------------------
 Option Explicit
 '// Variables de versión de la librería
-Public Const lotVersion = "2020.03"
-Public Const lotFeVersion = "mar, 26/05/2020 17:25"
+Public Const lotVersion = "2020.01"
+Public Const lotFeVersion = "sáb, 15/09/2020 22:30"
 Public Const NOMBRE_APLICACION = "Euromillones"
 
 '// Variables relacionadas con el bombo
@@ -63,7 +63,7 @@ Public Const ESTADO_INICIAL = 0
 Public Const BOTON_CERRAR = 1
 Public Const EJECUTAR = 5
 Public Const BORRAR = 7
-Public Const COLOREAR_NumeroS = 2
+Public Const COLOREAR_NUMEROS = 2
 Public Const COLOREAR_UNAFECHA = 3
 Public Const COLOREAR_CARACTERISTICAS = 4
 Public Const SIMULAR_METODOS = 6
@@ -163,7 +163,7 @@ Public Const NOMBRE_CATEGORIASPREMIOS As String = "Primera;Segunda;Tercera;Cuart
 Public Enum Juego
     LoteriaPrimitiva = 1
     Bonoloto = 2
-    gordoPrimitiva = 3
+    GordoPrimitiva = 3
     Euromillones = 4
     PrimitivaBonoloto = 5
 End Enum
@@ -184,6 +184,7 @@ Public Enum ModalidadJuego
     GP_5_54 = 2
     EU_5_50 = 3
     EU_2_12 = 4
+    RT_0_9 = 5
 End Enum
 '
 '

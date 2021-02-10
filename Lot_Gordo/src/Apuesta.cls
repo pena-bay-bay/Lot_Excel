@@ -7,37 +7,159 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-'---------------------------------------------------------------------------------------
-' Module    : Apuesta
-' Author    : Charly
-' Date      : 10/11/2013
-' Purpose   : Nueva version de Apuesta
-'---------------------------------------------------------------------------------------
-
+' *============================================================================*
+' *
+' *     Fichero    : Apuesta.cls
+' *
+' *     Autor      : Carlos Almela Baeza
+' *     Creación   : 10/11/2013
+' *     Revisión   :
+' *     Versión    : 1.0
+' *     Propósito  : Representa una sugerencia o una apuesta de un Boleto
+' *
+' *============================================================================*
 Option Explicit
+Option Base 0
+'
+'--- Variables Privadas -------------------------------------------------------*
 
+'--- Propiedades --------------------------------------------------------------*
+Public EntidadNegocio   As EntidadNegocio
 Public Combinacion      As Combinacion
+Public Estrellas        As Combinacion
+Public Fecha            As Date
 Public IdBoleto         As Integer
 Public SeHaJugado       As Boolean
-Public EntidadNegocio   As EntidadNegocio
-Public EsMultiple       As Boolean
-Public NumeroApuestas   As Integer
-Public FechaAlta        As Date
 Public FechaFinVigencia As Date
 Public Metodo           As String
 Public Juego            As Juego
-'
-Private m_dCoste As Double
+Public Semana           As Integer
+Public Dia              As String
+Public Aciertos         As Integer
+Public CategoriaPremio  As String
+Public ImportePremio    As Currency
 
-Private Sub Class_Initialize()
-    Set Combinacion = New Combinacion
-    Set EntidadNegocio = New EntidadNegocio
-    IdBoleto = 0
-    SeHaJugado = False
-    EsMultiple = False
-    NumeroApuestas = 0
-    FechaAlta = Date
-End Sub
+'---------------------------------------------------------------------------------------
+' Procedure : NumeroApuestas
+' Author    : Charly
+' Date      : 04/09/2020
+' Purpose   : Deduce según los pronosticos y estrellas si es una apuesta múltiple
+'---------------------------------------------------------------------------------------
+'
+Public Property Get NumeroApuestas()
+Select Case Juego
+    Case LoteriaPrimitiva, Bonoloto:
+        Select Case TotNumeros
+            Case 5: NumeroApuestas = 44
+            Case 6: NumeroApuestas = 1
+            Case 7: NumeroApuestas = 7
+            Case 8: NumeroApuestas = 28
+            Case 9: NumeroApuestas = 84
+            Case 10: NumeroApuestas = 210
+            Case 11: NumeroApuestas = 462
+            Case Else: NumeroApuestas = 0
+        End Select
+    
+    Case GordoPrimitiva:
+        Select Case TotNumeros
+            Case 5: NumeroApuestas = 1
+            Case 6: NumeroApuestas = 6
+            Case 7: NumeroApuestas = 21
+            Case 8: NumeroApuestas = 56
+            Case 9: NumeroApuestas = 126
+            Case 10: NumeroApuestas = 252
+            Case 11: NumeroApuestas = 462
+            Case Else: NumeroApuestas = 0
+        End Select
+    
+    Case Euromillones:
+        Select Case TotNumeros
+        Case 5:
+            Select Case TotEstrellas
+                Case Is = 2: NumeroApuestas = 1
+                Case Is = 3: NumeroApuestas = 3
+                Case Is = 4: NumeroApuestas = 6
+                Case Is = 5: NumeroApuestas = 10
+            End Select
+        Case 6:
+            Select Case TotEstrellas
+                Case Is = 2: NumeroApuestas = 6
+                Case Is = 3: NumeroApuestas = 18
+                Case Is = 4: NumeroApuestas = 36
+                Case Is = 5: NumeroApuestas = 60
+            End Select
+            
+        Case 7:
+            Select Case TotEstrellas
+                Case Is = 2: NumeroApuestas = 21
+                Case Is = 3: NumeroApuestas = 63
+                Case Is = 4: NumeroApuestas = 126
+                Case Is = 5: NumeroApuestas = 210
+            End Select
+            
+        Case 8:
+            Select Case TotEstrellas
+                Case Is = 2: NumeroApuestas = 56
+                Case Is = 3: NumeroApuestas = 168
+                Case Is = 4: NumeroApuestas = 336
+                Case Is = 5: NumeroApuestas = 560
+            End Select
+            
+        Case 9:
+            Select Case TotEstrellas
+                Case Is = 2: NumeroApuestas = 126
+                Case Is = 3: NumeroApuestas = 378
+                Case Is = 4: NumeroApuestas = 756
+                Case Is = 5: NumeroApuestas = 1260
+            End Select
+            
+        Case 10:
+            Select Case TotEstrellas
+                Case Is = 2: NumeroApuestas = 252
+                Case Is = 3: NumeroApuestas = 756
+                Case Is = 4: NumeroApuestas = 1512
+                Case Is = 5: NumeroApuestas = 2520
+            End Select
+        
+        Case Else:
+            NumeroApuestas = 0
+        End Select
+End Select
+End Property
+
+
+'---------------------------------------------------------------------------------------
+' Procedure : EsMultiple
+' Author    : Charly
+' Date      : 26/08/2020
+' Purpose   : Deduce según los pronosticos y estrellas si es una apuesta múltiple
+'---------------------------------------------------------------------------------------
+'
+Public Property Get EsMultiple() As Boolean
+    Select Case Juego
+        Case LoteriaPrimitiva, Bonoloto:
+            If Pronosticos = 5 Or Pronosticos > 6 Then
+                EsMultiple = True
+            Else
+                EsMultiple = False
+            End If
+            
+        Case GordoPrimitiva:
+            If Pronosticos > 5 Then
+                EsMultiple = True
+            Else
+                EsMultiple = False
+            End If
+            
+        Case Euromillones:
+            If Pronosticos = 5 And TotEstrellas = 2 Then
+                EsMultiple = False
+            Else
+                EsMultiple = True
+            End If
+    End Select
+End Property
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : Texto
@@ -47,21 +169,34 @@ End Sub
 '---------------------------------------------------------------------------------------
 '
 Public Property Get Texto() As String
+    Select Case Juego
+        Case Bonoloto, LoteriaPrimitiva, GordoPrimitiva:
+            Texto = Me.Combinacion.ToString(True)
+        
+        Case Euromillones
+            Texto = Me.Combinacion.ToString(True) & "E" & Me.Estrellas.ToString(True)
+    End Select
+End Property
 
-  On Error GoTo Texto_Error
-
-    Texto = Me.Combinacion.Texto
-
-   On Error GoTo 0
-   Exit Property
-
-Texto_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
-   ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Apuesta.Texto")
-   '   Lanza el Error
-   Err.Raise ErrNumber, ErrSource, ErrDescription
+'---------------------------------------------------------------------------------------
+' Procedure : Total Numeros
+' Author    : Charly
+' Date      : 23/08/2020
+' Purpose   :
+'---------------------------------------------------------------------------------------
+'
+Public Property Get TotNumeros() As Integer
+    TotNumeros = Me.Combinacion.Count
+End Property
+'---------------------------------------------------------------------------------------
+' Procedure : Total Estrellas
+' Author    : Charly
+' Date      : 23/08/2020
+' Purpose   :
+'---------------------------------------------------------------------------------------
+'
+Public Property Get TotEstrellas() As Integer
+    TotEstrellas = Me.Estrellas.Count
 End Property
 
 '---------------------------------------------------------------------------------------
@@ -72,55 +207,201 @@ End Property
 '---------------------------------------------------------------------------------------
 '
 Public Property Get Pronosticos() As Integer
+    Pronosticos = TotNumeros
+End Property
 
-  On Error GoTo Pronosticos_Error
-    Me.EsMultiple = True
-    Pronosticos = Me.Combinacion.Count
 
-    Select Case Pronosticos
-        Case 5: NumeroApuestas = 44
-            If Me.Juego = Euromillones Then
-                Me.EsMultiple = False
-            End If
-        Case 6:
-            NumeroApuestas = 1
-            If Me.Juego = PrimitivaBonoloto Then
-                Me.EsMultiple = False
-            End If
-        Case 7: NumeroApuestas = 7
-        Case 8: NumeroApuestas = 28
-        Case 9: NumeroApuestas = 84
-        Case 10: NumeroApuestas = 210
-        Case 11: NumeroApuestas = 462
-        Case Else: NumeroApuestas = 0
+
+'---------------------------------------------------------------------------------------
+' Procedure : Coste
+' Author    : Charly
+' Date      : 17/11/2013
+' Purpose   : Calcular el coste total de la apuesta
+'---------------------------------------------------------------------------------------
+'
+Public Property Get Coste() As Double
+    Select Case Juego
+        Case LoteriaPrimitiva:
+            Coste = NumeroApuestas * 1
+            
+        Case Bonoloto:
+            Coste = NumeroApuestas * 0.5
+            
+        Case GordoPrimitiva:
+            Coste = NumeroApuestas * 1.5
+            
+        Case Euromillones:
+           Coste = NumeroApuestas * 2.5
     End Select
+End Property
+'--- Constantes ---------------------------------------------------------------*
+'--- Mensajes -----------------------------------------------------------------*
+'--- Errores ------------------------------------------------------------------*
+'--- Métodos Privados ---------------------------------------------------------*
+Private Sub Class_Initialize()
+    Set Combinacion = New Combinacion
+    Set Estrellas = New Combinacion
+    Set EntidadNegocio = New EntidadNegocio
+    Juego = JUEGO_DEFECTO
+    IdBoleto = 0
+    SeHaJugado = False
+    CategoriaPremio = ""
+    ImportePremio = 0
+End Sub
+
+Private Sub Class_Terminate()
+    Set Combinacion = Nothing
+    Set Estrellas = Nothing
+    Set EntidadNegocio = Nothing
+End Sub
+
+
+Private Function CalApuestas() As Integer
+    Dim mPronos As Integer
+    mPronos = Pronosticos
+    
+End Function
+'---------------------------------------------------------------------------------------
+' Procedure : Constructor
+' Author    : Charly
+' Date      :
+' Purpose   : Constructor del objeto a partir de un rango de Excel
+'---------------------------------------------------------------------------------------
+'
+Public Sub Constructor(vNewValue As Range)
+    Dim mTexto As String
+    Dim i As Integer
+    Dim l As Double
+  On Error GoTo Constructor_Error
+    
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto:
+            With vNewValue
+                EntidadNegocio.Id = .Cells(1, 1).Value
+                IdBoleto = .Cells(1, 2).Value
+                Juego = IIf(.Cells(1, 3).Value = "BL", Bonoloto, JUEGO_DEFECTO)
+                Fecha = CDate(.Cells(1, 4).Value)
+                Semana = CInt(.Cells(1, 5).Value)
+                Dia = .Cells(1, 6).Value
+                mTexto = .Cells(1, 7).Value & "-" & _
+                         .Cells(1, 8).Value & "-" & _
+                         .Cells(1, 9).Value & "-" & _
+                         .Cells(1, 10).Value & "-" & _
+                         .Cells(1, 11).Value & "-" & _
+                         .Cells(1, 12).Value & "-" & _
+                         .Cells(1, 13).Value & "-" & _
+                         .Cells(1, 14).Value & "-" & _
+                         .Cells(1, 15).Value & "-" & _
+                         .Cells(1, 16).Value & "-" & _
+                         .Cells(1, 17).Value
+                Combinacion.Texto = mTexto
+                CategoriaPremio = .Cells(1, 23).Value
+                If IsNumeric(.Cells(1, 25).Value) Then
+                    ImportePremio = CCur(.Cells(1, 24).Value)
+                End If
+                Metodo = .Cells(1, 25).Value
+            End With
+            
+        Case LoteriaPrimitiva:
+            With vNewValue
+                EntidadNegocio.Id = .Cells(1, 1).Value
+                IdBoleto = .Cells(1, 2).Value
+                Juego = IIf(.Cells(1, 3).Value = "LP", LoteriaPrimitiva, JUEGO_DEFECTO)
+                Fecha = CDate(.Cells(1, 4).Value)
+                Semana = CInt(.Cells(1, 5).Value)
+                Dia = .Cells(1, 6).Value
+                mTexto = .Cells(1, 7).Value & "-" & _
+                         .Cells(1, 8).Value & "-" & _
+                         .Cells(1, 9).Value & "-" & _
+                         .Cells(1, 10).Value & "-" & _
+                         .Cells(1, 11).Value & "-" & _
+                         .Cells(1, 12).Value & "-" & _
+                         .Cells(1, 13).Value & "-" & _
+                         .Cells(1, 14).Value & "-" & _
+                         .Cells(1, 15).Value & "-" & _
+                         .Cells(1, 16).Value & "-" & _
+                         .Cells(1, 17).Value
+                Combinacion.Texto = mTexto
+                CategoriaPremio = .Cells(1, 23).Value
+                If IsNumeric(.Cells(1, 25).Value) Then
+                    ImportePremio = CCur(.Cells(1, 24).Value)
+                End If
+                Metodo = .Cells(1, 25).Value
+            End With
+            
+        Case GordoPrimitiva:
+             With vNewValue
+                EntidadNegocio.Id = .Cells(1, 1).Value
+                IdBoleto = .Cells(1, 2).Value
+                Juego = IIf(.Cells(1, 3).Value = "GP", GordoPrimitiva, JUEGO_DEFECTO)
+                Fecha = CDate(.Cells(1, 4).Value)
+                Semana = CInt(.Cells(1, 5).Value)
+                Dia = .Cells(1, 6).Value
+                mTexto = .Cells(1, 7).Value & "-" & _
+                         .Cells(1, 8).Value & "-" & _
+                         .Cells(1, 9).Value & "-" & _
+                         .Cells(1, 10).Value & "-" & _
+                         .Cells(1, 11).Value & "-" & _
+                         .Cells(1, 12).Value & "-" & _
+                         .Cells(1, 13).Value & "-" & _
+                         .Cells(1, 14).Value & "-" & _
+                         .Cells(1, 15).Value & "-" & _
+                         .Cells(1, 16).Value & "-" & _
+                         .Cells(1, 17).Value
+                Combinacion.Texto = mTexto
+                CategoriaPremio = .Cells(1, 23).Value
+                If IsNumeric(.Cells(1, 25).Value) Then
+                    ImportePremio = CCur(.Cells(1, 24).Value)
+                End If
+                Metodo = .Cells(1, 25).Value
+            End With
+       
+        Case Euromillones:
+             With vNewValue
+                EntidadNegocio.Id = .Cells(1, 1).Value
+                IdBoleto = .Cells(1, 2).Value
+                Juego = IIf(.Cells(1, 3).Value = "EU", Euromillones, JUEGO_DEFECTO)
+                Fecha = CDate(.Cells(1, 4).Value)
+                Semana = CInt(.Cells(1, 5).Value)
+                Dia = .Cells(1, 6).Value
+                mTexto = .Cells(1, 7).Value & "-" & _
+                         .Cells(1, 8).Value & "-" & _
+                         .Cells(1, 9).Value & "-" & _
+                         .Cells(1, 10).Value & "-" & _
+                         .Cells(1, 11).Value & "-" & _
+                         .Cells(1, 12).Value & "-" & _
+                         .Cells(1, 13).Value & "-" & _
+                         .Cells(1, 14).Value & "-" & _
+                         .Cells(1, 15).Value & "-" & _
+                         .Cells(1, 16).Value & "-" & _
+                         .Cells(1, 17).Value
+                Combinacion.Texto = mTexto
+                mTexto = .Cells(1, 18).Value & "-" & _
+                         .Cells(1, 19).Value & "-" & _
+                         .Cells(1, 20).Value & "-" & _
+                         .Cells(1, 21).Value & "-" & _
+                         .Cells(1, 22).Value
+                Estrellas.Texto = mTexto
+                CategoriaPremio = .Cells(1, 23).Value
+                If IsNumeric(.Cells(1, 25).Value) Then
+                    ImportePremio = CCur(.Cells(1, 24).Value)
+                End If
+                Metodo = .Cells(1, 25).Value
+            End With
+    
+    End Select
+    '
+    '   Calculamos los pronosticos
+    '
+    i = Pronosticos
     
    On Error GoTo 0
-   Exit Property
-
-Pronosticos_Error:
-     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
+   Exit Sub
+Constructor_Error:
+   Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
    ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-   '   Audita el error
-   Call HandleException(ErrNumber, ErrDescription, "Apuesta.Pronosticos")
-   '   Lanza el Error
+   Call HandleException(ErrNumber, ErrDescription, "Apuesta.Constructor")
    Err.Raise ErrNumber, ErrSource, ErrDescription
+End Sub
 
-End Property
-
-Public Property Get Coste(datJuego As Juego) As Double
-    Select Case datJuego
-    Case loteriaPrimitiva
-        m_dCoste = NumeroApuestas * 1
-    Case bonoloto
-        m_dCoste = NumeroApuestas * 0.5
-    Case gordoPrimitiva
-        m_dCoste = NumeroApuestas * 1.5
-    Case Euromillones
-       m_dCoste = NumeroApuestas * 2
-    End Select
-
-    Coste = m_dCoste
-    
-
-End Property
+' *===========(EOF): Apuesta.cls

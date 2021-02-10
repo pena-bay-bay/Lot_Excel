@@ -57,7 +57,7 @@ Private Sub cmdEjecutar_Click()
                     str_mensaje = "No ha introducido ningún " + vbCrLf _
                     + "número válido para colorear."
                 Else
-                    Me.Tag = COLOREAR_NumeroS
+                    Me.Tag = COLOREAR_NUMEROS
                     bol_opcion_valida = True
                 End If
             Else

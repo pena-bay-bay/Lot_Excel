@@ -55,5 +55,3 @@ Private Sub Workbook_WindowDeactivate(ByVal Wn As Window)
     On Error Resume Next
     Application.CommandBars(BARRA_FUNCIONES).Enabled = False
 End Sub
-
-

@@ -415,7 +415,11 @@ Private Sub cmdSave_Click()
         .SentidoOrdenacion = chkSentido.Value
         .TipoMuestra = chkCriterioMuestra.Value
         If .TipoMuestra Then
-            .NumeroSorteos = CInt(txtDiasMuestra.Text)
+            If IsNumeric(txtDiasMuestra.Text) Then
+                .NumeroSorteos = CInt(txtDiasMuestra.Text)
+            Else
+                .NumeroSorteos = 0
+            End If
         Else
             Select Case cboRango.ListIndex
                 Case 1: .DiasAnalisis = CInt(txtDiasMuestra.Text) * 7
@@ -424,7 +428,11 @@ Private Sub cmdSave_Click()
                 Case 4: .DiasAnalisis = CInt(txtDiasMuestra.Text) * 180
                 Case 5: .DiasAnalisis = CInt(txtDiasMuestra.Text) * 365
                 Case Else:
-                     .DiasAnalisis = CInt(txtDiasMuestra.Text)
+                    If IsNumeric(txtDiasMuestra.Text) Then
+                        .DiasAnalisis = CInt(txtDiasMuestra.Text)
+                    Else
+                        .DiasAnalisis = 0
+                    End If
             End Select
         End If
         .Pronosticos = CInt(txtPronosticos.Text)

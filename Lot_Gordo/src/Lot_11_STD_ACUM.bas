@@ -44,6 +44,7 @@ Public Sub CalcularStdAcum()
     mFecDesde = mFecHasta - mSorteos
     Set oInfo = New InfoSorteo
     Set oEngSort = New SorteoEngine
+    oInfo.Constructor JUEGO_DEFECTO
     '
     '   Borra la hoja de salida
     '
@@ -58,7 +59,7 @@ Public Sub CalcularStdAcum()
     '
     Set oParMuestra = New ParametrosMuestra
     With oParMuestra
-        .Juego = bonoloto
+        .Juego = Bonoloto
         .FechaAnalisis = mFecDesde
         .FechaFinal = oInfo.GetAnteriorSorteo(mFecDesde)
         .NumeroSorteos = mSorteos
@@ -83,14 +84,23 @@ Public Sub CalcularStdAcum()
             '
             '   Obtenemos la estadistica para la fecha
             '
-            Set rgDatos = mDB.Resultados_Fechas(oParMuestra.FechaInicial, _
-                                                oParMuestra.FechaFinal)
+            Set rgDatos = mDB.GetSorteosInFechas(oParMuestra.PeriodoDatos)
             '
             '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
             '
             Set oMuestra = New Muestra
             Set oMuestra.ParametrosMuestra = oParMuestra
-            oMuestra.Constructor rgDatos, bonoloto
+            Select Case JUEGO_DEFECTO
+                Case LoteriaPrimitiva, Bonoloto:
+                    oMuestra.Constructor rgDatos, ModalidadJuego.LP_LB_6_49
+                
+                Case GordoPrimitiva:
+                    oMuestra.Constructor rgDatos, ModalidadJuego.GP_5_54
+                
+                Case Euromillones:
+                    oMuestra.Constructor rgDatos, ModalidadJuego.EU_5_50
+                    
+            End Select
             '
             '   Obtenemos el sorteo de la fecha
             '
@@ -165,7 +175,7 @@ End Sub
 Private Sub DisMuestraFecha(datMuestra As Muestra, datSorteo As Sorteo)
     Dim i           As Integer
     Dim Num         As Integer
-    Dim oBola       As bola
+    Dim oBola       As Bola
     
   On Error GoTo DisMuestraFecha_Error
     

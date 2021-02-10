@@ -690,7 +690,7 @@ Private Sub CalMuestra()
     Select Case JUEGO_DEFECTO
         Case Bonoloto, LoteriaPrimitiva:
              mMuestra.Constructor oRange, LP_LB_6_49
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
              mMuestra.Constructor oRange, GP_5_54
         Case Euromillones
              mMuestra.Constructor oRange, EU_5_50

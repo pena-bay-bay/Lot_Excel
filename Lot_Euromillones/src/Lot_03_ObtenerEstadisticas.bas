@@ -1,7 +1,7 @@
 Attribute VB_Name = "Lot_03_ObtenerEstadisticas"
 ' *============================================================================*
 ' *
-' *     Fichero    : Lot_00_ObtenerEstadisticas
+' *     Fichero    : Lot_03_ObtenerEstadisticas
 ' *
 ' *     Autor      : Carlos Almela Baeza
 ' *     Creación   : mar, 17/01/2012 23:45
@@ -11,6 +11,8 @@ Attribute VB_Name = "Lot_03_ObtenerEstadisticas"
 ' *
 ' *============================================================================*
 Option Explicit
+
+
 
 ' *============================================================================*
 ' *     Procedure  : btn_Obtener_Estadisticas
@@ -67,13 +69,22 @@ Public Sub btn_Obtener_Estadisticas()
     '
     '   obtiene el rango con los datos comprendido entre las dos fechas
     '
-    Set m_objRg = m_objBd.Resultados_Fechas(m_objParMuestra.FechaInicial, _
-                                         m_objParMuestra.FechaFinal)
+    Set m_objRg = m_objBd.GetSorteosInFechas(m_objParMuestra.PeriodoDatos)
     '
     '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
     '
     Set objMuestra.ParametrosMuestra = m_objParMuestra
-    objMuestra.Constructor m_objRg, JUEGO_DEFECTO
+    Select Case JUEGO_DEFECTO
+        Case LoteriaPrimitiva, Bonoloto:
+            objMuestra.Constructor m_objRg, ModalidadJuego.LP_LB_6_49
+        
+        Case GordoPrimitiva:
+            objMuestra.Constructor m_objRg, ModalidadJuego.GP_5_54
+        
+        Case Euromillones:
+            objMuestra.Constructor m_objRg, ModalidadJuego.EU_5_50
+            
+    End Select
     '
     '
     '       Pinta la muestra en la hoja
@@ -85,19 +96,18 @@ Public Sub btn_Obtener_Estadisticas()
     Range("A9").Select
     
 btn_Obtener_Estadisticas_CleanExit:
-   On Error GoTo 0
+  On Error GoTo 0
     Exit Sub
-
 btn_Obtener_Estadisticas_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-    '   Audita el error
     Call HandleException(ErrNumber, ErrDescription, "Lot_ObtenerEstadisticas.btn_Obtener_Estadisticas")
-    '   Informa del error
     Call MsgBox(ErrDescription, vbError Or vbSystemModal, NOMBRE_APLICACION)
     Call Trace("CERRAR")
-
 End Sub
+
+
+
 
 
 ' *============================================================================*
@@ -114,6 +124,8 @@ Public Sub Pintar_Muestra(ByRef objMuestra As Muestra)
     Dim m_objBola           As Bola
     Dim mSort               As Sorteo
     Dim mEngSort            As SorteoEngine
+    Dim mMin                As Integer
+    Dim mMax                As Integer
     
   On Error GoTo Pintar_Muestra_Error
     '
@@ -175,9 +187,23 @@ Public Sub Pintar_Muestra(ByRef objMuestra As Muestra)
     '
     Range("A9").Activate    'Se posiciona en la celda A9
     '
-    '   para cada bola desde la 1 a la 49
+    '   Determinamos bolas del juego
     '
-    For i = 1 To 49
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto, LoteriaPrimitiva:
+            mMin = 1
+            mMax = 49
+        Case GordoPrimitiva:
+            mMin = 1
+            mMax = 54
+        Case Euromillones:
+            mMin = 1
+            mMax = 50
+    End Select
+    '
+    '   para cada bola
+    '
+    For i = mMin To mMax
         '
         '
         '   Obtiene la bola de trabajo de la muestra
@@ -245,14 +271,38 @@ Public Sub Pintar_Muestra(ByRef objMuestra As Muestra)
     Next i
     
     'Colorea los rangos de probabilidades
-    Colorear_Matriz Range("D10:D58"), True         'Probabilidad del número
-    Colorear_Matriz Range("E10:E58"), True         'Tiempo Medio
-    Colorear_Matriz Range("F10:F58"), True         'Probabilidad de la frecuencia
-    Colorear_Matriz Range("M10:M58"), False        'Próxima fecha
-    Colorear_Matriz Range("g10:g58"), False        'Tiempo medio
-    Colorear_Matriz Range("H10:H58"), False        'Desviacion
-    Colorear_Matriz Range("i10:i58"), False        'Moda
-    
+    Select Case JUEGO_DEFECTO
+        Case Bonoloto, LoteriaPrimitiva:
+            'Colorea los rangos de probabilidades
+            Colorear_Matriz Range("D10:D58"), True         'Probabilidad del n?mero
+            Colorear_Matriz Range("E10:E58"), True         'Tiempo Medio
+            Colorear_Matriz Range("F10:F58"), True         'Probabilidad de la frecuencia
+            Colorear_Matriz Range("M10:M58"), False        'Pr?xima fecha
+            Colorear_Matriz Range("g10:g58"), False        'Tiempo medio
+            Colorear_Matriz Range("H10:H58"), False        'Desviacion
+            Colorear_Matriz Range("i10:i58"), False        'Moda
+        Case GordoPrimitiva:
+            'Colorea los rangos de probabilidades
+            Colorear_Matriz Range("D10:D63"), True         'Probabilidad del n?mero
+            Colorear_Matriz Range("E10:E63"), True         'Tiempo Medio
+            Colorear_Matriz Range("F10:F63"), True         'Probabilidad de la frecuencia
+            Colorear_Matriz Range("M10:M63"), False        'Pr?xima fecha
+            Colorear_Matriz Range("g10:g63"), False        'Tiempo medio
+            Colorear_Matriz Range("H10:H63"), False        'Desviacion
+            Colorear_Matriz Range("i10:i63"), False        'Moda
+        Case Euromillones:
+            'Colorea los rangos de probabilidades
+            Colorear_Matriz Range("D10:D59"), True         'Probabilidad del n?mero
+            Colorear_Matriz Range("E10:E59"), True         'Tiempo Medio
+            Colorear_Matriz Range("F10:F59"), True         'Probabilidad de la frecuencia
+            Colorear_Matriz Range("M10:M59"), False        'Pr?xima fecha
+            Colorear_Matriz Range("g10:g59"), False        'Tiempo medio
+            Colorear_Matriz Range("H10:H59"), False        'Desviacion
+            Colorear_Matriz Range("i10:i59"), False        'Moda
+    End Select
+    '
+    '
+    '
     Cells.Select                'Selecciona todas las celdas de la hoja
     Cells.EntireColumn.AutoFit  'Autoajusta el tamaño de las columnas
     
@@ -260,14 +310,14 @@ Public Sub Pintar_Muestra(ByRef objMuestra As Muestra)
     Selection.AutoFilter        'Crea un autofiltro
 
 Pintar_Muestra_CleanExit:
-   On Error GoTo 0
+  On Error GoTo 0
     Exit Sub
 
 Pintar_Muestra_Error:
     Dim ErrNumber As Long: Dim ErrDescription As String: Dim ErrSource As String
     ErrNumber = Err.Number: ErrDescription = Err.Description: ErrSource = Err.Source
-    '   Audita el error
     Call HandleException(ErrNumber, ErrDescription, "Lot_ObtenerEstadisticas.Pintar_Muestra")
-    '   Lanza el Error
     Err.Raise ErrNumber, ErrSource, ErrDescription
 End Sub
+
+' *===========(EOF): Lot_03_ObtenerEstadisticas

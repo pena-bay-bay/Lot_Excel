@@ -43,7 +43,7 @@ Private Sub Class_Initialize()
     Select Case JUEGO_DEFECTO
         Case Bonoloto, LoteriaPrimitiva:
             mTipoBombo = 1                                  ' Bombo de 49 bolas
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             mTipoBombo = 2                                  ' Bombo de 54 bolas
         Case Euromillones:
             mTipoBombo = 3                                  ' Bombo de 50 bolas
@@ -82,9 +82,9 @@ Public Sub Constructor(rg_muestra As Range, Optional vNewMod As ModalidadJuego)
         '
         '   Asignamos el tipo de bombo exterior
         '
-        If Not IsMissing(vNewMod) Then
-            mTipoBombo = vNewMod
-        End If
+'        If Not IsMissing(vNewMod) Then
+'            mTipoBombo = vNewMod
+'        End If
         
         mRegTotal = 0
         Select Case mTipoBombo

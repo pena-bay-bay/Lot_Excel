@@ -640,6 +640,13 @@ GetSugerencias_Error:
 End Function
 
 
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : CalcularMuestra
+' Fecha          :
+' Propósito      :
+' Parámetros     :
+'------------------------------------------------------------------------------*
 Private Sub CalcularMuestra(datParam As ParametrosMuestra)
     Dim mRg             As Range                  ' rango de datos
     Dim mBd             As New BdDatos            ' base de datos
@@ -647,16 +654,23 @@ Private Sub CalcularMuestra(datParam As ParametrosMuestra)
     '
     '   obtiene el rango con los datos comprendido entre las dos fechas
     '
-'    Set mRg = mBd.Resultados_Fechas(datParam.FechaInicial, _
-'                                    datParam.FechaFinal)
     Set mRg = mBd.GetSorteosInFechas(datParam.PeriodoDatos)
-                                    
     '
     '   se lo pasa al constructor de la clase y obtiene las estadisticas para cada bola
     '
     Set mMuestra.ParametrosMuestra = datParam
-    mMuestra.Constructor mRg, JUEGO_DEFECTO
-    
+    Select Case JUEGO_DEFECTO
+        Case LoteriaPrimitiva, Bonoloto:
+            mMuestra.Constructor mRg, ModalidadJuego.LP_LB_6_49
+        
+        Case GordoPrimitiva:
+            mMuestra.Constructor mRg, ModalidadJuego.GP_5_54
+        
+        Case Euromillones:
+            mMuestra.Constructor mRg, ModalidadJuego.EU_5_50
+            
+    End Select
+
 On Error GoTo 0
 CalcularMuestra__CleanExit:
     Exit Sub
@@ -686,8 +700,14 @@ Private Function AgrupaMatriz(vMat As Variant, vAgrup As TipoAgrupacion) As Vari
     Select Case vAgrup
         
         Case grpDecenas:
-            ReDim a_Matriz(4, 10)
-            ReDim a_cont(4, 1)
+            If JUEGO_DEFECTO = Bonoloto Or _
+            JUEGO_DEFECTO = LoteriaPrimitiva Then
+                ReDim a_Matriz(4, 10)
+                ReDim a_cont(4, 1)
+            Else
+                ReDim a_Matriz(5, 10)
+                ReDim a_cont(5, 1)
+            End If
             
         Case grpSeptenas:
             ReDim a_Matriz(7, 7)
@@ -711,7 +731,7 @@ Private Function AgrupaMatriz(vMat As Variant, vAgrup As TipoAgrupacion) As Vari
     '   Redimimensionar contador y Probabilidad
     '
     
-    For i = 0 To UBound(vMat)
+    For i = 0 To UBound(vMat) - 1
         '
         '   Concretamos el Numero
         '
@@ -721,7 +741,6 @@ Private Function AgrupaMatriz(vMat As Variant, vAgrup As TipoAgrupacion) As Vari
         '
         Select Case vAgrup
             Case grpDecenas:
-            
                 j = n.Decena - 1
                 a_Matriz(j, a_cont(j, 0)) = n.Valor
                 a_cont(j, 0) = a_cont(j, 0) + 1

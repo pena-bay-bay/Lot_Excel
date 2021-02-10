@@ -97,7 +97,7 @@ Public Property Get CategoriaTexto() As String
                 Case Else: m_sCategoriaTexto = "Ninguna"
             End Select
          
-        Case gordoPrimitiva
+        Case GordoPrimitiva
             Select Case Me.CategoriaPremio
                 Case Primera: m_sCategoriaTexto = "1ª (5 + 1)"
                 Case Segunda: m_sCategoriaTexto = "2ª (5 + 0)"
@@ -360,7 +360,7 @@ Public Function Pack() As String
             mStr = "$1,$2,$3"
         Case LoteriaPrimitiva:
             mStr = "$1,$2,$3"
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             mStr = "$1,$2,$3"
         Case Euromillones:
             mStr = "$1,$2,$3,$4"
@@ -402,7 +402,7 @@ Public Sub UnPack(vNewValue As String)
     '
     '
     Select Case Juego
-        Case Bonoloto, LoteriaPrimitiva, gordoPrimitiva:
+        Case Bonoloto, LoteriaPrimitiva, GordoPrimitiva:
             Me.CategoriaPremio = Val(vMatriz(0))
             Me.NumeroAcertantesEspaña = Val(vMatriz(1))
             Me.Importe = Val(vMatriz(2))

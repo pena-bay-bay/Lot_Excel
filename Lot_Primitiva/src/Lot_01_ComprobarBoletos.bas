@@ -199,7 +199,7 @@ Private Sub ComprobarBoletos(vNewValue As Periodo)
                             oFila.Cells(1, 15).Interior.ColorIndex = COLOR_VERDE_CLARO
                         Else
                             oFila.Cells(1, 14).Value = ""
-                            oFila.Cells(1, 15).Value = ""
+                            oFila.Cells(1, 15).Value = 0
                             oFila.Cells(1, 15).Interior.ColorIndex = xlColorIndexNone
                         End If
                     End If
@@ -319,15 +319,19 @@ Private Sub ComprobarApuestas(vNewValue As Periodo)
                                 '
                                 oFila.Cells(1, i).Interior.ColorIndex = xlColorIndexNone
                             End If
-                            '
-                            ' para los sorteos de juego 6/49
-                            '
-                            If oSorteo.Complementario = iNumero Then
+                            If JUEGO_DEFECTO = Bonoloto Or JUEGO_DEFECTO = LoteriaPrimitiva Then
                                 '
-                                ' Si no es el complementario lo colorea de verde
+                                ' para los sorteos de juego 6/49
                                 '
-                                oFila.Cells(1, i).Interior.ColorIndex = COLOR_AMARILLO
+                                If oSorteo.Complementario = iNumero Then
+                                    '
+                                    ' Si no es el complementario lo colorea de verde
+                                    '
+                                    oFila.Cells(1, i).Interior.ColorIndex = COLOR_AMARILLO
+                                End If
                             End If
+                            ' #TODO: Agregar estrellas
+                            
                         End If
                     Next i
                     '

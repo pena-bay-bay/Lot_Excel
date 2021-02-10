@@ -1613,7 +1613,10 @@ Indice:
 			Debug.Print Now
 		End Sub
 
-
+14.- Operaciones con Rangos.
+	- Averiguar el area que comprende la selección actual
+		? Selection.CurrentRegion.Address		(el cursor está en la celda $B$3)
+		$A$1:$O$3
 
 
 

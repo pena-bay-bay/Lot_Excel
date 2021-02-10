@@ -121,7 +121,7 @@ Private Sub SetPremiosDefecto()
     Select Case m_eJuego
         Case Bonoloto: Parse LT_PREMIOSDEFBONOLOTO
         Case LoteriaPrimitiva: Parse LT_PREMIOSDEFPRIMITIVA
-        Case gordoPrimitiva: Parse LT_PREMIOSDEFGORDO
+        Case GordoPrimitiva: Parse LT_PREMIOSDEFGORDO
         Case Euromillones: Parse LT_PREMIOSDEFEUROMILLONES
     End Select
     

@@ -13,7 +13,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
 ' *============================================================================*
 ' *
 ' *     Fichero    : frmMetodoSelectView.frm
@@ -404,6 +403,7 @@ Private Sub txtFechaAnalisis_Change()
         txtFechaAnalisis.BackColor = RGB(255, 252, 162)    ' amarillo claro
     Else
         txtFechaAnalisis.BackColor = RGB(255, 255, 255)    'Blanco
+        mFechaAnalisis = CDate(txtFechaAnalisis.Text)
     End If
 End Sub
 
@@ -451,13 +451,17 @@ End Sub
 Public Sub InitForm()
     Dim mVar        As Variant
     Dim mHoy        As Date
-    Dim DB          As BdDatos
+    Dim Db          As BdDatos
   On Error GoTo InitForm_Error
     '
     '   Inicializamos pronosticos a 6
-    '   TODO: en función del juego seleccionar 5 para euromillon y el gordo
     '
-    mPronosticos = 6
+    If JUEGO_DEFECTO = Bonoloto Or _
+    JUEGO_DEFECTO = LoteriaPrimitiva Then
+        mPronosticos = 6
+    Else
+        mPronosticos = 5
+    End If
     '
     '   Cargamos el Combo de juegos
     '
@@ -476,8 +480,8 @@ Public Sub InitForm()
     Set mInfo = New InfoSorteo
     mInfo.Constructor JUEGO_DEFECTO
     
-    Set DB = New BdDatos
-    If mHoy = DB.UltimoResultado Then
+    Set Db = New BdDatos
+    If mHoy = Db.UltimoResultado Then
             mFechaAnalisis = mInfo.GetProximoSorteo(mHoy)
     Else
         If mInfo.EsFechaSorteo(mHoy) Then

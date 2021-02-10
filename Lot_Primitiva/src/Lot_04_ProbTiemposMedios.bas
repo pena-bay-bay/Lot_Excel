@@ -152,7 +152,7 @@ Private Sub cmd_CalculaTodosProb(obj_muestra As Muestra)
         Case Bonoloto, LoteriaPrimitiva:
             iMin = 1
             iMax = 49
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             iMin = 1
             iMax = 54
         Case Euromillones

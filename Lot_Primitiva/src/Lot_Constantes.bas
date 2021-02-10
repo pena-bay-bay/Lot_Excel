@@ -163,7 +163,7 @@ Public Const NOMBRE_CATEGORIASPREMIOS As String = "Primera;Segunda;Tercera;Cuart
 Public Enum Juego
     LoteriaPrimitiva = 1
     Bonoloto = 2
-    gordoPrimitiva = 3
+    GordoPrimitiva = 3
     Euromillones = 4
     PrimitivaBonoloto = 5
 End Enum
@@ -184,6 +184,7 @@ Public Enum ModalidadJuego
     GP_5_54 = 2
     EU_5_50 = 3
     EU_2_12 = 4
+    RT_0_9 = 5
 End Enum
 '
 '

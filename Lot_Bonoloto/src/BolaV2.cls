@@ -364,7 +364,7 @@ Private Function getTiempoIntervalo(vRegInf As Integer, vOrdInf As Integer, _
                 mTmAparicion = mTmAparicion + (2 - vOrdInf) + vOrdSup
            End If
            
-      Case gordoPrimitiva
+      Case GordoPrimitiva
            '
            ' Si la bola es un Numero o es Clave
            '

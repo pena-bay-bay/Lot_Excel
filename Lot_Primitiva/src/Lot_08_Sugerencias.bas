@@ -305,9 +305,12 @@ Private Sub DisLiterales(datSorteo As Sorteo, datFechaAnalisis As Date)
                 ActiveCell.Offset(1, i).Interior.ColorIndex = COLOR_VERDE
             End If
         Next i
-        ActiveCell.Offset(0, i - 1).Value = "C"
-        ActiveCell.Offset(1, i - 1).Value = c
-        ActiveCell.Offset(1, i - 1).Interior.ColorIndex = COLOR_AMARILLO
+        If datSorteo.Juego = Bonoloto Or _
+        datSorteo.Juego = LoteriaPrimitiva Then
+            ActiveCell.Offset(0, i).Value = "C"
+            ActiveCell.Offset(1, i).Value = c
+            ActiveCell.Offset(1, i).Interior.ColorIndex = COLOR_AMARILLO
+        End If
     End If
     '
     '   Metodo

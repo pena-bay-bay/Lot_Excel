@@ -108,7 +108,7 @@ Public Function GetProximoSorteo(vNewDate As Date) As Date
                     GetProximoSorteo = GetProximoSorteo + 4
             End Select
             
-        Case Juego.gordoPrimitiva
+        Case Juego.GordoPrimitiva
             mDias = 1       ' D
             If mDiaSemana > 1 Then
                 GetProximoSorteo = GetProximoSorteo + (7 - mDiaSemana) + 1
@@ -199,7 +199,7 @@ Public Function GetSorteosEntreFechas(vNewDateIni As Date, vNewDateFin As Date) 
                     mSorteos = mSorteos + 1
                 End If
                 
-            Case Juego.gordoPrimitiva:
+            Case Juego.GordoPrimitiva:
                 '
                 ' Si es el Gordo de la primitiva y es domingo suma 1 sorteo
                 '
@@ -248,7 +248,7 @@ Public Function EsFechaSorteo(vNewDate As Date) As Boolean
                     EsFechaSorteo = True
                 End If
                 
-            Case Juego.gordoPrimitiva:
+            Case Juego.GordoPrimitiva:
                 If mDiaSem = 1 Then
                     EsFechaSorteo = True
                 End If
@@ -318,7 +318,7 @@ Public Function GetAnteriorSorteo(vNewDate As Date) As Date
                     GetAnteriorSorteo = GetAnteriorSorteo - 4
             End Select
             
-        Case Juego.gordoPrimitiva
+        Case Juego.GordoPrimitiva
             mDias = 1       ' D
             If mDiaSemana > 1 Then
                 GetAnteriorSorteo = (GetAnteriorSorteo - mDiaSemana) + 1
@@ -360,7 +360,7 @@ Public Function AddDiasSorteo(vNewDate As Date, nNewDias As Integer) As Date
         mDate = Me.GetProximoSorteo(mDate)
     Next i
 '
-'   TODO: Optimizar con un algoritmo de calculo segun el juego
+'   #TODO: Optimizar con un algoritmo de calculo segun el juego
 '
 '    '
 '    '  1 = Domingo
@@ -382,3 +382,42 @@ Public Function AddDiasSorteo(vNewDate As Date, nNewDias As Integer) As Date
     AddDiasSorteo = mDate
 End Function
 
+
+'------------------------------------------------------------------------------*
+' Procedimiento  : SubstractDiasSorteo
+' Fecha          : ma., 07/jul/2020 16:20:31
+' Propósito      : Devuelve la fecha resultante de restar ndias a un sorteo
+' Parámetros     : Fecha de análisis, Numero dias
+' Retorno        : Fecha correspondiente a la resta de sorteos a una fecha
+'------------------------------------------------------------------------------*
+'
+Public Function SubstractDiasSorteo(vNewDate As Date, nNewDias As Integer) As Date
+    Dim i     As Integer
+    Dim mDate As Date
+    
+    mDate = vNewDate
+    For i = 1 To nNewDias
+        mDate = Me.GetAnteriorSorteo(mDate)
+    Next i
+'
+'   #TODO: Optimizar con un algoritmo de calculo segun el juego
+'
+'    '
+'    '  1 = Domingo
+'    '  D,L,M,X,J,V,S
+'    '  1,2,3,4,5,6,7
+'    '
+'    mDiaSemana = Weekday(vNewDate)
+'    '
+'    '   Cuantas semanas hay en los dias suministrados
+'    '   depende del juego, si es bonoloto hay 6 juegos por semana
+'
+'
+'    mDate = vNewDate
+'    For i = 0 To nNewDias
+'        mDate = mDate + i
+'
+'    Next i
+'
+    SubstractDiasSorteo = mDate
+End Function

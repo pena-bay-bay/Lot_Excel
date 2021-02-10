@@ -79,7 +79,7 @@ Public Property Get Peso() As String
     Select Case mJuego
         Case Bonoloto, LoteriaPrimitiva: mMedium = 25
         Case Euromillones: mMedium = 26
-        Case gordoPrimitiva: mMedium = 28
+        Case GordoPrimitiva: mMedium = 28
     End Select
     
     If mValor = -1 Then

@@ -57,8 +57,8 @@ Private Sub Class_Initialize()
     Set colRegistros = New Collection
     Set colFechasAparicion = New Collection
     Set colTiemposMedios = New Collection
-'   Rango_Frecuencias = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100)
-    Rango_Frecuencias = Array(3, 6, 9, 15, 25, 50)
+    Rango_Frecuencias = Array(1, 2, 3, 4, 5, 6, 7, 10, 20, 50, 100)
+    'Rango_Frecuencias = Array(3, 6, 9, 15, 25, 50)
     m_apariciones = -1
     m_dProb_TiempoMedio = -1
     mValorHomogeneo = 0

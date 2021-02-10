@@ -28,7 +28,7 @@ Private Const hjApuesta As String = "Apuestas"  'Hoja de Apuestas
 Private Const AdrssResultadosBL As String = "$A$2:$N${0}"
 Private Const AdrssResultadosLP As String = "$A$2:$N${0}"
 Private Const AdrssResultadosEU As String = "$A$2:$O${0}"
-Private Const AdrssResultadosGP As String = "$A$2:$N${0}"
+Private Const AdrssResultadosGP As String = "$A$2:$M${0}"
 
 Private Const AdrssBoletosBL As String = "$A$2:$P${0}"
 Private Const AdrssBoletosLP As String = "$A$2:$P${0}"
@@ -200,7 +200,7 @@ Private Sub Class_Initialize()
             mStr = Replace(AdrssApuestasLP, "{0}", CStr(mRow))
             Set mRgApuestas = Worksheets(hjApuesta).Range(mStr)
             
-        Case gordoPrimitiva:
+        Case GordoPrimitiva:
             '
             '   Sorteos
             '
@@ -435,7 +435,7 @@ Private Function GetTupla(vNewValue As Range) As TuplaAparicion
                 mTupla.OrdenAparicion = 1
             End If
         
-        Case gordoPrimitiva
+        Case GordoPrimitiva
             If vNewValue.Column < 12 Then
                 mTupla.OrdenAparicion = vNewValue.Column - 6
             Else
@@ -844,7 +844,7 @@ Public Function GetApuestaInFechas(vNewValue As Periodo) As Range
     '
     '   Inicializamos filas
     '
-    mRowIni = 0: mRowFin = 0
+    mRowIni = -1: mRowFin = -1
     '
     '   Establecemos como rango de trabajo la columna de fechas ($D$D)
     '
@@ -911,7 +911,7 @@ Public Function GetApuestaInFechas(vNewValue As Periodo) As Range
         mRowFin = mTmpRow - 2
     End If
     
-    If mRowIni > 0 And mRowFin > 0 Then
+    If mRowIni >= 0 And mRowFin >= 0 Then
         '
         '   La primera celda es la fecha de los resultados
         '
@@ -1142,7 +1142,7 @@ Public Function GetSorteosInFechas(vNewValue As Periodo) As Range
     '
     '   Inicializamos filas
     '
-    mRowIni = 0: mRowFin = 0
+    mRowIni = -1: mRowFin = -1
     '
     '   Establecemos como rango de trabajo la columna de fechas ($C$C)
     '
@@ -1174,7 +1174,7 @@ Public Function GetSorteosInFechas(vNewValue As Periodo) As Range
         mRowFin = GetRowFechaMenorOIgual(vNewValue.FechaFinal)
     End If
     
-    If mRowIni > 0 And mRowFin > 0 Then
+    If mRowIni >= 0 And mRowFin >= 0 Then
         '
         '   La primera celda es la fecha de los resultados
         '
@@ -1224,7 +1224,7 @@ Public Function GetAparicionesNumero(vNewValue As Integer) As Variant
             ' ($F:$L)
             Set mRg = mRgSorteos.Offset(0, 5).Resize(mRgSorteos.Rows.Count, 7)
         
-        Case gordoPrimitiva, Euromillones:
+        Case GordoPrimitiva, Euromillones:
             ' ($G:$K)
             Set mRg = mRgSorteos.Offset(0, 6).Resize(mRgSorteos.Rows.Count, 5)
     End Select
@@ -1316,7 +1316,7 @@ Public Function GetAparicionesReintegro(vNewValue As Integer) As Variant
             ' ($M:$M)
             Set mRg = mRgSorteos.Offset(0, 12).Resize(mRgSorteos.Rows.Count, 1)
         
-        Case gordoPrimitiva, Euromillones:
+        Case GordoPrimitiva, Euromillones:
             ' ($L:$L)
             Set mRg = mRgSorteos.Offset(0, 11).Resize(mRgSorteos.Rows.Count, 1)
     End Select
@@ -1406,7 +1406,7 @@ Public Function GetAparicionesEstrella(vNewValue As Integer) As Variant
     '   Establecemos como rango de trabajo la columna de los reintegros
     '
     Select Case JUEGO_DEFECTO
-        Case Bonoloto, LoteriaPrimitiva, gordoPrimitiva:
+        Case Bonoloto, LoteriaPrimitiva, GordoPrimitiva:
             '
             '   Sale sin tratamiento porque no hay estrellas en estos juegos
             '
