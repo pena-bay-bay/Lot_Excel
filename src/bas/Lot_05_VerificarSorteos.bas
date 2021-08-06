@@ -185,6 +185,7 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
                     End With
                 Next j
                 j = j + 1
+                Set oNum = New Numero
                 oNum.Valor = oSorteo.Complementario
                 Set oBola = oMuestra.Get_Bola(oNum.Valor)
                 With ActiveCell.Offset(i, j)
@@ -232,6 +233,7 @@ Private Sub VerificarSorteo(vNewValue As Periodo)
 '                        .Interior.ColorIndex = oBola.Color_Probabilidad
                     End With
                 Next j
+                j = 9
         End Select
         '
         '   Escribimos caracteristicas del sorteo

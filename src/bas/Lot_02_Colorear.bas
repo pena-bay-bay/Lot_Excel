@@ -127,8 +127,8 @@ Private Sub cmd_color_fecha(vNewData As Date)
             ColIni = 6
             ColFin = 10
         Case Euromillones:
-            ColIni = 7
-            ColFin = 11
+            ColIni = 6
+            ColFin = 10
     End Select
 
     ' para cada fila(resultado) en el rango de Datos
@@ -187,9 +187,7 @@ Private Sub cmd_color_fecha(vNewData As Date)
         '   Colorear estrellas
         '
         If JUEGO_DEFECTO = Euromillones Then
-            ColIni = 12
-            ColFin = 13
-            For i = ColIni To ColFin
+            For i = 11 To 12
                 color = 0
                 If (IsNumeric(m_rgFila.Cells(1, i).Value)) Then
                     m_valor = m_rgFila.Cells(1, i).Value
@@ -197,8 +195,8 @@ Private Sub cmd_color_fecha(vNewData As Date)
                     m_valor = 0
                 End If
                 Select Case m_valor
-                    Case oSorteo.EstrellaUno: color = COLOR_TERMINACION9
-                    Case oSorteo.EstrellaDos: color = COLOR_TERMINACION7
+                    Case oSorteo.EstrellaUno.Valor: color = COLOR_TERMINACION9
+                    Case oSorteo.EstrellaDos.Valor: color = COLOR_TERMINACION7
                 End Select
                 If color > 0 Then
                         ColoreaCelda m_rgFila.Cells(1, i), color
